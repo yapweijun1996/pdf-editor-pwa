@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#12233e">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; font-src 'self' blob: data:; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Paperplane — PDF Editor</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./src/app.js"></script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="wordmark"><img src="./icons/icon-192.png" alt=""><span>Paperplane<small>LOCAL PDF STUDIO</small></span></div>
+    <div class="header-actions">
+      <button id="install" hidden>Install</button>
+      <button id="theme" aria-label="Switch color theme">Theme</button>
+      <button id="open">Open PDF</button>
+      <button id="save" class="primary" disabled>Download PDF</button>
+    </div>
+  </header>
+  <div class="info"><span id="filename">No document open</span><span id="dirty"></span><span id="offline">Preparing offline access…</span></div>
+  <p id="status" role="status" aria-live="polite">Select a PDF to get started.</p>
+  <main>
+    <section id="welcome" class="welcome" aria-labelledby="welcome-title">
+      <div class="hero">
+        <p class="eyebrow">PRIVATE BY DESIGN</p>
+        <h1 id="welcome-title">Your PDFs.<br>Your workspace.</h1>
+        <p>Mark up, fill in, and rearrange pages right in your browser. Your files stay on this device.</p>
+        <button id="start" class="primary">Choose a PDF</button>
+        <span class="drop-note">or drop a PDF anywhere in the workspace</span>
+      </div>
+      <div class="hero-art" aria-hidden="true"><div class="mock-paper"><span>PDF</span><i></i><i></i><i></i><b>✦</b></div></div>
+    </section>
+    <section id="workspace" hidden aria-label="PDF workspace">
+      <div class="toolbar" aria-label="Editing tools">
+        <div class="tool-group" id="modes" role="group" aria-label="Markup">
+          <button data-mode="view" aria-pressed="true">View</button><button data-mode="text" aria-pressed="false">Text</button>
+          <button data-mode="ink" aria-pressed="false">Draw</button><button data-mode="highlight" aria-pressed="false">Highlight</button>
+          <button data-mode="image" aria-pressed="false">Image / Signature</button>
+        </div>
+        <div class="tool-group" role="group" aria-label="History and documents">
+          <button id="undo">Undo</button><button id="redo">Redo</button><button id="forms">Fill forms</button>
+          <button id="merge">Merge PDF</button><button id="extract">Extract pages</button>
+        </div>
+      </div>
+      <div id="tool-options" class="options" hidden>
+        <label id="text-option" hidden>Text <input id="mark-text" type="text" maxlength="250" placeholder="Type a note" autocomplete="off"></label>
+        <label id="size-option" hidden>Size <input id="mark-size" type="number" min="8" max="72" value="18"> pt</label>
+        <label id="color-option" hidden>Color <input id="mark-color" type="color" value="#15386a"></label>
+        <button id="choose-image" hidden>Choose PNG or JPEG</button>
+        <label id="image-option" hidden>Width <input id="image-width" type="number" min="10" max="95" value="30"> % of page view</label>
+        <button id="keyboard-place" hidden>Place at page center</button>
+        <p id="tool-hint"></p>
+      </div>
+      <div class="editor">
+        <aside class="sidebar" aria-label="Page thumbnails">
+          <h2>Pages</h2>
+          <div id="thumbs"></div>
+        </aside>
+        <div class="document">
+          <div class="page-bar">
+            <div class="tool-group" role="group" aria-label="Page navigation">
+              <button id="prev" aria-label="Previous page">←</button><label for="page-number">Page</label>
+              <input id="page-number" type="number" min="1" value="1" aria-label="Page number"> <span id="page-count"></span>
+              <button id="next" aria-label="Next page">→</button>
+            </div>
+            <div class="tool-group" role="group" aria-label="Zoom">
+              <button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-fit" title="Reset to fit width">Fit</button><button id="zoom-in" aria-label="Zoom in">+</button>
+            </div>
+            <div class="tool-group" role="group" aria-label="Page operations">
+              <button id="rotate">Rotate ↻</button><button id="earlier">Move earlier</button><button id="later">Move later</button><button id="delete">Delete page</button>
+            </div>
+          </div>
+          <div id="stage" tabindex="0" role="region" aria-label="Page viewer. Use Left and Right arrows to change pages.">
+            <div id="paper" hidden>
+              <canvas id="canvas" role="img" aria-label="Rendered PDF page"></canvas>
+              <svg id="overlay" aria-hidden="true"></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <dialog id="extract-dialog" aria-labelledby="extract-title">
+    <form id="extract-form">
+      <h2 id="extract-title">Extract pages</h2>
+      <p>Download selected pages as a separate PDF. This won’t change the open document. Form fields in the extracted copy become fixed page content.</p>
+      <label>Pages or ranges <input id="range" required placeholder="1, 3-5"></label>
+      <p id="extract-error" role="alert"></p>
+      <div class="dialog-actions"><button type="button" data-close>Cancel</button><button class="primary">Download selection</button></div>
+    </form>
+  </dialog>
+  <dialog id="form-dialog" aria-labelledby="form-title">
+    <h2 id="form-title">Fill PDF form</h2>
+    <p id="form-description"></p>
+    <form id="field-form">
+      <div id="fields"></div>
+      <p id="field-error" role="alert"></p>
+      <div class="dialog-actions"><button type="button" data-close>Cancel</button><button id="apply-fields" class="primary">Apply fields</button></div>
+    </form>
+  </dialog>
+  <dialog id="replace-dialog" aria-labelledby="replace-title">
+    <form method="dialog">
+      <h2 id="replace-title">Discard unsaved edits?</h2>
+      <p>Open the new PDF and discard these edits, or keep working and download a copy first.</p>
+      <div class="dialog-actions"><button value="keep" autofocus>Keep editing</button><button class="danger" value="discard">Discard and open</button></div>
+    </form>
+  </dialog>
+  <input id="file" type="file" accept=".pdf,application/pdf" hidden>
+  <input id="merge-file" type="file" accept=".pdf,application/pdf" hidden>
+  <input id="image-file" type="file" accept="image/png,image/jpeg" hidden>
+</body>
+</html>

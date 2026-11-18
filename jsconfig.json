@@ -1,0 +1,5 @@
+{
+  "compilerOptions": { "target": "ES2022", "module": "NodeNext", "moduleResolution": "NodeNext", "checkJs": false },
+  "include": ["src/**/*.js", "tests/**/*.mjs", "scripts/**/*.mjs", "sw.js"],
+  "exclude": ["node_modules", "vendor", "test-results"]
+}
