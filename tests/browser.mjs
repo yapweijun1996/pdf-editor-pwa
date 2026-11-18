@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { once } from 'node:events';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
-import { PDFDocument, rgb } from '../vendor/pdf-lib/dist/pdf-lib.esm.min.js';
+import { PDFDocument, PDFName, PDFPageTree, rgb } from '../vendor/pdf-lib/dist/pdf-lib.esm.min.js';
 import { serve } from '../scripts/serve.mjs';
 
 const dir = new URL('../test-results/', import.meta.url);
@@ -37,6 +37,39 @@ await fixture('merge.pdf', 2, 'Merge');
 await fixture('large.pdf', 50, 'Large');
 await fixture('form.pdf', 1, 'Form', true);
 const original = await readFile(path('sample.pdf'));
+
+async function inheritedFixture() {
+  const doc = await PDFDocument.create();
+  const first = doc.addPage([360, 300]), second = doc.addPage([380, 320]);
+  first.drawText('Inherited first', { x: 35, y: 240, size: 22 });
+  second.drawText('Inherited second', { x: 35, y: 240, size: 22 });
+  doc.getForm().createTextField('Nested field').addToPage(first, { x: 40, y: 100, width: 200, height: 28 });
+  second.setCropBox(20, 30, 350, 280);
+  second.node.set(PDFName.of('Rotate'), doc.context.obj(0));
+
+  const root = doc.catalog.Pages(), rootRef = doc.catalog.get(PDFName.of('Pages'));
+  const branch = PDFPageTree.withContext(doc.context, rootRef);
+  const branchRef = doc.context.register(branch);
+  branch.set(PDFName.of('Rotate'), doc.context.obj(90));
+  for (const name of ['MediaBox', 'Resources']) {
+    const key = PDFName.of(name);
+    branch.set(key, doc.context.register(first.node.get(key)));
+    first.node.delete(key);
+  }
+  branch.set(PDFName.of('CropBox'), doc.context.obj([10, 20, 350, 280]));
+  root.Kids().remove(1);
+  root.Kids().remove(0);
+  root.set(PDFName.of('Count'), doc.context.obj(0));
+  root.pushTreeNode(branchRef);
+  for (const [index, leaf] of [first, second].entries()) {
+    branch.insertLeafNode(leaf.ref, index);
+    leaf.node.setParent(branchRef);
+  }
+  const bytes = Buffer.from(await doc.save());
+  await writeFile(path('inherited-input.pdf'), bytes);
+  return bytes;
+}
+const inheritedInput = await inheritedFixture();
 const server = serve(0);
 await once(server, 'listening');
 const origin = `http://127.0.0.1:${server.address().port}`;
@@ -67,6 +100,20 @@ async function capture(name, action, target = page) {
   await download.saveAs(path(name));
   return download.suggestedFilename();
 }
+async function confirmSaved() {
+  assert.equal(await page.locator('#dirty').textContent(), 'Unsaved edits');
+  await click('I saved this copy');
+  await status('You confirmed that you saved this version');
+  assert.equal(await page.locator('#dirty').textContent(), '');
+}
+async function dismissUnloadWarning(target) {
+  const unload = target.waitForEvent('dialog', { timeout: 5000 });
+  const reload = target.reload({ timeout: 5000 }).catch(() => null);
+  const warning = await unload;
+  assert.equal(warning.type(), 'beforeunload');
+  await warning.dismiss();
+  await reload;
+}
 async function inspect(name) {
   return page.evaluate(async input => {
     const { getDocument, GlobalWorkerOptions } = await import('/vendor/pdfjs/build/pdf.min.mjs');
@@ -77,11 +124,15 @@ async function inspect(name) {
       const result = [];
       for (let index = 1; index <= pdf.numPages; index++) {
         const item = await pdf.getPage(index);
-        result.push({ rotation: item.rotate, text: (await item.getTextContent()).items.map(i => i.str).join(' ') });
+        result.push({ view: item.view, rotation: item.rotate, text: (await item.getTextContent()).items.map(i => i.str).join(' ').trim() });
       }
       return result;
     } finally { await task.destroy(); }
   }, [...await readFile(path(name))]);
+}
+async function inspectBoxes(name) {
+  const doc = await PDFDocument.load(await readFile(path(name)));
+  return doc.getPages().map(p => [p.getMediaBox(), p.getCropBox()]);
 }
 async function dragMark(start, end) {
   const overlay = page.locator('#overlay');
@@ -108,12 +159,7 @@ try {
   await page.locator('#overlay').click({ position: { x: 75, y: 150 } });
   await status('Text added');
   await text('#dirty', 'Unsaved edits');
-  const unload = page.waitForEvent('dialog');
-  const reload = page.reload({ timeout: 5000 }).catch(() => null);
-  const warning = await unload;
-  assert.equal(warning.type(), 'beforeunload');
-  await warning.dismiss();
-  await reload;
+  await dismissUnloadWarning(page);
   await page.locator('#file').setInputFiles(path('merge.pdf'));
   await page.getByRole('dialog', { name: 'Discard unsaved edits?' }).waitFor();
   await click('Keep editing');
@@ -131,6 +177,16 @@ try {
   await click('Redo');
   await text('#page-count', 'of 2');
   assert.equal(await capture('saved.pdf', () => click('Download PDF')), 'sample-edited.pdf');
+  await dismissUnloadWarning(page);
+  await click('Rotate ↻');
+  await page.locator('#confirm-save').waitFor({ state: 'hidden' });
+  await click('Undo');
+  await confirmSaved();
+  await click('Undo');
+  await text('#dirty', 'Unsaved edits');
+  await click('Redo');
+  await status('Edit redone');
+  assert.equal(await page.locator('#dirty').textContent(), '');
   await open('saved.pdf');
   await text('#page-count', 'of 2');
   const edited = await inspect('saved.pdf');
@@ -140,6 +196,34 @@ try {
   assert.deepEqual(await readFile(path('sample.pdf')), original);
   await evidence('saved-reopened');
   console.log('PASS UI text, rotation, deletion, undo/redo, unsaved navigation/replacement warning, download and reopen; original unchanged.');
+
+  const deniedContext = await browser.newContext();
+  try {
+    const denied = await deniedContext.newPage();
+    const cdp = await deniedContext.newCDPSession(denied);
+    await cdp.send('Page.setDownloadBehavior', { behavior: 'deny' });
+    await denied.goto(origin);
+    await denied.locator('#file').setInputFiles(path('sample.pdf'));
+    await render(denied);
+    await denied.locator('#rotate').click();
+    await text('#dirty', 'Unsaved edits', denied);
+    const [download] = await Promise.all([denied.waitForEvent('download'), denied.locator('#save').click()]);
+    assert.equal(await download.failure(), 'canceled');
+    await text('#status', 'Download requested', denied);
+    assert.equal(await denied.locator('#dirty').textContent(), 'Unsaved edits');
+    await dismissUnloadWarning(denied);
+    await denied.locator('#file').setInputFiles(path('merge.pdf'));
+    await denied.getByRole('dialog', { name: 'Discard unsaved edits?' }).waitFor();
+    await denied.getByRole('button', { name: 'Keep editing' }).click();
+    await text('#status', 'Kept the current document', denied);
+    assert.equal(await denied.locator('#filename').textContent(), 'sample.pdf');
+    await denied.locator('#undo').click();
+    await text('#status', 'Edit undone', denied);
+    assert.equal(await denied.locator('#dirty').textContent(), '');
+    await denied.locator('#redo').click();
+    await text('#dirty', 'Unsaved edits', denied);
+  } finally { await deniedContext.close(); }
+  console.log('PASS denied download canceled by Chromium; navigation and replacement warnings remain, undo/redo keeps the correct dirty state.');
 
   await open('sample.pdf');
   await click('Next page');
@@ -160,7 +244,50 @@ try {
   await text('#dirty', 'Unsaved edits');
   await capture('merged.pdf', () => click('Download PDF'));
   assert.deepEqual((await inspect('merged.pdf')).map(p => p.text.trim()), ['Sample 2', 'Sample 1', 'Sample 3', 'Merge 1', 'Merge 2']);
+  await confirmSaved();
   console.log('PASS standalone reorder, merge, range validation and extract output/order.');
+
+  await open('inherited-input.pdf');
+  const inherited = await inspect('inherited-input.pdf');
+  assert.deepEqual(inherited, [
+    { view: [10, 20, 350, 280], rotation: 90, text: 'Inherited first' },
+    { view: [20, 30, 370, 310], rotation: 0, text: 'Inherited second' },
+  ]);
+  const boxes = await inspectBoxes('inherited-input.pdf');
+  assert.deepEqual(boxes.map(([media]) => [media.width, media.height]), [[360, 300], [380, 320]]);
+  await click('Move later');
+  await capture('inherited-reordered.pdf', () => click('Download PDF'));
+  assert.deepEqual(await inspect('inherited-reordered.pdf'), [inherited[1], inherited[0]]);
+  assert.deepEqual(await inspectBoxes('inherited-reordered.pdf'), [boxes[1], boxes[0]]);
+  const reordered = await PDFDocument.load(await readFile(path('inherited-reordered.pdf')));
+  const field = reordered.getForm().getTextField('Nested field');
+  const widget = field.acroField.getWidgets()[0];
+  const widgetRef = reordered.context.getObjectRef(widget.dict);
+  assert.equal(field.isReadOnly(), false);
+  assert.equal(widget.P(), reordered.getPage(1).ref);
+  assert.ok(widgetRef && reordered.getPage(1).node.Annots().asArray().includes(widgetRef));
+
+  await click('Extract pages');
+  await page.getByLabel('Pages or ranges').fill('1-2');
+  await capture('inherited-extracted.pdf', () => click('Download selection'));
+  assert.deepEqual(await inspect('inherited-extracted.pdf'), [inherited[1], inherited[0]]);
+  assert.deepEqual(await inspectBoxes('inherited-extracted.pdf'), [boxes[1], boxes[0]]);
+  await click('Previous page');
+  await click('Delete page');
+  await capture('inherited-deleted.pdf', () => click('Download PDF'));
+  assert.deepEqual(await inspect('inherited-deleted.pdf'), [inherited[0]]);
+  assert.deepEqual(await inspectBoxes('inherited-deleted.pdf'), [boxes[0]]);
+  await click('Undo');
+  await page.locator('#merge-file').setInputFiles(path('merge.pdf'));
+  await status('Appended 2 page(s)');
+  await capture('inherited-merged.pdf', () => click('Download PDF'));
+  const merged = await inspect('inherited-merged.pdf');
+  assert.deepEqual(merged.slice(0, 2), [inherited[1], inherited[0]]);
+  assert.deepEqual(merged.slice(2).map(p => p.text), ['Merge 1', 'Merge 2']);
+  assert.deepEqual((await inspectBoxes('inherited-merged.pdf')).slice(0, 2), [boxes[1], boxes[0]]);
+  assert.deepEqual(await readFile(path('inherited-input.pdf')), inheritedInput);
+  await confirmSaved();
+  console.log('PASS inherited MediaBox, CropBox, Rotate and font resources in reordered, extracted, deleted and merged exports; reordered widget stays on its page.');
 
   await open('form.pdf');
   await click('Fill forms');
@@ -185,6 +312,7 @@ try {
   assert.deepEqual(savedFields.getDropdown('Department').getSelected(), ['Engineering']);
   assert.equal(savedFields.getRadioGroup('Delivery').getSelected(), 'Email');
   assert.deepEqual(savedFields.getOptionList('Topics').getSelected(), ['Print', 'Web']);
+  await confirmSaved();
   await open('filled.pdf');
   await click('Fill forms');
   assert.equal(await form.getByLabel('Name', { exact: true }).inputValue(), 'Ada Lovelace');
@@ -206,6 +334,7 @@ try {
   await status('Image added');
   await evidence('annotation-preview');
   await capture('annotated.pdf', () => click('Download PDF'));
+  await confirmSaved();
   await open('annotated.pdf');
   const ink = await pixel(.2, .23), highlight = await pixel(.2, .34), image = await pixel(.53, .53);
   assert.ok(ink[0] < 100 && ink[2] > ink[0], JSON.stringify(ink));

@@ -20,6 +20,7 @@
       <button id="theme" aria-label="Switch color theme">Theme</button>
       <button id="open">Open PDF</button>
       <button id="save" class="primary" disabled>Download PDF</button>
+      <button id="confirm-save" hidden>I saved this copy</button>
     </div>
   </header>
   <div class="info"><span id="filename">No document open</span><span id="dirty"></span><span id="offline">Preparing offline access…</span></div>
@@ -106,7 +107,7 @@
   <dialog id="replace-dialog" aria-labelledby="replace-title">
     <form method="dialog">
       <h2 id="replace-title">Discard unsaved edits?</h2>
-      <p>Open the new PDF and discard these edits, or keep working and download a copy first.</p>
+      <p>Open the new PDF and discard these edits, or keep editing. If you downloaded this version, check that you have the file and choose “I saved this copy” before opening another PDF.</p>
       <div class="dialog-actions"><button value="keep" autofocus>Keep editing</button><button class="danger" value="discard">Discard and open</button></div>
     </form>
   </dialog>

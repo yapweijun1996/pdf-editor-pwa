@@ -4,7 +4,7 @@ import { createViewer } from './viewer.js';
 
 const $ = id => document.getElementById(id);
 const sources = new Map();
-let session, baseId, selected = 0, serial = 0, zoom = 1, busy = false;
+let session, requestedState, baseId, selected = 0, serial = 0, zoom = 1, busy = false;
 let mode = 'view', image, stroke, formSource, warned = false;
 const colors = { text: '#15386a', ink: '#15386a', highlight: '#ffd12a' };
 const viewer = createViewer({
@@ -19,6 +19,7 @@ function status(message, error = false) {
 const activePage = () => session?.current.pages[selected];
 const anyDialog = () => Boolean(document.querySelector('dialog[open]'));
 const ready = () => session && !busy && !anyDialog();
+const canConfirmSave = () => session?.dirty && session.current === requestedState;
 const warnBeforeUnload = event => { event.preventDefault(); event.returnValue = true; };
 
 function controls() {
@@ -31,6 +32,8 @@ function controls() {
   $('page-number').value = selected + 1;
   $('page-count').textContent = `of ${count}`;
   $('dirty').textContent = session?.dirty ? 'Unsaved edits' : '';
+  $('confirm-save').hidden = !canConfirmSave();
+  $('confirm-save').disabled = busy;
   if (warned !== Boolean(session?.dirty)) {
     warned = Boolean(session?.dirty);
     if (warned) window.addEventListener('beforeunload', warnBeforeUnload);
@@ -141,6 +144,7 @@ async function importPDF(file, merge = false) {
       zoom = 1;
       image = undefined;
       session = history(documentState(id, loaded.pdf.numPages));
+      requestedState = undefined;
       setMode('view');
       refresh({ reset: true, reveal: true });
       status(`Opened ${file.name}.`);
@@ -375,13 +379,21 @@ async function save() {
     const state = session.current;
     const bytes = await createPDF(sources, state, state.pages, baseId);
     const name = download(bytes, 'edited');
-    session.checkpoint();
-    status(`Download requested: ${name}. Check your browser’s downloads.`);
+    requestedState = state;
+    const next = session.dirty ? ' If you have the file, choose “I saved this copy”.' : '';
+    status(`Download requested: ${name}. Check your browser’s downloads.${next}`);
   } catch (error) {
     status(`Could not save this PDF. Your edits are still open. ${error.message}`, true);
   } finally { lock(false); }
 }
 $('save').onclick = save;
+$('confirm-save').onclick = () => {
+  if (!ready() || !canConfirmSave()) return;
+  session.checkpoint();
+  controls();
+  $('save').focus();
+  status('You confirmed that you saved this version.');
+};
 $('extract').onclick = () => {
   if (!ready()) return;
   $('range').value = String(selected + 1);

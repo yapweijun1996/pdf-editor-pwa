@@ -1,7 +1,7 @@
 import * as renderer from '../vendor/pdfjs/build/pdf.min.mjs';
 import {
   PDFDocument, PDFTextField, PDFCheckBox, PDFRadioGroup, PDFDropdown, PDFOptionList,
-  StandardFonts, degrees, rgb, LineCapStyle, PDFName,
+  StandardFonts, degrees, rgb, LineCapStyle, PDFName, PDFPageLeaf,
 } from '../vendor/pdf-lib/dist/pdf-lib.esm.min.js';
 import { rotatePoint } from './model.js';
 
@@ -133,6 +133,16 @@ export async function createPDF(sources, state, pages, baseId, extract = false) 
     const originals = base.getPages();
     targets = pages.map(page => originals[page.index]);
     if (targets.some((page, index) => page !== originals[index])) {
+      // Reinsertion changes page parents. Keep each page's effective inherited entries
+      // without cloning the pages or breaking references from the catalog and form widgets.
+      const keys = PDFPageLeaf.InheritableEntries.map(name => PDFName.of(name));
+      for (const { node } of originals) {
+        for (const key of keys) {
+          if (node.has(key)) continue;
+          const value = node.getInheritableAttribute(key);
+          if (value !== undefined) node.set(key, value);
+        }
+      }
       for (let index = originals.length - 1; index >= 0; index--) output.removePage(index);
       targets.forEach((page, index) => output.insertPage(index, page));
     }
