@@ -8,7 +8,7 @@ import { chromium } from 'playwright';
 import { blocked, emptyStages, measureUI, message, performancePages, viewport, within } from './browser.mjs';
 import { checkOutput, detectReaders, referenceRaster } from './readers.mjs';
 import { contentSettings } from './content.mjs';
-import { classify, sha256, stages, summarize, validateManifest, validationOutcome } from './report.mjs';
+import { classify, navigationPlan, reportExitCode, sha256, stages, summarize, validateManifest } from './report.mjs';
 import { runtimeSnapshot, serveRuntime } from './runtime.mjs';
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
@@ -23,10 +23,10 @@ async function main() {
   const { values } = parseArgs({ options: {
     manifest: { type: 'string', default: join(root, 'tests/corpus/manifest.json') },
     output: { type: 'string', default: join(root, 'docs/baseline/results.json') },
-    timeout: { type: 'string', default: '8000' }, help: { type: 'boolean' },
+    timeout: { type: 'string', default: '8000' }, strict: { type: 'boolean', default: false }, help: { type: 'boolean' },
   } });
   if (values.help) {
-    console.log('Usage: node scripts/baseline/run.mjs [--manifest PATH] [--output NEW_JSON_PATH] [--timeout MS]');
+    console.log('Usage: node scripts/baseline/run.mjs [--manifest PATH] [--output NEW_JSON_PATH] [--timeout MS] [--strict]');
     return;
   }
   const timeout = Number(values.timeout);
@@ -70,10 +70,8 @@ async function main() {
       const { id, path, category, sha256: hash, bytes, expected, pageCount } = sample;
       const actual = emptyStages();
       const result = { id, path, category, sha256: hash, bytes, expected, pageCount, actual,
-        edit: blocked('open did not succeed'), ...(category === 'performance' ? {
-          middlePage: blocked(pageCount > 2 ? 'navigation prerequisites not met' : 'no distinct middle page'),
-          lastPage: blocked('navigation prerequisites not met'), returnToFirst: blocked('navigation prerequisites not met'),
-        } : {}) };
+        edit: blocked('open did not succeed'), ...Object.fromEntries(Object.keys(navigationPlan(sample))
+          .map(name => [name, blocked('navigation prerequisites not met')])) };
       let stage = 'fixture';
       try {
         const pathOnDisk = await realpath(join(manifestDir, path));
@@ -121,15 +119,12 @@ async function main() {
         }
       }
       result.secondReader ??= { status: 'blocked', reason: 'Browser or fixture infrastructure failure' };
-      result.validation = validationOutcome(result.secondReader);
-      const supplementalSteps = [result.middlePage, result.lastPage, result.returnToFirst];
-      const supplementalMismatch = result.validation === 'mismatch' || supplementalSteps.some(step => step?.status === 'error');
-      const infrastructure = Boolean(result.infrastructure || result.blockedNetworkRequests || result.saveConfirmation) ||
-        result.validation === 'infrastructure-failure' || [result.edit, ...supplementalSteps]
-          .some(step => ['timeout', 'infrastructure-failure'].includes(step?.status));
-      Object.assign(result, classify(expected, actual, infrastructure, supplementalMismatch));
+      Object.assign(result, classify(sample, result));
       results.push(result);
-      console.error(`${index + 1}/${samples.length} ${id}: ${result.outcome} (${stages.map(key => actual[key].status).join('/')})`);
+      const failed = Object.entries(result.comparisons).filter(([, value]) => ['mismatch', 'infrastructure-failure'].includes(value))
+        .map(([name, value]) => `${name}=${value}`);
+      console.error(`${index + 1}/${samples.length} ${id}: ${result.outcome} (${stages.map(key => actual[key]?.status ?? 'missing').join('/')})` +
+        (failed.length ? ` [${failed.join(', ')}]` : ''));
     }
   } finally {
     if (browser) await within(browser.close(), timeout, 'Browser shutdown').catch(error => infra.push(message(error)));
@@ -139,6 +134,7 @@ async function main() {
   const report = {
     schemaVersion: 1, goal: '97e94b6a-60de-44e6-89d0-3b785f0b3a95', startedAt, finishedAt: new Date().toISOString(),
     command: [basename(process.execPath), 'scripts/baseline/run.mjs', ...process.argv.slice(2)],
+    mode: values.strict ? 'strict' : 'measurement',
     manifest: { path: runDirectory(manifestPath), sha256: sha256(manifestBytes), entries: samples.length }, app, harness,
     artifactsDirectory: runDirectory(scratch), contentSettings,
     environment: { node: process.version, chromium: chromiumVersion, playwright: require('playwright/package.json').version,
@@ -152,7 +148,7 @@ async function main() {
   };
   await writeFile(output, `${JSON.stringify(report, null, 2)}\n`, { flag: 'wx' });
   console.log(`${JSON.stringify(summary)}\nReport: ${output}`);
-  if (summary.totals['infrastructure-failure'] || infra.length) process.exitCode = 2;
+  process.exitCode = reportExitCode(summary, infra, values.strict);
 }
 
 main().catch(error => { console.error(message(error)); process.exitCode = 1; });

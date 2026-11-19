@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
+import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -8,49 +9,137 @@ import { chromium } from 'playwright';
 import { emptyStages, measureUI, performancePages } from '../scripts/baseline/browser.mjs';
 import { compareContent, contentSettings, createPageIdentity, expectsBlank, hasMeaningfulInk, identityScore,
   parsePpm, rasterStats, rotatedReference } from '../scripts/baseline/content.mjs';
-import { detectReaders, referenceRaster } from '../scripts/baseline/readers.mjs';
-import { classify, compare, sha256, stages, summarize, validateManifest, validationOutcome } from '../scripts/baseline/report.mjs';
+import { checkOutput, detectReaders, referenceRaster } from '../scripts/baseline/readers.mjs';
+import { classify, reportExitCode, sha256, stages, summarize, validateManifest, validationOutcome } from '../scripts/baseline/report.mjs';
 import { runtimeSnapshot, serveRuntime } from '../scripts/baseline/runtime.mjs';
 
 const positive = Object.fromEntries(stages.map(stage => [stage, 'success']));
 const negative = { open: 'error', render: 'not-applicable', save: 'not-applicable', reopen: 'not-applicable' };
-const observed = (...statuses) => Object.fromEntries(stages.map((stage, index) => [stage, { status: statuses[index] }]));
+const status = status => ({ status });
+const success = status('success'), blocked = status('blocked'), error = status('error');
+const opened = (pages = 1) => ({ ...success, checksMatch: true, pages });
+const painted = (page = 1) => ({ ...success, content: { match: true }, stable: true, page });
+const downloaded = { ...success, bytes: 10, sha256: 'a'.repeat(64) };
+const reader = { inputInfo: success, pdfinfo: success, qpdf: success, pageCountMatches: true, rotationMatches: true };
+const healthy = (pages = 1) => structuredClone({ actual: { open: opened(pages), render: painted(), save: downloaded, reopen: painted() },
+  reopenOpen: opened(pages), reopenRender: painted(), edit: success, secondReader: reader });
+const rejected = () => structuredClone({ actual: { open: { ...error, errorKind: 'corrupt-or-unsupported', uiMessage: 'Corrupt or unsupported PDF.' },
+  render: blocked, save: blocked, reopen: blocked }, edit: blocked, secondReader: blocked,
+  recovery: { id: 'known-good', expectedPages: 1, open: opened(), render: painted() } });
 const fixture = (index, more = {}) => ({ id: `case-${index}`, category: 'synthetic', path: `samples/${index}.pdf`,
   sha256: 'a'.repeat(64), bytes: 10, source: { type: 'self-generated', generator: 'test', recipe: 'unit' },
   license: 'CC0-1.0', expected: positive, pageCount: 1, ...more });
 const manifest = (...samples) => ({ schemaVersion: 1, samples });
 
-test('expected rejection is separate from an observed mismatch and from a timeout', () => {
-  assert.equal(classify(negative, observed('error', 'blocked', 'blocked', 'blocked')).outcome, 'expected-rejection');
-  assert.equal(classify(positive, observed('error', 'blocked', 'blocked', 'blocked')).outcome, 'mismatch');
-  assert.equal(classify(negative, observed('timeout', 'blocked', 'blocked', 'blocked')).outcome, 'infrastructure-failure');
-  assert.equal(classify(negative, observed('success', 'success', 'success', 'success')).outcome, 'mismatch');
-  assert.equal(compare('success', { status: 'success', checksMatch: false }), 'mismatch');
-  assert.equal(compare('success', { status: 'blocked' }), 'mismatch');
-  assert.equal(compare('error', { status: 'infrastructure-failure' }), 'infrastructure-failure');
-  assert.equal(classify(positive, observed('success', 'success', 'success', 'success'), false, true).outcome, 'mismatch');
+const negativeSample = fixture('negative', { expected: { ...negative, probeKnownGoodAfterRejection: true, policy: 'corrupt_error' } });
+const alternative = { ...negativeSample, expected: { ...negativeSample.expected, policy: 'recover_or_corrupt_error',
+  alternativeOpen: 'success', onAlternativeSuccess: { render: 'success' } } };
+const perfSample = fixture('performance', { category: 'performance', pageCount: 50 });
+const navigated = () => ({ ...healthy(50), middlePage: painted(25), lastPage: painted(50), returnToFirst: painted() });
+
+test('every required stage rejects missing, blocked, unavailable, unknown, timeout and observed error', () => {
+  const cases = [
+    ...stages.map(key => [fixture(1), healthy, 'actual', key]),
+    ...['edit', 'reopenOpen', 'reopenRender'].map(key => [fixture(1), healthy, null, key]),
+    ...['open', 'render'].map(key => [negativeSample, rejected, 'recovery', key]),
+    ...['middlePage', 'lastPage', 'returnToFirst'].map(key => [perfSample, navigated, null, key]),
+    ...['inputInfo', 'pdfinfo', 'qpdf'].map(key => [fixture(1), healthy, 'secondReader', key]),
+  ];
+  for (const [sample, make, parent, key] of cases) {
+    const name = parent === 'recovery' ? `recovery${key === 'open' ? 'Open' : 'Render'}` : parent === 'secondReader' ? parent : key;
+    for (const value of [undefined, {}, status('unavailable'), status('not-attempted'), status('unknown'), blocked,
+      status('timeout'), status('infrastructure-failure'), error, { ...success, checksMatch: false }]) {
+      if (parent === 'secondReader' && value?.checksMatch === false) continue; // Reader comparisons use count and rotation flags.
+      const row = make();
+      const entry = parent ? row[parent] : row;
+      if (value === undefined) delete entry[key];
+      else entry[key] = value;
+      if (key === 'open' && parent === 'recovery' && value?.status === 'error') row.recovery.render = blocked;
+      const { comparisons, outcome } = classify(sample, row);
+      const expected = value?.status === 'error' || value?.checksMatch === false ? 'mismatch' : 'infrastructure-failure';
+      assert.equal(comparisons[name], expected, `${parent}.${key} ${JSON.stringify(value)}`);
+      assert.ok(['mismatch', 'infrastructure-failure'].includes(outcome), `${parent}.${key} falsely passed`);
+    }
+  }
 });
 
-test('a declared recovery branch does not pass an unverified export', () => {
-  const expected = { ...negative, policy: 'recover_or_corrupt_error', alternativeOpen: 'success', onAlternativeSuccess: { render: 'success' } };
-  assert.equal(classify(expected, observed('success', 'success', 'blocked', 'blocked')).outcome, 'alternative-observed');
-  assert.equal(classify(expected, observed('success', 'success', 'success', 'success')).outcome, 'mismatch');
-  const rejected = observed('error', 'blocked', 'blocked', 'blocked');
-  rejected.open.errorKind = 'password-or-encryption';
-  assert.equal(classify(expected, rejected).outcome, 'mismatch');
-  rejected.open.errorKind = 'corrupt-or-unsupported';
-  assert.equal(classify(expected, rejected).outcome, 'expected-rejection');
+test('dependencies explain explicit blocks, not omitted, contradictory or failed evidence', () => {
+  const positiveSample = fixture(1);
+  const notOpened = { actual: { open: error, render: blocked, save: blocked, reopen: blocked }, edit: blocked, secondReader: blocked };
+  const notSaved = { ...healthy(), reopenOpen: undefined, reopenRender: undefined, secondReader: blocked };
+  Object.assign(notSaved.actual, { save: error, reopen: blocked });
+  const notReopened = healthy();
+  Object.assign(notReopened, { reopenOpen: error, reopenRender: blocked });
+  notReopened.actual.reopen = error;
+  for (const row of [notOpened, notSaved, notReopened]) assert.equal(classify(positiveSample, row).outcome, 'mismatch');
+  assert.equal(classify(positiveSample, { ...notReopened, reopenRender: undefined }).outcome, 'infrastructure-failure');
+  for (const [stage, change, expected] of [
+    ['open', { pages: 9 }, 'mismatch'], ['open', { checksMatch: undefined }, 'infrastructure-failure'],
+    ['render', { stable: false }, 'mismatch'], ['render', { content: undefined }, 'infrastructure-failure'],
+    ['save', { bytes: 0 }, 'infrastructure-failure'], ['save', { sha256: undefined }, 'infrastructure-failure'],
+  ]) {
+    const row = healthy();
+    Object.assign(row.actual[stage], change);
+    assert.equal(classify(positiveSample, row).outcome, expected, stage);
+  }
+  const wrongPage = navigated();
+  wrongPage.lastPage = painted(25);
+  assert.equal(classify(perfSample, wrongPage).comparisons.lastPage, 'mismatch');
 });
 
-test('reader confirmation, warning, unavailable, and failure are not interchangeable', () => {
-  const reader = { pdfinfo: { status: 'success', diagnostics: [] }, qpdf: { status: 'success' }, pageCountMatches: true, rotationMatches: true };
-  assert.equal(validationOutcome(reader), 'confirmed');
-  assert.equal(validationOutcome({ ...reader, qpdf: { status: 'warning' } }), 'warning');
-  assert.equal(validationOutcome({ ...reader, pdfinfo: { status: 'unavailable', diagnostics: [] }, pageCountMatches: null }), 'unconfirmed');
-  assert.equal(validationOutcome({ ...reader, qpdf: { status: 'error' } }), 'mismatch');
-  assert.equal(validationOutcome({ ...reader, qpdf: { status: 'timeout' } }), 'infrastructure-failure');
-  assert.equal(validationOutcome({ ...reader, rotationMatches: false }), 'mismatch');
-  assert.equal(validationOutcome({ status: 'blocked' }), 'blocked');
+test('negative and alternative paths keep the rejection and audit the selected follow-up', () => {
+  for (const sample of [negativeSample, alternative]) {
+    assert.equal(classify(sample, rejected()).outcome, 'expected-rejection');
+    for (const recovery of [undefined, blocked, { status: 'success' }, { ...rejected().recovery, id: undefined },
+      { ...rejected().recovery, status: 'timeout' }]) {
+      assert.equal(classify(sample, { ...rejected(), recovery }).outcome, 'infrastructure-failure');
+    }
+    const row = rejected();
+    row.actual.open.errorKind = 'app-error';
+    assert.equal(classify(sample, row).outcome, 'mismatch');
+    row.actual.open = status('timeout');
+    delete row.recovery;
+    assert.equal(classify(sample, row).outcome, 'infrastructure-failure');
+  }
+  for (const [recovery, failed] of [
+    [{ ...rejected().recovery, open: error, render: blocked }, 'recoveryOpen'],
+    [{ ...rejected().recovery, open: opened(9) }, 'recoveryOpen'],
+    [{ ...rejected().recovery, render: error }, 'recoveryRender'],
+    [{ ...rejected().recovery, status: 'error' }, 'recovery'],
+  ]) {
+    const result = classify(alternative, { ...rejected(), recovery });
+    assert.equal(result.outcome, 'mismatch');
+    assert.equal(result.comparisons.open, 'expected-rejection');
+    assert.equal(result.comparisons[failed], 'mismatch');
+  }
+  const accepted = { actual: { open: opened(), render: painted(), save: blocked, reopen: blocked }, secondReader: blocked };
+  assert.equal(classify(alternative, accepted).outcome, 'alternative-observed');
+  assert.equal(classify(alternative, { ...accepted, recovery: { ...rejected().recovery, render: error } }).outcome, 'mismatch');
+  for (const render of [blocked, undefined, error, { ...painted(), content: { match: false } }]) {
+    assert.notEqual(classify(alternative, { ...accepted, actual: { ...accepted.actual, render } }).outcome, 'alternative-observed');
+  }
+});
+
+test('reader warnings cannot mask unknown required checks or become infrastructure errors by themselves', () => {
+  const sample = fixture(1);
+  for (const [secondReader, validation, outcome] of [
+    [reader, 'confirmed', 'match'], [{ ...reader, qpdf: status('warning') }, 'warning', 'mismatch'],
+    [{ ...reader, qpdf: status('warning'), rotationMatches: null }, 'unconfirmed', 'infrastructure-failure'],
+    [{ ...reader, qpdf: status('error'), pdfinfo: status('timeout') }, 'infrastructure-failure', 'infrastructure-failure'],
+    [{ ...reader, rotationMatches: false }, 'mismatch', 'mismatch'], [blocked, 'blocked', 'infrastructure-failure'],
+    [{ ...reader, status: 'error' }, 'mismatch', 'mismatch'],
+    [{ ...reader, status: 'timeout' }, 'infrastructure-failure', 'infrastructure-failure'],
+    [undefined, 'infrastructure-failure', 'infrastructure-failure'],
+  ]) {
+    assert.equal(validationOutcome(secondReader), validation);
+    assert.equal(classify(sample, { ...healthy(), secondReader }).outcome, outcome);
+  }
+  assert.equal(reportExitCode({ totals: { mismatch: 1 } }, [], false), 0);
+  assert.equal(reportExitCode({ totals: { mismatch: 1 } }, [], true), 3);
+  for (const strict of [false, true]) {
+    assert.equal(reportExitCode({ totals: { mismatch: 1, 'infrastructure-failure': 1 } }, [], strict), 2);
+    assert.equal(reportExitCode({ totals: {} }, ['shutdown failed'], strict), 2);
+  }
 });
 
 test('manifest validation rejects duplicate identities, unsafe paths and absent expectations', () => {
@@ -67,8 +156,12 @@ test('manifest validation rejects duplicate identities, unsafe paths and absent 
 test('all 150 identities must appear once; complete smoke is not a Phase 0 corpus', () => {
   const samples = validateManifest(manifest(...Array.from({ length: 150 }, (_, index) => fixture(index,
     index < 2 ? { category: 'performance', pageCount: index === 0 ? 50 : 500 } : {}))));
-  const actual = observed('success', 'success', 'success', 'success');
-  const results = samples.map(sample => ({ ...sample, actual, outcome: 'match' }));
+  const results = samples.map(sample => {
+    const row = sample.category === 'performance'
+      ? { ...healthy(sample.pageCount), middlePage: painted(sample.pageCount / 2), lastPage: painted(sample.pageCount), returnToFirst: painted() }
+      : healthy();
+    return { ...sample, ...row, ...classify(sample, row) };
+  });
   const summary = summarize(samples, results);
   assert.equal(summary.represented, 150);
   assert.equal(summary.phase0Shape, true);
@@ -259,7 +352,9 @@ test('Chromium: marked and intentional blank pass; opaque-white main canvas fail
         },
       };
       await measureUI(setup, server, sample, input, temp, timeout, result, new Map([[1, raster]]));
-      Object.assign(result, classify(sample.expected, result.actual));
+      result.secondReader = await checkOutput(tools, inputPath, join(temp, 'download.pdf'), result.actual.open.pages,
+        result.edit.status === 'success', timeout);
+      Object.assign(result, classify(sample, result));
       assert.equal(result.blockedNetworkRequests, 0);
       assert.equal(result.actual.open.checksMatch, true);
       assert.equal(result.reopenOpen.checksMatch, true);
@@ -300,6 +395,123 @@ test('Chromium: marked and intentional blank pass; opaque-white main canvas fail
     }
     await browser?.close();
     await server?.close();
+  }
+});
+
+// Serialized into a child-process preload. Change pixels only after the public
+// chooser submits the known-good file in the negative trial's context.
+function interceptRecoveryDraw(chromium) {
+  const launch = chromium.launch.bind(chromium);
+  chromium.launch = async (...args) => {
+    const browser = await launch(...args);
+    const newContext = browser.newContext.bind(browser);
+    let trial = 0;
+    browser.newContext = async (...options) => {
+      const context = await newContext(...options);
+      if (++trial === 2) await context.addInitScript(() => {
+        let recovering = false;
+        document.addEventListener('change', event => {
+          if (event.target instanceof HTMLInputElement && event.target.type === 'file') {
+            recovering = event.target.files[0]?.name === 'SYN-02.pdf';
+          }
+        }, true);
+        const draw = CanvasRenderingContext2D.prototype.drawImage;
+        CanvasRenderingContext2D.prototype.drawImage = function (...args) {
+          const result = Reflect.apply(draw, this, args);
+          if (recovering && this.canvas.id === 'canvas') {
+            this.save();
+            this.resetTransform();
+            this.globalAlpha = 1;
+            this.globalCompositeOperation = 'copy';
+            this.fillStyle = '#fff';
+            this.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            this.restore();
+          }
+          return result;
+        };
+      });
+      return context;
+    };
+    return browser;
+  };
+}
+
+test('Chromium runner: a true rejection cannot hide failed or missing known-good recovery', {
+  skip: process.env.BASELINE_CHROMIUM !== '1', timeout: 110000,
+}, async () => {
+  const root = fileURLToPath(new URL('../', import.meta.url));
+  const corpus = join(root, 'tests/corpus');
+  const all = validateManifest(JSON.parse(await readFile(join(corpus, 'manifest.json'))));
+  const samples = ['SYN-02', 'BAD-10'].map(id => all.find(sample => sample.id === id));
+  const scratch = await mkdtemp(join(tmpdir(), 'baseline-recovery-test-'));
+  const preload = join(scratch, 'recovery-preload.mjs');
+  const pair = join(scratch, 'pair.json'), negativeOnly = join(scratch, 'negative-only.json');
+  const evidence = { status: 'fail', scratch, cases: [] };
+  try {
+    await mkdir(join(scratch, 'samples'));
+    for (const sample of samples) {
+      const input = await readFile(join(corpus, sample.path));
+      assert.equal(sha256(input), sample.sha256);
+      await writeFile(join(scratch, sample.path), input);
+    }
+    await writeFile(pair, JSON.stringify(manifest(...samples)));
+    await writeFile(negativeOnly, JSON.stringify(manifest(samples[1])));
+    await writeFile(preload, `import { chromium } from ${JSON.stringify(import.meta.resolve('playwright'))};\n(${interceptRecoveryDraw})(chromium);\n`);
+    for (const [name, whiten, strict, missing, outcome, exit] of [
+      ['healthy-measurement', false, false, false, 'expected-rejection', 0],
+      ['healthy-strict', false, true, false, 'expected-rejection', 0],
+      ['white-measurement', true, false, false, 'mismatch', 0],
+      ['white-strict', true, true, false, 'mismatch', 3],
+      ['no-control', false, false, true, 'infrastructure-failure', 2],
+    ]) {
+      const output = join(scratch, `${name}.json`);
+      const args = [...(whiten ? ['--import', preload] : []), 'scripts/baseline/run.mjs',
+        '--manifest', missing ? negativeOnly : pair, '--output', output, '--timeout', '3500', ...(strict ? ['--strict'] : [])];
+      const child = spawnSync(process.execPath, args, { cwd: root, encoding: 'utf8', timeout: 22000,
+        env: { ...process.env, TMPDIR: scratch } });
+      evidence.cases.push({ name, cwd: root, TMPDIR: scratch, command: [process.execPath, ...args], exit: child.status,
+        signal: child.signal, stdout: child.stdout, stderr: child.stderr, report: output });
+      assert.ifError(child.error);
+      assert.equal(child.status, exit, child.stderr);
+      const report = JSON.parse(await readFile(output));
+      assert.equal(report.mode, strict ? 'strict' : 'measurement');
+      assert.deepEqual(report.results.map(row => row.id), missing ? ['BAD-10'] : ['SYN-02', 'BAD-10']);
+      if (!missing) assert.equal(report.results[0].outcome, 'match');
+      const row = report.results.at(-1);
+      assert.equal(row.actual.open.status, 'error');
+      assert.equal(row.comparisons.open, 'expected-rejection');
+      assert.equal(row.outcome, outcome);
+      assert.equal(report.summary.totals[outcome], 1);
+      assert.equal(report.summary.totals['expected-rejection'], Number(!whiten && !missing));
+      assert.equal(report.summary.totals.mismatch, Number(whiten));
+      assert.equal(report.summary.totals['infrastructure-failure'], Number(missing));
+      if (missing) {
+        assert.equal(row.recovery.open.status, 'blocked');
+        assert.match(row.recovery.open.reason, /No previously confirmed control/);
+        assert.equal(row.comparisons.recoveryOpen, 'infrastructure-failure');
+        assert.equal(report.summary.stageTotals.recoveryOpen.blocked, 1);
+      } else {
+        assert.equal(row.recovery.id, 'SYN-02');
+        assert.equal(row.comparisons.recoveryOpen, 'match');
+        assert.equal(row.recovery.render.status, whiten ? 'error' : 'success');
+        assert.equal(report.summary.comparisonTotals.recoveryRender[whiten ? 'mismatch' : 'match'], 1);
+        if (whiten) {
+          const observed = row.recovery.render.lastObservation;
+          assert.equal(observed.opacity, 1);
+          assert.equal(observed.nonwhite, 0);
+          assert.equal(observed.content.match, false);
+          assert.match(child.stderr, /BAD-10: mismatch .*recoveryRender=mismatch/);
+        } else assert.ok(row.recovery.render.ink > 0);
+      }
+    }
+    evidence.status = 'pass';
+  } catch (error) {
+    evidence.error = String(error);
+    throw error;
+  } finally {
+    if (process.env.BASELINE_RECOVERY_REPORT) {
+      await writeFile(process.env.BASELINE_RECOVERY_REPORT, `${JSON.stringify(evidence, null, 2)}\n`);
+    }
   }
 });
 
@@ -405,8 +617,8 @@ test('Chromium: rejects direct and nonadjacent raster replays, accepts normal re
       for (const [name, replay, failures] of trials) {
         const result = { name, id: sample.id, inputSha256: sample.sha256, independent, replay, actual: emptyStages() };
         evidence.cases.push(result);
-        await measureUI(replayCanvas(browser, replay, result), server, sample, input, await mkdtemp(join(scratch, `${name}-`)),
-          timeout, result, references);
+        const temp = await mkdtemp(join(scratch, `${name}-`));
+        await measureUI(replayCanvas(browser, replay, result), server, sample, input, temp, timeout, result, references);
         assert.deepEqual([...new Set(result.events.map(({ selected, source }) => `${source}->${selected}`))].sort(),
           Object.entries(replay).map(([selected, source]) => `${source}->${selected}`).sort());
         assert.equal(result.blockedNetworkRequests, 0);
@@ -428,8 +640,9 @@ test('Chromium: rejects direct and nonadjacent raster replays, accepts normal re
         }
         if (!failures.returnToFirst) assert.equal(result.returnToFirst.rasterSha256, result.actual.render.rasterSha256);
         if (sample === duplicate) assert.equal(result.middlePage.rasterSha256, result.actual.render.rasterSha256);
-        Object.assign(result, classify(sample.expected, result.actual, false,
-          [result.middlePage, result.lastPage, result.returnToFirst].some(step => step.status === 'error')));
+        result.secondReader = await checkOutput(tools, path, join(temp, 'download.pdf'), result.actual.open.pages,
+          result.edit.status === 'success', timeout);
+        Object.assign(result, classify(sample, result));
         assert.equal(result.outcome, Object.keys(failures).length ? 'mismatch' : 'match');
       }
     }

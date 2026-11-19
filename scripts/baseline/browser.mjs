@@ -2,7 +2,7 @@ import { basename, join } from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
 import { errors } from 'playwright';
-import { sha256, stages } from './report.mjs';
+import { navigationPlan, sha256, stages } from './report.mjs';
 import { contentSettings, createPageIdentity, rasterStats, rotatedReference } from './content.mjs';
 
 export const viewport = { width: 1280, height: 900 };
@@ -143,8 +143,7 @@ const missingReference = page => ({ status: 'infrastructure-failure', ms: null,
   reason: `Missing usable independent page reference(s) for measurement of page ${page}` });
 
 export function performancePages(sample) {
-  return [...new Set(sample.category === 'performance' && sample.pageCount > 1
-    ? [1, Math.ceil(sample.pageCount / 2), sample.pageCount] : [1])];
+  return [...new Set([1, ...Object.values(navigationPlan(sample))])];
 }
 
 async function openAndRender(page, file, expectedPages, reference, timeout, identity, rivals = []) {
@@ -228,9 +227,9 @@ export async function measureUI(browser, server, sample, input, temp, timeout, r
       result.actual.save = blocked('open did not succeed');
       result.actual.reopen = blocked('no download');
       if (open.status === 'error') {
-        result.recovery = control ? { id: control.id,
+        result.recovery = control ? { id: control.id, expectedPages: control.pages,
           ...await openAndRender(page, control.file, control.pages, control.reference, timeout, createPageIdentity()) }
-          : blocked('No previously confirmed control specimen');
+          : { open: blocked('No previously confirmed control specimen'), render: blocked('No previously confirmed control specimen') };
       }
       return;
     }
@@ -241,11 +240,11 @@ export async function measureUI(browser, server, sample, input, temp, timeout, r
       result.actual.reopen = blocked('no download');
       return;
     }
-    if (sample.category === 'performance' && render.status === 'success' && open.checksMatch && open.pages > 1) {
-      const middle = Math.ceil(open.pages / 2);
-      if (open.pages > 2) result.middlePage = await navigate(page, middle, references.get(middle), timeout, identity, rivalsFor(middle));
-      result.lastPage = await navigate(page, open.pages, references.get(open.pages), timeout, identity, rivalsFor(open.pages), 'End');
-      result.returnToFirst = await navigate(page, 1, first, timeout, identity, rivalsFor(1), 'Home');
+    if (render.status === 'success' && open.checksMatch) {
+      for (const [stage, number] of Object.entries(navigationPlan(sample))) {
+        const key = stage === 'lastPage' ? 'End' : stage === 'returnToFirst' ? 'Home' : undefined;
+        result[stage] = await navigate(page, number, references.get(number), timeout, identity, rivalsFor(number), key);
+      }
     }
     const destination = join(temp, 'download.pdf');
     const editStarted = performance.now();
@@ -287,7 +286,8 @@ export async function measureUI(browser, server, sample, input, temp, timeout, r
           checksMatch: roundTrip.open.checksMatch && roundTrip.render.status === 'success' }
         : roundTrip.open;
     } catch (error) {
-      result.actual.reopen = { status: 'infrastructure-failure', ms: null, reason: message(error) };
+      result.actual.reopen = result.reopenOpen = { status: 'infrastructure-failure', ms: null, reason: message(error) };
+      result.reopenRender = blocked('Reopen startup failed');
     }
   } finally {
     await within(context.close(), timeout, 'Context cleanup');

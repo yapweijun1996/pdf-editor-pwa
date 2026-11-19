@@ -1,0 +1,35 @@
+# Phase 0 independent required-stage integration review
+
+Goal `97e94b6a-60de-44e6-89d0-3b785f0b3a95` · 2026-11-19 UTC · reviewed candidate over `d3e79e3c1c4863bfd3a69dd5aa6d372dd2c9dba0`. **Approve baseline provenance for the exact reviewed bytes and integrate locally for QA round three.** This is not a QA verdict, release clearance or owner acceptance. Earlier reviews apply only to their historical revisions.
+
+## Independence and provenance
+
+Reviewer: `pi session 01a1f1a2-995a-7334-8479-5e7e1156a7a3 (gpt-6.2-sol)`, Independent final required-stage integration reviewer. Baseline contributors: Phase 0 baseline harness agent (clean-room baseline harness engineer); `01a1f166-298d-7565-9860-bf3c26f5cac0` (content verification); `01a1f17b-53c3-7008-9139-574ab0abf50e` (page identity); and `01a1f194-e1d0-714d-9500-1d98b76087bc` (required-stage classification). I did not author or edit the baseline code, tests, documentation or measurements. I recomputed all 12 scoped digests and checked the pending record (`f16038ac58e192e8be3f5b1dd9ea4f18d5ae2700542f9c9fef901ff2fb07fa9c`) and contributor chain before changing only its review fields. The source mapping resolves to the engine plan and product spec, with the fixture notes and manifest supplying stage expectations. The observed method uses the public chooser, DOM and canvas, browser download event, and public Poppler/qpdf CLIs. I did not inspect app or PDF implementation source. Draft-07, calendar dates, source and review references, and 190 live digest entries across all five records checked out. The other four approvals and their scoped bytes are unchanged. This review does not establish historical source access or legal title.
+
+## Required stages and controls
+
+Round-two QA showed that a successful negative classification could hide a failed known-good render. The new classifier keeps the expected rejection at `comparisons.open` but separately grades recovery open/count and stable page-1 paint. A failed prerequisite can explain an explicit downstream block, not a missing record or a downstream error. I traced the accepted and alternative branches as well: initial open/count and paint are required; export cases additionally require the confirmed edit, captured download, fresh reopen/count and paint, and the declared independent checks. Accepted alternatives skip export, not render. The performance plan requires middle, last and return observations. Missing or unavailable required stages cannot turn the row clean; infrastructure takes precedence in the row and exit status without erasing stage mismatches. The maintained matrix exercises missing, unavailable, unknown, blocked, timed-out, inconsistent and observed error statuses, including recovery-open errors and independent-check warnings.
+
+`npm test` passed 20 with three opt-in skips; the full opt-in baseline suite ran separately and passed 14/14 on Chromium 159.0.8154.6. The white controls rejected initial-only, reopen-only and combined opacity-preserving white paint; marked and intentional blank samples passed. Direct and nonadjacent stale-page replays failed the injected stages; normal navigation and both identical-reference trials passed. The runner-level recovery evidence used the original SYN-02 and BAD-10 inputs:
+
+| Recovery control | BAD-10 row | Expected rejections / mismatches / infrastructure | Exit |
+| --- | --- | --- | ---: |
+| Healthy, measurement | Expected rejection, successful recovery open and render | 1 / 0 / 0 | 0 |
+| Healthy, strict | Expected rejection, successful recovery open and render | 1 / 0 / 0 | 0 |
+| Opaque white at recovery, measurement | Mismatch, successful recovery open but failed paint | 0 / 1 / 0 | 0 |
+| Opaque white at recovery, strict | Mismatch, successful recovery open but failed paint | 0 / 1 / 0 | 3 |
+| No control available, measurement | Infrastructure failure, both recovery stages blocked | 0 / 0 / 1 | 2 |
+
+Measurement exit 0 means the report completed without infrastructure failure, not that the data show a clean verdict. The white observation was stable and opaque with zero sampled nonwhite pixels. The bad input remained correctly rejected in all five controls.
+
+## Retained baseline and independent rerun
+
+The [report](../../baseline/results.json) SHA-256 is `4280d88a0ca8a969eee3aaea148e4278c498eec2ecec5dfedcd851949f642c0a`; the [log](../../baseline/run.log) SHA-256 is `26809a6197f08e71181582267ade05b574c63fadfb621d0d922a8669f6541a6b`. I inspected and reran artifact reconciliation for all 150 ordered manifest/result/log rows, 150 input digests and sizes, 130 captured download digests and sizes, 144 fresh Poppler reference rasters and derived rotations, 14 successful recoveries and four 50/500-page workload timing rows. I separately checked required stages on clean rows, planned raster coverage, recovery binding to the prior confirmed control and identity evidence for all 12 navigation observations. Corpus verification passed.
+
+Retained totals: **127 matches, 14 expected rejections, six alternatives, three mismatches, zero infrastructure failures**. I did not rerun all 150 browser trials. I reran all four 50/500-page scenarios and the three known mismatches through the actual strict runner with fresh downloads and independent checks: four matches, three mismatches, no infrastructure failures, exit 3. All performance navigation bitmap digests agreed. XRT-09 still failed reopen and output validation. XRT-10 produced the same visible page-render error and structural warning; the fresh run observed the error before the reopen poll confirmed open, so reopen paint was explicitly blocked rather than recorded as the failed substage. XRS-09 remained an unexplained raster disagreement, not a confirmed app defect. These are observations, not harness infrastructure failures. Timing observations include automation and have no pass limits. No semantic, all-page, cross-browser, physical-device, production latency, security or license-release clearance is implied.
+
+## Scanner and local evidence
+
+The [sanitized similarity scan](phase0-similarity.json), using pinned TypeScript 5.9.3, covered all 20 authored JavaScript paths and six opaque comparators. All four controls passed; no hits or omissions and no source-bearing output. Authored coverage reconciled to Git, provenance and raw hashes. Inventory SHA-256: `af7ae6a00b571b7b79c2e10f1a0d76cd7239b688292e073c468589a3ede5d26b`. A clear scan does not prove independent derivation. All 219 runtime assets are byte-identical to `bcfda7a`; runtime SHA-256 `7baf56ea9d8bdc64df7082460902fd432d8e260c1c13e45ddd7c292c7a081ef9`.
+
+Local evidence: `.aic/phase0-required-stage-review/`, including `retained.json` (`384b9a173d78f1027b98d461099125587a66cc503444b4be7bbe3efdeba58ea1`), `recovery-control.json` (`9f047c23b01ad48800656105099beebed47c1a1257733162dd77e04d00790f54`), `white-control.json`, `navigation-control.json`, test and corpus logs, `representative.log`, and `representative-directory` pointing to the fresh report. Exact-commit verification stays local to avoid embedding the commit's own ID in its tracked evidence. No push, deployment or release.

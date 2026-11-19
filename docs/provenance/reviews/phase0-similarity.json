@@ -1,7 +1,7 @@
 {
   "reportVersion": 1,
   "base": "bcfda7a21d75af4e5c65cbaa4a1d7e4580cb3f22",
-  "head": "4c989e04fa826299371050b05724b32428944dd8",
+  "head": "d3e79e3c1c4863bfd3a69dd5aa6d372dd2c9dba0",
   "node": "v26.13.0",
   "parser": {
     "version": "5.9.3",
@@ -18,9 +18,9 @@
     {
       "path": "scripts/baseline/browser.mjs",
       "status": "scanned",
-      "sha256": "1e2f162ba3d49f1be09d7c4e9519e733fd48698b2924cbd41eb4ff2290a2f820",
-      "bytes": 16524,
-      "tokens": 3589
+      "sha256": "fbc614f29b9a11618984f98db1a4dcb2197b09d0b5592c6622b779b212e43c77",
+      "bytes": 16472,
+      "tokens": 3547
     },
     {
       "path": "scripts/baseline/content.mjs",
@@ -39,16 +39,16 @@
     {
       "path": "scripts/baseline/report.mjs",
       "status": "scanned",
-      "sha256": "10479d54ffe47afa57435b470e0084693ff8a306db41d365985d30f6da56ce52",
-      "bytes": 5854,
-      "tokens": 1239
+      "sha256": "d4601e04810025d82d45b360482ed18513f436d490b98e9f357f6e75fd49118f",
+      "bytes": 10830,
+      "tokens": 2267
     },
     {
       "path": "scripts/baseline/run.mjs",
       "status": "scanned",
-      "sha256": "c17b2eb314dd770d58154c5fe5ffc8a033f48a9b7275babd6e04382c08e2d19c",
-      "bytes": 9977,
-      "tokens": 1966
+      "sha256": "658cc38ea4a5824f96a1e9430e9652b396d54bba3485aeadfe20e8b7f256e176",
+      "bytes": 9557,
+      "tokens": 1940
     },
     {
       "path": "scripts/baseline/runtime.mjs",
@@ -137,9 +137,9 @@
     {
       "path": "tests/baseline.test.mjs",
       "status": "scanned",
-      "sha256": "9519cb8703cacf8c6a8169f4f416d6c7c199b1a038185fde3f5b2a3d26c26a83",
-      "bytes": 25843,
-      "tokens": 6077
+      "sha256": "d59bd8c1764b5ec80cf6ef69a959146d3713bd6593bb50a3bcd08da51344c8e8",
+      "bytes": 37846,
+      "tokens": 8808
     },
     {
       "path": "tests/clean-room.test.mjs",
@@ -200,7 +200,7 @@
       "tokens": 3143
     }
   ],
-  "inventorySha256": "a29f5947a23eae483d56d301c237c9b4432afef3a57bfdf91792c694ee33b731",
+  "inventorySha256": "af7ae6a00b571b7b79c2e10f1a0d76cd7239b688292e073c468589a3ede5d26b",
   "hits": [],
   "controls": {
     "normalizedCopy": true,

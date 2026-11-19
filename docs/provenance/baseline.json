@@ -2,25 +2,25 @@
   "schemaVersion": 1,
   "module": "Phase 0 black-box measurement harness, tests, run evidence, and baseline documentation",
   "revision": {
-    "baseCommit": "4c989e04fa826299371050b05724b32428944dd8",
+    "baseCommit": "d3e79e3c1c4863bfd3a69dd5aa6d372dd2c9dba0",
     "files": {
       "README.md": "eacd5726f81127d58dfa0a4e41277e0a9cdd87494e8962fa8a9400d096b13399",
-      "docs/baseline/README.md": "cb47e0bd2ce635bf1cab59d88673466db06b67454b6c7abdf9c9a436371df8b6",
-      "docs/baseline/results.json": "ba7f30c076b0e9f38ddb04d30cb72718b1f8dba72a134aabe37f417b627ac9e9",
-      "docs/baseline/run.log": "e983f509a75c8aa5fce29b3ded2f27f53fbfb9cf3261068ccd052124dad039d8",
+      "docs/baseline/README.md": "ef2236f1fac3c114439e6ef67d794739002b0c0b951660ac17925d8411376399",
+      "docs/baseline/results.json": "4280d88a0ca8a969eee3aaea148e4278c498eec2ecec5dfedcd851949f642c0a",
+      "docs/baseline/run.log": "26809a6197f08e71181582267ade05b574c63fadfb621d0d922a8669f6541a6b",
       "package.json": "b35b09e4877eb87d60d6d5ce9323cdd4c5770eb436c9653708bd1a08b75660c8",
-      "scripts/baseline/browser.mjs": "1e2f162ba3d49f1be09d7c4e9519e733fd48698b2924cbd41eb4ff2290a2f820",
+      "scripts/baseline/browser.mjs": "fbc614f29b9a11618984f98db1a4dcb2197b09d0b5592c6622b779b212e43c77",
       "scripts/baseline/content.mjs": "d96ca30da8c7ada1d8955c1450ac656bd08c4250db588d4cde0ead0502a9d878",
       "scripts/baseline/readers.mjs": "ee9adf50f974e8957fee565fe92ad1436f8f283ea8bc7ad9893bb28426732581",
-      "scripts/baseline/report.mjs": "10479d54ffe47afa57435b470e0084693ff8a306db41d365985d30f6da56ce52",
-      "scripts/baseline/run.mjs": "c17b2eb314dd770d58154c5fe5ffc8a033f48a9b7275babd6e04382c08e2d19c",
+      "scripts/baseline/report.mjs": "d4601e04810025d82d45b360482ed18513f436d490b98e9f357f6e75fd49118f",
+      "scripts/baseline/run.mjs": "658cc38ea4a5824f96a1e9430e9652b396d54bba3485aeadfe20e8b7f256e176",
       "scripts/baseline/runtime.mjs": "c57f6e529bcb291534290aee05425c94ad41a67e46aa8bbaf9d3d97e789e781e",
-      "tests/baseline.test.mjs": "9519cb8703cacf8c6a8169f4f416d6c7c199b1a038185fde3f5b2a3d26c26a83"
+      "tests/baseline.test.mjs": "d59bd8c1764b5ec80cf6ef69a959146d3713bd6593bb50a3bcd08da51344c8e8"
     }
   },
   "author": {
-    "id": "pi session 01a1f17b-53c3-7008-9139-574ab0abf50e (gpt-6.2-sol)",
-    "role": "PDF Editor PWA / Baseline page-identity repair engineer"
+    "id": "pi session 01a1f194-e1d0-714d-9500-1d98b76087bc (gpt-6.2-sol)",
+    "role": "PDF Editor PWA / Baseline required-stage classification repair engineer"
   },
   "authoredOn": "2026-11-19",
   "sources": [
@@ -42,34 +42,32 @@
       "notes": "Defines the local picker, rendering, rotation, download, and reopen user workflows."
     }
   ],
-  "notes": "Contributors: PDF Editor PWA / Phase 0 baseline harness agent (Clean-room baseline harness engineer); pi session 01a1f166-298d-7565-9860-bf3c26f5cac0 (gpt-6.2-sol), Baseline content-verification repair engineer; and the page-identity repair author identified above. The original review is historical at 4c989e04fa826299371050b05724b32428944dd8; the intervening changes-requested decision in docs/provenance/reviews/phase0-repaired-baseline.md applies to its prior candidate only. Consulted on 2026-11-19: docs/CLEAN-ROOM.md (Inputs and handoff), docs/notes/phase0-fixtures.md (page-tree, graphics and baseline measurement notes), tests/corpus/README.md (Harness and evidence), tests/corpus/manifest.json (preservation expectations), and local public Poppler pdftoppm 25.04.0 -h (page range, crop box, scale and single-file options). Public Chromium UI and canvas observations, including the independently rerun supplied review control, served as defect evidence. The identity association, relative visual metric, and test-only repeated-appearance document are independently authored. No app engine, PDF package or vendor implementation source was inspected by the author; runtime fingerprinting used opaque bytes. The initial local impact-tool project inventory included vendor paths; no implementation excerpt or vendor finding was used. Raster agreement is limited to sampled appearances and referenced pages, not semantic fidelity or all-page preservation. Author tests, run reconciliation and hashed downloads are retained under .aic/phase0-navigation-repair/.",
+  "notes": "Contributors: PDF Editor PWA / Phase 0 baseline harness agent (Clean-room baseline harness engineer); pi session 01a1f166-298d-7565-9860-bf3c26f5cac0 (gpt-6.2-sol), Baseline content-verification repair engineer; pi session 01a1f17b-53c3-7008-9139-574ab0abf50e (gpt-6.2-sol), Baseline page-identity repair engineer; and the required-stage repair author identified above. Earlier independent decisions apply only to their recorded digests, including docs/provenance/reviews/phase0-page-identity.md at the current base. Consulted on 2026-11-19: ENGINE-PLAN.md, docs/CLEAN-ROOM.md (Inputs and handoff), docs/notes/phase0-fixtures.md (Baseline harness handoff), tests/corpus/manifest.json (recovery and export expectations), prior authored baseline code and docs, and round-two black-box Chromium recovery evidence. Prior measurement work also consulted the local public Poppler pdftoppm 25.04.0 help for page range, crop box, scale and single-file options. Reproduced the QA result with its test preload before editing; the maintained control, required-stage comparisons, and CLI contract were authored for this repair. No app engine, PDF package or vendor implementation source was inspected by the repair author; runtime fingerprinting used opaque bytes. Raster agreement is limited to sampled appearances and referenced pages, not semantic fidelity or all-page preservation. Author tests, reconciliation and hashed downloads are retained under .aic/phase0-final-repair/.",
   "review": {
     "status": "approved",
     "reviewer": {
-      "id": "pi session 01a1f185-847b-7160-8d9e-1ccccc0a968a (gpt-6.2-sol)",
-      "role": "PDF Editor PWA / Independent page-identity final integration reviewer"
+      "id": "pi session 01a1f1a2-995a-7334-8479-5e7e1156a7a3 (gpt-6.2-sol)",
+      "role": "PDF Editor PWA / Independent final required-stage integration reviewer"
     },
     "reviewedOn": "2026-11-19",
     "reviewedRevision": {
-      "baseCommit": "4c989e04fa826299371050b05724b32428944dd8",
+      "baseCommit": "d3e79e3c1c4863bfd3a69dd5aa6d372dd2c9dba0",
       "files": {
         "README.md": "eacd5726f81127d58dfa0a4e41277e0a9cdd87494e8962fa8a9400d096b13399",
-        "docs/baseline/README.md": "cb47e0bd2ce635bf1cab59d88673466db06b67454b6c7abdf9c9a436371df8b6",
-        "docs/baseline/results.json": "ba7f30c076b0e9f38ddb04d30cb72718b1f8dba72a134aabe37f417b627ac9e9",
-        "docs/baseline/run.log": "e983f509a75c8aa5fce29b3ded2f27f53fbfb9cf3261068ccd052124dad039d8",
+        "docs/baseline/README.md": "ef2236f1fac3c114439e6ef67d794739002b0c0b951660ac17925d8411376399",
+        "docs/baseline/results.json": "4280d88a0ca8a969eee3aaea148e4278c498eec2ecec5dfedcd851949f642c0a",
+        "docs/baseline/run.log": "26809a6197f08e71181582267ade05b574c63fadfb621d0d922a8669f6541a6b",
         "package.json": "b35b09e4877eb87d60d6d5ce9323cdd4c5770eb436c9653708bd1a08b75660c8",
-        "scripts/baseline/browser.mjs": "1e2f162ba3d49f1be09d7c4e9519e733fd48698b2924cbd41eb4ff2290a2f820",
+        "scripts/baseline/browser.mjs": "fbc614f29b9a11618984f98db1a4dcb2197b09d0b5592c6622b779b212e43c77",
         "scripts/baseline/content.mjs": "d96ca30da8c7ada1d8955c1450ac656bd08c4250db588d4cde0ead0502a9d878",
         "scripts/baseline/readers.mjs": "ee9adf50f974e8957fee565fe92ad1436f8f283ea8bc7ad9893bb28426732581",
-        "scripts/baseline/report.mjs": "10479d54ffe47afa57435b470e0084693ff8a306db41d365985d30f6da56ce52",
-        "scripts/baseline/run.mjs": "c17b2eb314dd770d58154c5fe5ffc8a033f48a9b7275babd6e04382c08e2d19c",
+        "scripts/baseline/report.mjs": "d4601e04810025d82d45b360482ed18513f436d490b98e9f357f6e75fd49118f",
+        "scripts/baseline/run.mjs": "658cc38ea4a5824f96a1e9430e9652b396d54bba3485aeadfe20e8b7f256e176",
         "scripts/baseline/runtime.mjs": "c57f6e529bcb291534290aee05425c94ad41a67e46aa8bbaf9d3d97e789e781e",
-        "tests/baseline.test.mjs": "9519cb8703cacf8c6a8169f4f416d6c7c199b1a038185fde3f5b2a3d26c26a83"
+        "tests/baseline.test.mjs": "d59bd8c1764b5ec80cf6ef69a959146d3713bd6593bb50a3bcd08da51344c8e8"
       }
     },
-    "evidence": [
-      "docs/provenance/reviews/phase0-page-identity.md"
-    ],
-    "notes": "Independently approved for these exact digests and recorded source scope. White and stale controls, legitimate renders, baseline bindings, and bounded mechanical similarity coverage were checked. This is not QA round two, historical source-access certification, or release or owner approval."
+    "evidence": ["docs/provenance/reviews/phase0-required-stage.md"],
+    "notes": "Independent provenance approval for the exact required-stage repair and retained baseline. Required-stage matrix, real Chromium controls, artifact reconciliation and scanner coverage passed. This decision does not waive QA round three or grant release clearance."
   }
 }
