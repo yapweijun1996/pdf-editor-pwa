@@ -10,7 +10,18 @@ const colors = { text: '#15386a', ink: '#15386a', highlight: '#ffd12a' };
 const viewer = createViewer({
   stage: $('stage'), paper: $('paper'), canvas: $('canvas'), overlay: $('overlay'), thumbs: $('thumbs'),
   getSource: id => sources.get(id), onSelect: (index, reveal) => go(index, reveal), onError: message => status(message, true),
+  canTap: () => ready() && (mode === 'image' || (mode === 'text' && Boolean($('mark-text').value.trim()))),
+  canPinch: () => ready(),
+  onTap: (x, y) => place(viewer.point(x, y)),
+  onPinch: (ratio, x, y) => adjustZoom(zoom * ratio, viewer.zoomAnchor(x, y)),
+  onMultitouch: cancelStroke,
 });
+
+function cancelStroke() {
+  if (!stroke) return;
+  stroke = undefined;
+  viewer.paint();
+}
 
 function status(message, error = false) {
   $('status').textContent = message;
@@ -51,14 +62,18 @@ function controls() {
   $('delete').disabled = busy || count < 2;
 }
 
-function lock(value) { busy = value; controls(); }
-function refresh({ render = true, reset = false, reveal = false } = {}) {
+function lock(value) {
+  busy = value;
+  if (busy) viewer.cancelGestures();
+  controls();
+}
+function refresh({ render = true, reset = false, reveal = false, anchor } = {}) {
   controls();
   if (!session) return;
   viewer.list(session.current.pages, selected, reveal);
   if (render) {
     stroke = undefined;
-    void viewer.show(activePage(), zoom, reset);
+    void viewer.show(activePage(), zoom, reset, anchor);
   } else viewer.update(activePage());
 }
 function go(index, reveal = true) {
@@ -220,7 +235,13 @@ $('page-number').onchange = event => go(event.target.valueAsNumber - 1);
 $('page-number').onkeydown = event => { if (event.key === 'Enter') { event.preventDefault(); event.target.blur(); } };
 $('undo').onclick = () => historyStep('undo');
 $('redo').onclick = () => historyStep('redo');
-function adjustZoom(next) { if (ready()) { zoom = Math.max(.5, Math.min(3, next)); refresh(); } }
+function adjustZoom(next, anchor) {
+  if (!ready()) return;
+  next = Math.max(.5, Math.min(3, next));
+  if (next === zoom) return;
+  zoom = next;
+  refresh({ anchor });
+}
 $('zoom-in').onclick = () => adjustZoom(zoom * 1.25);
 $('zoom-out').onclick = () => adjustZoom(zoom / 1.25);
 $('zoom-fit').onclick = () => adjustZoom(1);
@@ -249,8 +270,8 @@ window.addEventListener('keydown', event => {
 
 function setMode(next) {
   mode = next;
-  stroke = undefined;
-  viewer.paint();
+  viewer.cancelGestures();
+  cancelStroke();
   $('paper').dataset.mode = mode;
   $('tool-options').hidden = mode === 'view';
   $('text-option').hidden = $('size-option').hidden = mode !== 'text';
@@ -259,7 +280,7 @@ function setMode(next) {
   $('color-option').hidden = !Object.hasOwn(colors, mode);
   if (!$('color-option').hidden) $('mark-color').value = colors[mode];
   $('tool-hint').textContent = ({
-    text: 'Type a note, then click or tap the page where its baseline should begin.',
+    text: 'Type a note, then click or tap the page to place it once.',
     ink: 'Drag on the page to draw freehand ink or a visual signature.',
     highlight: 'Drag over the area to mark it with translucent ink.',
     image: image ? `Ready to place: ${image.name}. Click or tap the top-left corner on the page.` : 'Choose an image or a scanned signature to place on this page.',
@@ -316,7 +337,9 @@ function place(point) {
     const width = point.viewWidth * percent / 100;
     mark = { ...point, kind: mode, image, width, height: width * image.ratio };
   }
-  if (mark) change({ type: 'mark', id: activePage().id, mark }, `${mode === 'text' ? 'Text' : 'Image'} added.`, false);
+  if (!mark) return;
+  const added = change({ type: 'mark', id: activePage().id, mark }, `${mark.kind === 'text' ? 'Text' : 'Image'} added.`, false);
+  if (added && mark.kind === 'text') $('mark-text').value = '';
 }
 const overlay = $('overlay');
 $('keyboard-place').onclick = () => {
@@ -354,10 +377,9 @@ overlay.addEventListener('pointerup', event => {
     change({ type: 'mark', id: mark.id, mark }, `${mark.kind === 'ink' ? 'Drawing' : 'Highlight'} added.`, false);
   } else viewer.paint();
 });
-for (const name of ['pointercancel', 'lostpointercapture']) overlay.addEventListener(name, () => {
-  if (stroke) { stroke = undefined; viewer.paint(); }
+for (const name of ['pointercancel', 'lostpointercapture']) overlay.addEventListener(name, event => {
+  if (stroke?.pointer === event.pointerId) cancelStroke();
 });
-overlay.addEventListener('click', event => { if (mode === 'text' || mode === 'image') place(viewer.point(event.clientX, event.clientY)); });
 
 function download(bytes, suffix) {
   const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));

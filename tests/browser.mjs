@@ -371,9 +371,14 @@ try {
   await render(mobile);
   assert.equal(await mobile.evaluate(() => getComputedStyle(document.documentElement).colorScheme), 'dark');
   assert.equal(await mobile.evaluate(() => document.documentElement.scrollWidth), 390);
+  const pages = mobile.locator('input[aria-controls~="page-thumbnails"]');
+  assert.equal(await pages.isChecked(), false);
+  await pages.tap();
   await mobile.getByRole('button', { name: 'Go to page 2', exact: true }).tap();
   await render(mobile);
   assert.equal(await mobile.locator('#page-number').inputValue(), '2');
+  await pages.tap();
+  assert.equal(await mobile.locator('#page-thumbnails').isVisible(), false);
   await mobile.getByRole('button', { name: 'Zoom in' }).tap();
   await render(mobile);
   await text('#zoom-fit', '125%', mobile);

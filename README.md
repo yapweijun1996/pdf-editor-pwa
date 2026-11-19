@@ -1,6 +1,6 @@
 # Paperplane — Local PDF Studio
 
-> **Beta.** Desktop editing is tested; mobile editing is being improved after a first real iPhone test (long tool panels, repeated text placement on tap). Treat the public demo as a test version.
+> **Beta.** Desktop and mobile editing are covered by automated browser tests. Real-device behavior may vary.
 
 Paperplane is a static, browser-first PDF editor. It reads files, renders pages, and generates new PDFs locally. There is no upload, no account, and no frontend build. Opened PDFs and edits are held in memory, not in the offline cache.
 
@@ -24,20 +24,29 @@ Wait for **Offline ready** on the first online visit. Afterwards the app can rel
 - **Fill forms** lists the plain fields from the PDF that supplied the selected page. Apply text, checkbox, radio, dropdown or list changes as one edit. Use **Undo**/**Redo** (up to 100 recent edits) or Ctrl/Cmd+Z and Ctrl/Cmd+Shift+Z. Ctrl/Cmd+S requests a download.
 - **Download PDF** requests an `-edited.pdf` copy; the original is never written. The app cannot tell whether the browser saved, blocked, or canceled the download. Check that you have the file, then choose **I saved this copy** to mark that version as saved. Until you confirm, edited versions still trigger the replacement warning and request the browser’s standard unsaved-navigation warning. Later edits need a new download and confirmation. There is no crash/session restore, and some browsers do not show `beforeunload` prompts without prior interaction or when the OS terminates the app.
 
+## Mobile behavior and limits
+
+- On a phone, the PDF opens above the bottom editing bar. **Undo** and **Redo** are in that bar, outside the menus. Open **Pages** for thumbnails, rotation, reordering and deletion, or **More tools** for forms, merge and extract.
+- Choose **Text**, type your note in **Tool options**, dismiss the keyboard, and tap the page once where you want the text baseline. You can collapse **Tool options** without losing your pending text. A successful placement (including **Place at page center**) clears the input; type again to place another note. Scrolling, dragging, canceled touches and multi-finger gestures do not place text.
+- In **View** or **Text**, swipe to scroll the page and pinch within the viewer to change PDF zoom. Zoom updates when you release, from 50% to 300% of fit width. Use **Fit** to return to fit width. In **Draw** and **Highlight**, a single-finger drag marks the page; switch to **View** to pan without marking.
+
+The mobile suite uses Playwright WebKit at 375×812 and 390×844. It sends touchscreen taps for placement and history, and scripted pointer gestures for drag, cancellation and pinch; the scroll test moves the viewer and checks cancellation. It does not reproduce native iOS gesture physics, the software keyboard, or installation on a real iPhone.
+
 ## Supported scope and limits
 
 - Annotations are new page content, not edits to existing text, redaction, OCR, or cryptographic signatures. Added text and edited plain text fields use Helvetica’s Latin/WinAnsi character set. A highlight is a translucent freehand stroke, not text selection. The PDF canvas does not provide an accessible text layer or interactive PDF links; editing and navigation controls are keyboard accessible.
 - Standard plain AcroForm fields stay editable in a standalone export without page removal. Deletion, merge and extract can rebuild the document: form appearances are flattened in that copy, and document-level data such as outlines, tags and attachments may not be preserved. Verify important output in your viewer. XFA, form scripts/calculations, rich text fields and signature fields are unsupported. Saving signed PDFs may invalidate existing signatures.
 - Password-protected files require an unlocked copy. Corrupt files and unsupported PDF features can fail to open, render, or save. The page count is not a file-size limit; very image-heavy pages or large merges may still need significant memory. Browser cache eviction requires another online visit.
-- PWA installation and file association depend on the browser and OS. The automated checks use desktop Chromium and a touch-emulated mobile viewport; they do not simulate a native installation or OS file association.
+- PWA installation and file association depend on the browser and OS. The automated checks use Chromium and WebKit iPhone emulation; they do not simulate a native installation or OS file association.
 
 ## Verify
 
 ```sh
 npm ci
-npx playwright install chromium
+npx playwright install chromium webkit
 npm test
 npm run test:browser
+npm run test:mobile
 node scripts/assets.mjs --check
 ```
 
