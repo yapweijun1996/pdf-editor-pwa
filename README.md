@@ -53,3 +53,7 @@ The [license and provenance policy](docs/CLEAN-ROOM.md) allows verified MIT, Apa
 - `vendor/pdf-lib/`: `pdf-lib` **1.17.1**, MIT. Unmodified minified ES module and upstream license.
 
 The exact files were extracted from the pinned npm distributions. They are used directly from disk by the browser. No packages are fetched at runtime. `npm run assets` regenerates the three actual PNG icons and the versioned service-worker asset list; rerun it after runtime changes. The app does not require regeneration to run from a checkout.
+
+## License
+
+Paperplane is licensed under the [MIT License](LICENSE). See [THIRD-PARTY-NOTICES](THIRD-PARTY-NOTICES) for third-party licenses and notices.
