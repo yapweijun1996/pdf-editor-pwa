@@ -75,3 +75,5 @@ The [full JSON report](results.json) and [runner log](run.log) cover all 150 ent
 Report SHA-256: `4280d88a0ca8a969eee3aaea148e4278c498eec2ecec5dfedcd851949f642c0a`. Log SHA-256: `26809a6197f08e71181582267ade05b574c63fadfb621d0d922a8669f6541a6b`.
 
 Author verification reconciles the log, 150 retained inputs, 130 retained downloads, 144 fresh Poppler raster digests and derived rotations, 14 required recoveries, report and provenance file hashes, and runtime equality. To repeat it in this worktree with the local evidence, run `python3 .aic/phase0-final-repair/verify.py` (`jsonschema` is required for the Draft-07 validation step). Independent provenance, similarity review and QA remain pending.
+
+Note (2026-11-19): line 1 of run.log was redacted after publication because it contained a local filesystem path. The recorded run.log digests in docs/provenance/baseline.json were updated to match; the 150 result lines are unchanged.
