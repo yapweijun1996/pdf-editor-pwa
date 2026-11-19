@@ -43,7 +43,7 @@ The Node suite checks immutable page operations, field updates, range extraction
 
 ## Phase 0 baseline
 
-`npm run baseline -- --manifest tests/corpus/manifest.json --output docs/baseline/results.json --timeout 8000` runs the unchanged editor in headless Chromium against local synthetic fixtures. See the [baseline methodology and run status](docs/baseline/README.md) for timing definitions, optional second-reader validation and limitations. This measurement is not a production gate.
+`npm run baseline -- --manifest tests/corpus/manifest.json --output <new-report.json> --timeout 8000` runs the unchanged editor in headless Chromium against local synthetic fixtures. Poppler `pdftoppm` supplies the independent content reference. See the [baseline methodology and run status](docs/baseline/README.md) for commands, timing definitions, reader validation and limitations. This measurement is not a production gate.
 
 ## Vendored software and offline assets
 

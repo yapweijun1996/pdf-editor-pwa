@@ -5,8 +5,9 @@ import { basename, dirname, isAbsolute, join, posix, relative, resolve, sep } fr
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { chromium } from 'playwright';
-import { blocked, emptyStages, measureUI, message, viewport, within } from './browser.mjs';
-import { checkOutput, detectReaders } from './readers.mjs';
+import { blocked, emptyStages, measureUI, message, performancePages, viewport, within } from './browser.mjs';
+import { checkOutput, detectReaders, referenceRaster } from './readers.mjs';
+import { contentSettings } from './content.mjs';
 import { classify, sha256, stages, summarize, validateManifest, validationOutcome } from './report.mjs';
 import { runtimeSnapshot, serveRuntime } from './runtime.mjs';
 
@@ -16,7 +17,7 @@ const inside = (folder, path) => {
   const remainder = relative(folder, path);
   return remainder !== '..' && !remainder.startsWith(`..${sep}`) && !isAbsolute(remainder);
 };
-const harnessFiles = ['run', 'browser', 'readers', 'report', 'runtime'];
+const harnessFiles = ['run', 'browser', 'content', 'readers', 'report', 'runtime'];
 
 async function main() {
   const { values } = parseArgs({ options: {
@@ -69,30 +70,45 @@ async function main() {
       const { id, path, category, sha256: hash, bytes, expected, pageCount } = sample;
       const actual = emptyStages();
       const result = { id, path, category, sha256: hash, bytes, expected, pageCount, actual,
-        edit: blocked('open did not succeed'), ...(category === 'performance' ? { lastPage: blocked('open did not succeed') } : {}) };
+        edit: blocked('open did not succeed'), ...(category === 'performance' ? {
+          middlePage: blocked(pageCount > 2 ? 'navigation prerequisites not met' : 'no distinct middle page'),
+          lastPage: blocked('navigation prerequisites not met'), returnToFirst: blocked('navigation prerequisites not met'),
+        } : {}) };
       let stage = 'fixture';
       try {
         const pathOnDisk = await realpath(join(manifestDir, path));
         if (!inside(manifestDir, pathOnDisk) || !(await stat(pathOnDisk)).isFile()) throw new Error('Fixture is outside the corpus or not a regular file');
         const input = await readFile(pathOnDisk);
         if (input.length !== bytes || sha256(input) !== hash) throw new Error('Fixture byte count or SHA-256 differs from manifest');
-        stage = 'browser';
         const temp = join(scratch, `${index + 1}`);
         await mkdir(temp);
+        // References and second-reader validation both use the exact verified chooser bytes.
+        const localInput = join(temp, 'input.pdf');
+        await writeFile(localInput, input, { flag: 'wx' });
+        result.artifacts = { input: `${index + 1}/input.pdf` };
+        const references = new Map();
+        if (expected.render === 'success' || expected.onAlternativeSuccess?.render === 'success') {
+          stage = 'reference';
+          result.references = await Promise.all(performancePages(sample).map(async page => {
+            const { evidence, raster } = await referenceRaster(readerTools.pdftoppm, sample, localInput, page, timeout);
+            if (raster) references.set(page, raster);
+            return evidence;
+          }));
+        }
+        stage = 'browser';
         if (!browser?.isConnected()) {
           browser = await chromium.launch({ headless: true, timeout });
           chromiumVersion = browser.version();
         }
-        await within(measureUI(browser, server, sample, input, temp, timeout, result, control), 22 * timeout, 'Sample browser watchdog');
+        await within(measureUI(browser, server, sample, input, temp, timeout, result, references, control), 22 * timeout, 'Sample browser watchdog');
         if (!control && expected.open === 'success' && actual.open.status === 'success' &&
             actual.open.checksMatch && actual.render.status === 'success') {
-          control = { id, pages: actual.open.pages, file: { name: posix.basename(path), mimeType: 'application/pdf', buffer: input } };
+          control = { id, pages: actual.open.pages, reference: references.get(1),
+            file: { name: posix.basename(path), mimeType: 'application/pdf', buffer: input } };
         }
         stage = 'reader';
         if (actual.save.status === 'success') {
-          // Use the same verified bytes submitted to the chooser, even if the corpus changes mid-run.
-          const localInput = join(temp, 'input.pdf');
-          await writeFile(localInput, input, { flag: 'wx' });
+          result.artifacts.download = `${index + 1}/download.pdf`;
           result.secondReader = await checkOutput(readerTools, localInput, join(temp, 'download.pdf'),
             actual.open.pages, result.edit.status === 'success', timeout);
         } else result.secondReader = { status: 'blocked', reason: 'No completed download' };
@@ -124,6 +140,7 @@ async function main() {
     schemaVersion: 1, goal: '97e94b6a-60de-44e6-89d0-3b785f0b3a95', startedAt, finishedAt: new Date().toISOString(),
     command: [basename(process.execPath), 'scripts/baseline/run.mjs', ...process.argv.slice(2)],
     manifest: { path: runDirectory(manifestPath), sha256: sha256(manifestBytes), entries: samples.length }, app, harness,
+    artifactsDirectory: runDirectory(scratch), contentSettings,
     environment: { node: process.version, chromium: chromiumVersion, playwright: require('playwright/package.json').version,
       platform: platform(), osRelease: release(), osVersion: version(), arch: arch(), cpu: cpus()[0]?.model,
       logicalCores: cpus().length, memoryBytes: totalmem(), headless: true, viewport, dpr: 1,
