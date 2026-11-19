@@ -1,0 +1,59 @@
+%PDF-1.7
+%ηθικ
+% Synthetic TXT-06
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica  >>
+endobj
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R  >>
+endobj
+4 0 obj
+<<  /Length 63 >>
+stream
+710 0 0 -20 660 700 d1
+50 45 540 115 re f 250 160 110 480 re f
+
+endstream
+endobj
+5 0 obj
+<<  /Length 64 >>
+stream
+695 0 0 -20 660 700 d1
+50 40 m 600 40 l 490 580 l 140 580 l h f
+
+endstream
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type3 /FontBBox [0 -20 660 700] /FontMatrix [.001 0 0 .001 0 0] /CharProcs << /A 4 0 R /B 5 0 R >> /FirstChar 65 /LastChar 66 /Widths [710 695] /Encoding << /Type /Encoding /Differences [65 /A /B] >> /Resources << >> >>
+endobj
+7 0 obj
+<<  /Length 110 >>
+stream
+q .13 .34 .62 rg 24 232 16 9 re f Q
+BT /F0 13 Tf 24 255 Td (TXT-06) Tj ET
+BT /F1 32 Tf 30 155 Td (ABBA) Tj ET
+
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /Contents 7 0 R /Resources << /Font << /F0 3 0 R /F1 6 0 R >> >> >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 1 /Kids [8 0 R]  /MediaBox [0 0 320 290] /Resources << /Font << /F0 3 0 R >>  >> >>
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000105 00000 n 
+0000000918 00000 n 
+0000000034 00000 n 
+0000000155 00000 n 
+0000000269 00000 n 
+0000000384 00000 n 
+0000000644 00000 n 
+0000000806 00000 n 
+trailer
+<< /Size 9 /Root 1 0 R /ID [<01cd646fba16492e3b96d03c9b66f2b6> <01cd646fba16492e3b96d03c9b66f2b6>]   >>
+startxref
+1040
+%%EOF

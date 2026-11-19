@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "module": "Phase 0 clean-room policy, provenance format and fixture/harness research notes",
+  "revision": {
+    "baseCommit": "bcfda7a21d75af4e5c65cbaa4a1d7e4580cb3f22",
+    "files": {
+      "docs/CLEAN-ROOM.md": "15ac5beff7cff678cb24780560da04e0325b3fb71efdc669f401d426d4999d5f",
+      "docs/provenance/README.md": "68027f9149a67f3d51b2dcf3f70a771df38081cb9cfb5cbc596914b2a1b06c5e",
+      "docs/provenance/schema.json": "807d7be8b3e234b9e74d87c988110b2c9b3d70a499d5aaa1c5035e6fe4a4d194",
+      "docs/provenance/template.json": "9dcd534574c368928829c99ba1016b24df5c539a0004769a84cbb0d7eff59877",
+      "docs/notes/phase0-fixtures.md": "f48dcc353d45249fea13e0811224af50dda3051a287c6ed379b6e240b9b1a4f2",
+      "docs/notes/sources.json": "95f673e18e722778de920bc43c199de6c1448e4d29263a351dc8d0e16688ff0e"
+    }
+  },
+  "author": {
+    "id": "pi session 01a1f137-0f97-72bc-b380-4839dc96fe63 (gpt-6.2-sol)",
+    "role": "Clean-room specification researcher"
+  },
+  "authoredOn": "2026-11-19",
+  "sources": [
+    { "sourceId": "adobe-iso-32000-1-2008", "sections": ["7.2–7.8 (selected clauses)", "7.9.2, 7.9.4–7.9.5", "8.3–8.6, 8.9.2–8.9.7", "9.2–9.4, 9.6, 9.10.2–9.10.3", "11.3–11.6", "12.5.2–12.5.6, 12.7.2–12.7.4", "14.3.2–14.3.3, 14.4"], "notes": "Exact recipe citations are in docs/notes/phase0-fixtures.md. Used PDF behavior and structure as reference, not implementation examples." },
+    { "sourceId": "cc0-1.0-legalcode", "sections": ["2–4"], "notes": "Informed the proposed dedication record; no actual fixture dedication was made." },
+    { "sourceId": "json-schema-draft-07-validation", "sections": ["6", "7", "Companion Draft-07 meta-schema"], "notes": "Reference for the provenance record constraints and format checks." },
+    { "sourceId": "project-engine-plan", "sections": ["1–5"], "notes": "Phase scope, license/provenance and independent review requirements." },
+    { "sourceId": "project-spec", "sections": ["Must have", "Quality bar"], "notes": "Product context for public UX and error probes." },
+    { "sourceId": "project-readme", "sections": ["Edit a PDF", "Supported scope and limits"], "notes": "Documented scope and limitations, not runtime evidence." }
+  ],
+  "notes": "Independently authored notes and record format; no engine, test or third-party implementation sources consulted. Fixture allocation is an assumption, timings and oracle outcomes are unmeasured, and ISO 32000-2 was not consulted. This record covers the documentation deliverable only.",
+  "review": {
+    "status": "approved",
+    "reviewer": {
+      "id": "pi session 01a1f149-1d40-75ec-8ca6-4de2b1e86139 (gpt-6.2-sol)",
+      "role": "Clean-room provenance and similarity reviewer"
+    },
+    "reviewedOn": "2026-11-19",
+    "reviewedRevision": {
+      "baseCommit": "bcfda7a21d75af4e5c65cbaa4a1d7e4580cb3f22",
+      "files": {
+        "docs/CLEAN-ROOM.md": "15ac5beff7cff678cb24780560da04e0325b3fb71efdc669f401d426d4999d5f",
+        "docs/provenance/README.md": "68027f9149a67f3d51b2dcf3f70a771df38081cb9cfb5cbc596914b2a1b06c5e",
+        "docs/provenance/schema.json": "807d7be8b3e234b9e74d87c988110b2c9b3d70a499d5aaa1c5035e6fe4a4d194",
+        "docs/provenance/template.json": "9dcd534574c368928829c99ba1016b24df5c539a0004769a84cbb0d7eff59877",
+        "docs/notes/phase0-fixtures.md": "f48dcc353d45249fea13e0811224af50dda3051a287c6ed379b6e240b9b1a4f2",
+        "docs/notes/sources.json": "95f673e18e722778de920bc43c199de6c1448e4d29263a351dc8d0e16688ff0e"
+      }
+    },
+    "evidence": ["docs/provenance/reviews/phase0-review.md#research-deliverable"],
+    "notes": "Phase 0 research documentation only. Source mappings and exact bytes checked; no independent confirmation of historical access or unreported exposure. No corpus, harness, QA, or release clearance."
+  }
+}

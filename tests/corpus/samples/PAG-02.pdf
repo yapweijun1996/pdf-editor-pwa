@@ -1,0 +1,96 @@
+%PDF-1.7
+%ηθικ
+% Synthetic PAG-02
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica  >>
+endobj
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R  >>
+endobj
+5 0 obj
+<<  /Length 77 >>
+stream
+q .13 .34 .62 rg 24 232 16 9 re f Q
+BT /F0 13 Tf 24 255 Td (PAG-02-P1) Tj ET
+
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 4 0 R /Contents 5 0 R  >>
+endobj
+7 0 obj
+<<  /Length 77 >>
+stream
+q .13 .34 .62 rg 24 232 16 9 re f Q
+BT /F0 13 Tf 24 255 Td (PAG-02-P2) Tj ET
+
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 4 0 R /Contents 7 0 R  >>
+endobj
+4 0 obj
+<< /Type /Pages /Count 2 /Kids [6 0 R 8 0 R] /Parent 2 0 R  >>
+endobj
+10 0 obj
+<<  /Length 77 >>
+stream
+q .13 .34 .62 rg 24 232 16 9 re f Q
+BT /F0 13 Tf 24 255 Td (PAG-02-P3) Tj ET
+
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 9 0 R /Contents 10 0 R  >>
+endobj
+12 0 obj
+<<  /Length 77 >>
+stream
+q .13 .34 .62 rg 24 232 16 9 re f Q
+BT /F0 13 Tf 24 255 Td (PAG-02-P4) Tj ET
+
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 9 0 R /Contents 12 0 R  >>
+endobj
+14 0 obj
+<<  /Length 77 >>
+stream
+q .13 .34 .62 rg 24 232 16 9 re f Q
+BT /F0 13 Tf 24 255 Td (PAG-02-P5) Tj ET
+
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 9 0 R /Contents 14 0 R  >>
+endobj
+9 0 obj
+<< /Type /Pages /Count 3 /Kids [11 0 R 13 0 R 15 0 R] /Parent 2 0 R  >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 5 /Kids [4 0 R 9 0 R]  /MediaBox [0 0 320 290] /Resources << /Font << /F0 3 0 R >>  >> >>
+endobj
+xref
+0 16
+0000000000 65535 f 
+0000000105 00000 n 
+0000001289 00000 n 
+0000000034 00000 n 
+0000000539 00000 n 
+0000000155 00000 n 
+0000000283 00000 n 
+0000000347 00000 n 
+0000000475 00000 n 
+0000001202 00000 n 
+0000000617 00000 n 
+0000000746 00000 n 
+0000000812 00000 n 
+0000000941 00000 n 
+0000001007 00000 n 
+0000001136 00000 n 
+trailer
+<< /Size 16 /Root 1 0 R /ID [<2c05a0f58b80f76def0c44614f2df74d> <2c05a0f58b80f76def0c44614f2df74d>]   >>
+startxref
+1417
+%%EOF

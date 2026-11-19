@@ -1,0 +1,60 @@
+%PDF-1.7
+%ηθικ
+% Synthetic FRM-02
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica  >>
+endobj
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R /AcroForm 9 0 R >>
+endobj
+5 0 obj
+<<  /Length 119 >>
+stream
+q .13 .34 .62 rg 24 232 16 9 re f Q
+BT /F0 13 Tf 24 255 Td (FRM-02) Tj ET
+BT /F0 14 Tf 48 185 Td (Harbor survey) Tj ET
+
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /Contents 5 0 R   /Annots [8 0 R] >>
+endobj
+7 0 obj
+<< /Type /XObject /Subtype /Form /BBox [0 0 169 27] /Resources << /Font << /F0 3 0 R >>  >> /Length 107 >>
+stream
+1 g 0 0 169 27 re f .16 .29 .44 RG 1 w .5 .5 168 26 re S
+/Tx BMC
+BT /F0 11 Tf 5 12 Td (42 buoys) Tj ET
+EMC
+
+endstream
+endobj
+8 0 obj
+<< /Type /Annot /Subtype /Widget /Rect [49 139 218 166] /P 6 0 R /F 4 /Parent 4 0 R /AP << /N 7 0 R >>  >>
+endobj
+4 0 obj
+<< /T (Survey-FRM-02) /TU (Harbor survey response) /FT /Tx /V (42 buoys) /DV (42 buoys) /DA (/F0 11 Tf 0 g)  /Ff 4096 /Kids [8 0 R] >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 1 /Kids [6 0 R]  /MediaBox [0 0 320 290] /Resources << /Font << /F0 3 0 R >>  >> >>
+endobj
+9 0 obj
+<< /Fields [4 0 R] /DR << /Font << /F0 3 0 R >>  >> /DA (/F0 11 Tf 0 g) /NeedAppearances false >>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000105 00000 n 
+0000000941 00000 n 
+0000000034 00000 n 
+0000000791 00000 n 
+0000000170 00000 n 
+0000000341 00000 n 
+0000000422 00000 n 
+0000000669 00000 n 
+0000001063 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R /ID [<27d119ceddeb40417a012b0e656d5f4d> <27d119ceddeb40417a012b0e656d5f4d>]   >>
+startxref
+1176
+%%EOF

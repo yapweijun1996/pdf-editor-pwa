@@ -41,6 +41,10 @@ node scripts/assets.mjs --check
 
 The Node suite checks immutable page operations, field updates, range extraction, annotation coordinates and undo/redo. The browser suite starts its own loopback server, generates PDFs, drives the editor, parses the downloaded PDFs, and checks rendered pixels. It covers denied downloads and exports of PDFs with inherited page attributes. If qpdf is installed, use `qpdf --check` on each `test-results/inherited-*.pdf` input and export for an additional structural check. For the offline scenario it stops the HTTP server and sets the Chromium context offline before reloading. Artifacts, including PDFs and screenshots, go to `test-results/` (ignored). `tests/fixtures/locked.pdf` is a synthetic one-page PDF encrypted with qpdf to exercise the password error; browser verification does not require qpdf.
 
+## Phase 0 baseline
+
+`npm run baseline -- --manifest tests/corpus/manifest.json --output docs/baseline/results.json --timeout 8000` runs the unchanged editor in headless Chromium against local synthetic fixtures. See the [baseline methodology and run status](docs/baseline/README.md) for timing definitions, optional second-reader validation and limitations. This measurement is not a production gate.
+
 ## Vendored software and offline assets
 
 - `vendor/pdfjs/`: Mozilla `pdfjs-dist` **6.5.438**, Apache-2.0. Unmodified browser and worker bundles, packed CMaps, standard fonts, ICC profile and WASM/decoder assets. Asset licenses are in their corresponding directories.

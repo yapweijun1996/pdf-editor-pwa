@@ -1,0 +1,57 @@
+%PDF-1.7
+%ηθικ
+% Synthetic PAG-10
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica  >>
+endobj
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R  >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold  >>
+endobj
+6 0 obj
+<<  /Length 77 >>
+stream
+q .13 .34 .62 rg 24 232 16 9 re f Q
+BT /F0 13 Tf 24 255 Td (PAG-10-P1) Tj ET
+
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 5 0 R /Contents 6 0 R  >>
+endobj
+8 0 obj
+<<  /Length 77 >>
+stream
+q .13 .34 .62 rg 24 232 16 9 re f Q
+BT /F0 13 Tf 24 255 Td (PAG-10-P2) Tj ET
+
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 5 0 R /Contents 8 0 R  /Resources << /Font << /F0 3 0 R >>  >> >>
+endobj
+5 0 obj
+<< /Type /Pages /Count 2 /Kids [7 0 R 9 0 R] /Parent 2 0 R  >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 2 /Kids [5 0 R]  /MediaBox [0 0 320 290] /Resources << /Font << /F0 4 0 R >>  >> >>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000105 00000 n 
+0000000729 00000 n 
+0000000034 00000 n 
+0000000155 00000 n 
+0000000651 00000 n 
+0000000227 00000 n 
+0000000355 00000 n 
+0000000419 00000 n 
+0000000547 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R /ID [<1f7e89b0df8fabc87942c1ac8ac8f672> <1f7e89b0df8fabc87942c1ac8ac8f672>]   >>
+startxref
+851
+%%EOF

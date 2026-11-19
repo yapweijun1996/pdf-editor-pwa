@@ -1,0 +1,49 @@
+%PDF-1.7
+%ηθικ
+% Synthetic MET-03
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica  >>
+endobj
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R /Metadata 4 0 R >>
+endobj
+4 0 obj
+<< /Type /Metadata /Subtype /XML /Length 292 >>
+stream
+<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<rdf:Description rdf:about="" xmlns:fixture="urn:pdf-editor-pwa:phase0:" fixture:id="MET-03" fixture:label="Morning survey"/>
+</rdf:RDF>
+</x:xmpmeta>
+
+endstream
+endobj
+5 0 obj
+<<  /Length 74 >>
+stream
+q .13 .34 .62 rg 24 232 16 9 re f Q
+BT /F0 13 Tf 24 255 Td (MET-03) Tj ET
+
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /Contents 5 0 R  >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 1 /Kids [6 0 R]  /MediaBox [0 0 320 290] /Resources << /Font << /F0 3 0 R >>  >> >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000105 00000 n 
+0000000732 00000 n 
+0000000034 00000 n 
+0000000170 00000 n 
+0000000543 00000 n 
+0000000668 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R /ID [<63786461367d8da1f4ad6392dd2b4e9d> <63786461367d8da1f4ad6392dd2b4e9d>]   >>
+startxref
+854
+%%EOF

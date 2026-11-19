@@ -1,0 +1,53 @@
+%PDF-1.7
+%ηθικ
+% Synthetic PAG-08
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica  >>
+endobj
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R  >>
+endobj
+5 0 obj
+<<  /Length 77 >>
+stream
+q .13 .34 .62 rg 24 232 16 9 re f Q
+BT /F0 13 Tf 24 255 Td (PAG-08-P1) Tj ET
+
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 4 0 R /Contents 5 0 R  >>
+endobj
+7 0 obj
+<<  /Length 77 >>
+stream
+q .13 .34 .62 rg 24 232 16 9 re f Q
+BT /F0 13 Tf 24 255 Td (PAG-08-P2) Tj ET
+
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 4 0 R /Contents 7 0 R  /Rotate 0 >>
+endobj
+4 0 obj
+<< /Type /Pages /Count 2 /Kids [6 0 R 8 0 R] /Parent 2 0 R  >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 2 /Kids [4 0 R]  /Resources << /Font << /F0 3 0 R >>  >> /MediaBox [0 0 360 346] /CropBox [10 12 310 278] /Rotate 270 >>
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000105 00000 n 
+0000000627 00000 n 
+0000000034 00000 n 
+0000000549 00000 n 
+0000000155 00000 n 
+0000000283 00000 n 
+0000000347 00000 n 
+0000000475 00000 n 
+trailer
+<< /Size 9 /Root 1 0 R /ID [<d80de54df3d830d7389dc7f5c435ac98> <d80de54df3d830d7389dc7f5c435ac98>]   >>
+startxref
+786
+%%EOF

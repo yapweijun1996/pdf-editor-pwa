@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "module": "Phase 0 black-box measurement harness, tests, run evidence, and baseline documentation",
+  "revision": {
+    "baseCommit": "bcfda7a21d75af4e5c65cbaa4a1d7e4580cb3f22",
+    "files": {
+      "scripts/baseline/browser.mjs": "4eb60e99b4746f9b5ba8ef307b18e3b3642b69aa7fc4f8d41c37b2b9197bfa40",
+      "scripts/baseline/readers.mjs": "daa03affb5c4872fdc5c96b54549168ca85bb7f8a0edfbedbe0efc60d4eade21",
+      "scripts/baseline/report.mjs": "10479d54ffe47afa57435b470e0084693ff8a306db41d365985d30f6da56ce52",
+      "scripts/baseline/run.mjs": "31de7bbb2575c569e6a39ddfb78e8f2516e458cc57c9a2a05d67f7f31aa6b7d8",
+      "scripts/baseline/runtime.mjs": "c57f6e529bcb291534290aee05425c94ad41a67e46aa8bbaf9d3d97e789e781e",
+      "tests/baseline.test.mjs": "ae1c2b6edf30bbd2a3bc2759dd69df7f9880826485b9fac7f0ecdbfe6880fb39",
+      "README.md": "e00bafafb6e3f6d0003badf00de960069df96d692efeee43d5e2bf51bd9c23b8",
+      "package.json": "b35b09e4877eb87d60d6d5ce9323cdd4c5770eb436c9653708bd1a08b75660c8",
+      "docs/baseline/README.md": "db27be05976c9d233914aeefd54fec78d55eeaf2e9a8e3b70fbcf1481849b167",
+      "docs/baseline/results.json": "a8cb33bcc2be504b9a84aeeb170806656e0b93b42df301251b5d8351bc9252ee",
+      "docs/baseline/run.log": "5756aa1967d8a5607218a1400915e3f70874dba5576888873eabbde1005858eb"
+    }
+  },
+  "author": { "id": "PDF Editor PWA / Phase 0 baseline harness agent", "role": "Clean-room baseline harness engineer" },
+  "authoredOn": "2026-11-19",
+  "sources": [
+    { "sourceId": "project-engine-plan", "sections": ["3", "4", "5"], "notes": "Defines baseline scope, independent review and the distinction from release gates." },
+    { "sourceId": "project-spec", "sections": ["Must have", "Quality bar"], "notes": "Defines the local picker, rendering, rotation, download, and reopen user workflows." }
+  ],
+  "notes": "Measurement design follows docs/notes/phase0-fixtures.md, Baseline harness handoff, and docs/CLEAN-ROOM.md, Inputs and handoff. Implementation was independently derived; selectors and statuses came from the public entry markup and live editor UI. Runtime fingerprinting processed opaque bytes only. PDF readers and the existing browser verification were exercised black-box, not used as implementation sources. The baseline measures first canvas paint, page count, first-page rotation and available structural checks, not feature fidelity or release readiness. Full-run manifest and app fingerprints are recorded in docs/baseline/results.json.",
+  "review": {
+    "status": "approved",
+    "reviewer": {
+      "id": "pi session 01a1f149-1d40-75ec-8ca6-4de2b1e86139 (gpt-6.2-sol)",
+      "role": "Clean-room provenance and similarity reviewer"
+    },
+    "reviewedOn": "2026-11-19",
+    "reviewedRevision": {
+      "baseCommit": "bcfda7a21d75af4e5c65cbaa4a1d7e4580cb3f22",
+      "files": {
+        "scripts/baseline/browser.mjs": "4eb60e99b4746f9b5ba8ef307b18e3b3642b69aa7fc4f8d41c37b2b9197bfa40",
+        "scripts/baseline/readers.mjs": "daa03affb5c4872fdc5c96b54549168ca85bb7f8a0edfbedbe0efc60d4eade21",
+        "scripts/baseline/report.mjs": "10479d54ffe47afa57435b470e0084693ff8a306db41d365985d30f6da56ce52",
+        "scripts/baseline/run.mjs": "31de7bbb2575c569e6a39ddfb78e8f2516e458cc57c9a2a05d67f7f31aa6b7d8",
+        "scripts/baseline/runtime.mjs": "c57f6e529bcb291534290aee05425c94ad41a67e46aa8bbaf9d3d97e789e781e",
+        "tests/baseline.test.mjs": "ae1c2b6edf30bbd2a3bc2759dd69df7f9880826485b9fac7f0ecdbfe6880fb39",
+        "README.md": "e00bafafb6e3f6d0003badf00de960069df96d692efeee43d5e2bf51bd9c23b8",
+        "package.json": "b35b09e4877eb87d60d6d5ce9323cdd4c5770eb436c9653708bd1a08b75660c8",
+        "docs/baseline/README.md": "db27be05976c9d233914aeefd54fec78d55eeaf2e9a8e3b70fbcf1481849b167",
+        "docs/baseline/results.json": "a8cb33bcc2be504b9a84aeeb170806656e0b93b42df301251b5d8351bc9252ee",
+        "docs/baseline/run.log": "5756aa1967d8a5607218a1400915e3f70874dba5576888873eabbde1005858eb"
+      }
+    },
+    "evidence": ["docs/provenance/reviews/phase0-review.md#baseline-harness"],
+    "notes": "Approved for Phase 0 provenance of the exact recorded scope. This is not browser retest, app correctness, QA or release approval; XRT-09 and XRT-10 remain measured baseline mismatches."
+  }
+}

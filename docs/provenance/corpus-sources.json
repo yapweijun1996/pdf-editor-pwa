@@ -1,0 +1,45 @@
+{
+  "ledgerVersion": 1,
+  "scope": "Phase 0 Corpus Implementation source extension to docs/notes/sources.json; not third-party bundled material.",
+  "sources": [
+    {
+      "id": "phase0-research-matrix",
+      "kind": "project-context",
+      "path": "docs/notes/phase0-fixtures.md",
+      "version": "Phase 0 goal 97e94b6a-60de-44e6-89d0-3b785f0b3a95",
+      "accessedOn": "2026-11-19",
+      "notes": "Recipe groups, probe design and policy counts. Independently implemented; no code or specimen files in the handoff."
+    },
+    {
+      "id": "phase0-corpus-contract",
+      "kind": "project-context",
+      "path": ".aic/phase0-contract.md",
+      "version": "Phase 0 goal 97e94b6a-60de-44e6-89d0-3b785f0b3a95",
+      "accessedOn": "2026-11-19",
+      "notes": "Manifest vocabulary and ownership boundaries; not evidence for PDF semantics."
+    },
+    {
+      "id": "phase0-clean-room-policy",
+      "kind": "project-context",
+      "path": "docs/CLEAN-ROOM.md",
+      "version": "Phase 0 goal 97e94b6a-60de-44e6-89d0-3b785f0b3a95",
+      "accessedOn": "2026-11-19",
+      "notes": "Permitted inputs, oracle-only independent reader use, provenance and dedication rules."
+    }
+  ],
+  "consultationNotes": [
+    {
+      "sourceId": "adobe-iso-32000-1-2008",
+      "accessedOn": "2026-11-19",
+      "sha256": "9de0ca9e8570d6209e8bd48a355be8eb6ec376acfc3fc3ae97cd8730351417ff",
+      "notes": "Fetched the Adobe URL in the research ledger, extracted locally via installed pdftotext, and checked applicable sections for direct semantics. No PDF specimen or spec example is redistributed. Per-case section locators are recorded in the manifest."
+    },
+    {
+      "sourceId": "cc0-1.0-legalcode",
+      "accessedOn": "2026-11-19",
+      "notes": "Consulted the public legal-code URL in the research ledger for the artifact dedication."
+    }
+  ],
+  "observationEvidence": "tests/corpus/oracle-report.json",
+  "artifactLedger": "tests/corpus/manifest.json"
+}

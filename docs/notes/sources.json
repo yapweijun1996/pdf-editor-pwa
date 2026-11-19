@@ -1,0 +1,89 @@
+{
+  "ledgerVersion": 1,
+  "scope": "Phase 0 clean-room research references, not a fixture manifest or artifact dedication.",
+  "sources": [
+    {
+      "id": "adobe-iso-32000-1-2008",
+      "kind": "public-specification",
+      "title": "Document management — Portable document format — Part 1: PDF 1.7",
+      "version": "ISO 32000-1:2008, first edition, 2008-07-01, Adobe-published copy",
+      "url": "https://opensource.adobe.com/dc-acrobat-sdk-docs/pdfstandards/PDF32000_2008.pdf",
+      "accessedOn": "2026-11-19",
+      "status": "consulted",
+      "sha256": "9de0ca9e8570d6209e8bd48a355be8eb6ec376acfc3fc3ae97cd8730351417ff",
+      "sections": {
+        "7.2, 7.3, 7.4.4": "Lexical syntax, object types, references, streams and FlateDecode.",
+        "7.5.2–7.5.8": "Header/body, table/trailer, revisions, object streams and cross-reference streams including hybrid layout.",
+        "7.6.1–7.6.3, 7.6.5, 14.4": "Encryption, standard security handler, crypt filters and file IDs.",
+        "7.7.2–7.7.3, 7.8, 7.9.2, 7.9.4–7.9.5": "Catalog, page trees and inheritance, page content/resources, text strings, dates and rectangles.",
+        "8.3–8.6, 8.9.2–8.9.7, 11.3–11.6": "Geometry, graphics, images and transparency.",
+        "9.2–9.4, 9.6, 9.10.2–9.10.3": "Font use, text state and objects, simple fonts and Unicode mapping.",
+        "12.5.2–12.5.6, 12.7.2–12.7.4": "Annotation dictionaries, flags and appearances, plain form fields and widgets.",
+        "14.3.2–14.3.3": "Metadata streams and the document information dictionary."
+      },
+      "notes": "HTTP 200; cover and section headings checked in local text extraction, with targeted clause checks. Reference only, not redistributed and not a fixture. Scope excludes ISO 32000-2; no ISO 32000-2 source was supplied or consulted."
+    },
+    {
+      "id": "cc0-1.0-legalcode",
+      "kind": "public-legal-documentation",
+      "title": "CC0 1.0 Universal Legal Code",
+      "version": "1.0 Universal",
+      "url": "https://creativecommons.org/publicdomain/zero/1.0/legalcode.en",
+      "accessedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": { "2–4": "Waiver, public license fallback and limitations; basis for recording a rights-holder dedication." },
+      "notes": "HTTP 200; recommendation only. No dedication or artifact rights verification has taken place."
+    },
+    {
+      "id": "json-schema-draft-07-validation",
+      "kind": "public-specification",
+      "title": "JSON Schema Validation",
+      "version": "Draft-07, draft-handrews-json-schema-validation-01",
+      "url": "https://json-schema.org/draft-07/draft-handrews-json-schema-validation-01",
+      "relatedUrls": ["https://json-schema.org/draft-07/schema"],
+      "accessedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": { "6, 7": "Validation keywords, conditional shape and format; companion Draft-07 meta-schema." },
+      "notes": "Both URLs returned HTTP 200. Used only for provenance data validation, not PDF behavior."
+    },
+    {
+      "id": "project-engine-plan",
+      "kind": "project-context",
+      "title": "Engine and licensing plan",
+      "version": "2026-11-19 plan at bcfda7a21d75af4e5c65cbaa4a1d7e4580cb3f22",
+      "path": "ENGINE-PLAN.md",
+      "accessedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": { "1–5": "Project scope, licensing, provenance, Phase 0, independent gates and production targets." },
+      "notes": "Project requirements, not PDF specification evidence."
+    },
+    {
+      "id": "project-spec",
+      "kind": "project-context",
+      "title": "PDF Editor PWA",
+      "version": "2026-11-18 request at bcfda7a21d75af4e5c65cbaa4a1d7e4580cb3f22",
+      "path": "SPEC.md",
+      "accessedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": { "Must have; Quality bar": "Local-only app, supported workflows and user-visible failure expectations." },
+      "notes": "Project requirements, not PDF specification evidence."
+    },
+    {
+      "id": "project-readme",
+      "kind": "project-context",
+      "title": "Paperplane — Local PDF Studio",
+      "version": "bcfda7a21d75af4e5c65cbaa4a1d7e4580cb3f22",
+      "path": "README.md",
+      "accessedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": { "Edit a PDF; Supported scope and limits": "Documented public behavior and export limitations for baseline probes." },
+      "notes": "Product documentation only. No app, tool or reader behavior was exercised as an oracle for this research."
+    }
+  ],
+  "artifactPolicy": {
+    "origin": "self-generated; no downloaded specimens or externally sourced asset payloads",
+    "intendedLicense": "CC0-1.0",
+    "dedicationStatus": "pending actual generated artifacts and authorized rights-holder dedication",
+    "artifacts": []
+  }
+}

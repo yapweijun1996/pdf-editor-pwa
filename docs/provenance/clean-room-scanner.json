@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "module": "Phase 0 isolated mechanical similarity scanner, runtime identity check and synthetic tests",
+  "revision": {
+    "baseCommit": "bcfda7a21d75af4e5c65cbaa4a1d7e4580cb3f22",
+    "files": {
+      "scripts/clean-room/check.mjs": "bc5af9dbf21da1210eeb16c5c73612db13aeefde5da481ac4ae8a83dd48a2ba5",
+      "scripts/clean-room/compare.mjs": "c52ea83564d6415458a6742caa95edd7bee81ad8d4a1f265e166d845922a065d",
+      "tests/clean-room.test.mjs": "5cdac2a93921daf3a6a142393e23791e6b67bd1281794ceabcfa1029e255291e"
+    }
+  },
+  "author": {
+    "id": "pi session 01a1f149-1d40-75ec-8ca6-4de2b1e86139 (gpt-6.2-sol)",
+    "role": "Clean-room provenance and similarity reviewer"
+  },
+  "authoredOn": "2026-11-19",
+  "sources": [
+    {
+      "sourceId": "project-engine-plan",
+      "sections": ["2. License and provenance rules", "3. Phases", "4. Independence"],
+      "notes": "Separate the non-release provenance check from the prior-to-release audit and preserve independent review."
+    },
+    {
+      "sourceId": "phase0-clean-room-policy",
+      "sections": ["Mechanical similarity review (no third-party source disclosure)", "Licensing and provenance gates"],
+      "notes": "Read-only child comparison, deterministic inventories, reproducibility controls, and allowlisted output."
+    }
+  ],
+  "notes": "Supplemental source ledger for the clean-room policy ID: docs/provenance/corpus-sources.json. The independently written matcher uses local TypeScript 5.9.3 as an unmodified parse-only dependency, not PDF behavior evidence. No app or bundled implementation was read by the author. The isolated child only parses and hashes permitted comparison inputs. Review evidence and invocation are documented in docs/provenance/reviews/phase0-review.md; generated report is evidence, not input to the scanner.",
+  "review": {
+    "status": "approved",
+    "reviewer": {
+      "id": "pi session 01a1f155-4902-73e2-a328-8840d54b968c (gpt-6.2-sol)",
+      "role": "Independent provenance integration reviewer"
+    },
+    "reviewedOn": "2026-11-19",
+    "reviewedRevision": {
+      "baseCommit": "bcfda7a21d75af4e5c65cbaa4a1d7e4580cb3f22",
+      "files": {
+        "scripts/clean-room/check.mjs": "bc5af9dbf21da1210eeb16c5c73612db13aeefde5da481ac4ae8a83dd48a2ba5",
+        "scripts/clean-room/compare.mjs": "c52ea83564d6415458a6742caa95edd7bee81ad8d4a1f265e166d845922a065d",
+        "tests/clean-room.test.mjs": "5cdac2a93921daf3a6a142393e23791e6b67bd1281794ceabcfa1029e255291e"
+      }
+    },
+    "evidence": ["docs/provenance/reviews/phase0-integration.md#scanner"],
+    "notes": "Approved for the bounded Phase 0 scanner scope. Reviewed source, isolation assumptions, synthetic controls and sanitized output. This is not a security or release approval."
+  }
+}

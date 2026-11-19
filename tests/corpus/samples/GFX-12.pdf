@@ -1,0 +1,54 @@
+%PDF-1.7
+%ηθικ
+% Synthetic GFX-12
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica  >>
+endobj
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R  >>
+endobj
+4 0 obj
+<< /Type /XObject /Subtype /Form /BBox [0 0 100 72] /Group << /S /Transparency /I true /CS /DeviceGray >> /Resources << >> /Length 43 >>
+stream
+.30 g 0 0 54 72 re f .82 g 54 0 46 72 re f
+
+endstream
+endobj
+5 0 obj
+<< /Type /XObject /Subtype /Form /BBox [0 0 100 72] /Group << /S /Transparency /I true /CS /DeviceRGB >> /Resources << >> /Length 60 >>
+stream
+.16 .35 .82 rg 0 0 77 72 re f .65 .2 .1 rg 38 12 62 48 re f
+
+endstream
+endobj
+6 0 obj
+<<  /Length 154 >>
+stream
+q .13 .34 .62 rg 24 232 16 9 re f Q
+BT /F0 13 Tf 24 255 Td (GFX-12) Tj ET
+q .82 .77 .62 rg 40 65 185 110 re f Q
+q 1 0 0 1 80 80 cm /Masked gs /Patch Do Q
+
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /Contents 6 0 R /Resources << /Font << /F0 3 0 R >> /XObject << /Patch 5 0 R >> /ExtGState << /Masked << /Type /ExtGState /SMask << /S /Luminosity /G 4 0 R >> >> >> >> >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 1 /Kids [7 0 R]  /MediaBox [0 0 320 290] /Resources << /Font << /F0 3 0 R >>  >> >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000105 00000 n 
+0000001018 00000 n 
+0000000034 00000 n 
+0000000155 00000 n 
+0000000368 00000 n 
+0000000597 00000 n 
+0000000803 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /ID [<a025e49c241e9f79c8aecc4bf6cfd08b> <a025e49c241e9f79c8aecc4bf6cfd08b>]   >>
+startxref
+1140
+%%EOF

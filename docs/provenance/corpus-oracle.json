@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "module": "Phase 0 public-CLI oracle driver and implementation audit report",
+  "revision": {
+    "baseCommit": "bcfda7a21d75af4e5c65cbaa4a1d7e4580cb3f22",
+    "files": {
+      "docs/provenance/corpus-sources.json": "00755a08935bd76c901a0b36b0e1d36b44c88af2f97b3bdfe67bb0e2ccb4dc51",
+      "scripts/corpus/LICENSE": "c41e1c07c6482e4839b85fdb21c28ee69f7ff90bd5453d53eafe8347db768541",
+      "scripts/corpus/oracle.mjs": "ec31ed0cda6505ba075140b15c71e04927aadc3b326e4644f6c5badbf5eb8672",
+      "tests/corpus/manifest.json": "fdaecccaf6f2dfdb27e1cfae0d2a40730129746ee632c0013139d1f5ac807d1a",
+      "tests/corpus/oracle-report.json": "cd5dcade800c3f36e2fa40e1875e41cbd69b716e142a904615bf4cdd606388f3"
+    }
+  },
+  "author": {
+    "id": "Corpus Implementation agent (gpt-6.2-sol)",
+    "role": "Clean-room corpus generation engineer"
+  },
+  "authoredOn": "2026-11-19",
+  "sources": [
+    {
+      "sourceId": "phase0-research-matrix",
+      "sections": [
+        "Category and recipe matrix",
+        "Generator and manifest handoff"
+      ],
+      "notes": "Allocation and probes; numeric allocation taken as a research assumption, not an engine-plan gate."
+    },
+    {
+      "sourceId": "phase0-clean-room-policy",
+      "sections": [
+        "Inputs and handoff",
+        "Licensing and provenance gates"
+      ],
+      "notes": "Source isolation, artifact rights boundaries, and independent review; supplemental source ledger is docs/provenance/corpus-sources.json."
+    },
+    {
+      "sourceId": "phase0-corpus-contract",
+      "sections": [
+        "Corpus and harness boundaries"
+      ],
+      "notes": "Keep measured tool observations separate from manifest expectations."
+    }
+  ],
+  "notes": "Source extension: docs/provenance/corpus-sources.json. qpdf and Poppler CLIs were invoked as black boxes on local synthetic files, not inspected or used as code/template sources. Exact versions, flags/method, input digests and results are recorded in tests/corpus/oracle-report.json and the hashed runner. No library is bundled. This is implementation evidence, not independent QA, editor baseline behavior, or production certification.",
+  "review": {
+    "status": "approved",
+    "reviewer": {
+      "id": "pi session 01a1f155-4902-73e2-a328-8840d54b968c (gpt-6.2-sol)",
+      "role": "Independent provenance integration reviewer"
+    },
+    "reviewedOn": "2026-11-19",
+    "reviewedRevision": {
+      "baseCommit": "bcfda7a21d75af4e5c65cbaa4a1d7e4580cb3f22",
+      "files": {
+        "docs/provenance/corpus-sources.json": "00755a08935bd76c901a0b36b0e1d36b44c88af2f97b3bdfe67bb0e2ccb4dc51",
+        "scripts/corpus/LICENSE": "c41e1c07c6482e4839b85fdb21c28ee69f7ff90bd5453d53eafe8347db768541",
+        "scripts/corpus/oracle.mjs": "ec31ed0cda6505ba075140b15c71e04927aadc3b326e4644f6c5badbf5eb8672",
+        "tests/corpus/manifest.json": "fdaecccaf6f2dfdb27e1cfae0d2a40730129746ee632c0013139d1f5ac807d1a",
+        "tests/corpus/oracle-report.json": "cd5dcade800c3f36e2fa40e1875e41cbd69b716e142a904615bf4cdd606388f3"
+      }
+    },
+    "evidence": ["docs/provenance/reviews/phase0-integration.md#corpus-oracle", "docs/provenance/reviews/phase0-review.md#corpus-deliverables-separate-review-of-the-author-records"],
+    "notes": "Approved for the exact public-CLI oracle scope. Full rerun matched the retained report byte-for-byte. This is not editor QA, semantic-preservation evidence, or release clearance."
+  }
+}

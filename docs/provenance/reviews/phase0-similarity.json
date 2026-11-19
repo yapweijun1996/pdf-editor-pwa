@@ -1,0 +1,209 @@
+{
+  "reportVersion": 1,
+  "base": "bcfda7a21d75af4e5c65cbaa4a1d7e4580cb3f22",
+  "head": "bcfda7a21d75af4e5c65cbaa4a1d7e4580cb3f22",
+  "node": "v26.13.0",
+  "parser": {
+    "version": "5.9.3",
+    "sha256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675"
+  },
+  "scanner": {
+    "launcherSha256": "bc5af9dbf21da1210eeb16c5c73612db13aeefde5da481ac4ae8a83dd48a2ba5",
+    "workerSha256": "c52ea83564d6415458a6742caa95edd7bee81ad8d4a1f265e166d845922a065d",
+    "windowTokens": 80
+  },
+  "verdict": "no-hits",
+  "omissions": [],
+  "authored": [
+    {
+      "path": "scripts/baseline/browser.mjs",
+      "status": "scanned",
+      "sha256": "4eb60e99b4746f9b5ba8ef307b18e3b3642b69aa7fc4f8d41c37b2b9197bfa40",
+      "bytes": 10648,
+      "tokens": 2440
+    },
+    {
+      "path": "scripts/baseline/readers.mjs",
+      "status": "scanned",
+      "sha256": "daa03affb5c4872fdc5c96b54549168ca85bb7f8a0edfbedbe0efc60d4eade21",
+      "bytes": 2776,
+      "tokens": 676
+    },
+    {
+      "path": "scripts/baseline/report.mjs",
+      "status": "scanned",
+      "sha256": "10479d54ffe47afa57435b470e0084693ff8a306db41d365985d30f6da56ce52",
+      "bytes": 5854,
+      "tokens": 1239
+    },
+    {
+      "path": "scripts/baseline/run.mjs",
+      "status": "scanned",
+      "sha256": "31de7bbb2575c569e6a39ddfb78e8f2516e458cc57c9a2a05d67f7f31aa6b7d8",
+      "bytes": 8953,
+      "tokens": 1793
+    },
+    {
+      "path": "scripts/baseline/runtime.mjs",
+      "status": "scanned",
+      "sha256": "c57f6e529bcb291534290aee05425c94ad41a67e46aa8bbaf9d3d97e789e781e",
+      "bytes": 3290,
+      "tokens": 769
+    },
+    {
+      "path": "scripts/clean-room/check.mjs",
+      "status": "scanned",
+      "sha256": "bc5af9dbf21da1210eeb16c5c73612db13aeefde5da481ac4ae8a83dd48a2ba5",
+      "bytes": 8818,
+      "tokens": 2213
+    },
+    {
+      "path": "scripts/clean-room/compare.mjs",
+      "status": "scanned",
+      "sha256": "c52ea83564d6415458a6742caa95edd7bee81ad8d4a1f265e166d845922a065d",
+      "bytes": 7120,
+      "tokens": 1778
+    },
+    {
+      "path": "scripts/corpus/art-recipes.mjs",
+      "status": "scanned",
+      "sha256": "73b2d30944d0f1d51b22f24f1dae7ed75af393077d4c4df3ce0523a4dda4dcf8",
+      "bytes": 9784,
+      "tokens": 2018
+    },
+    {
+      "path": "scripts/corpus/document-recipes.mjs",
+      "status": "scanned",
+      "sha256": "dd26cd71faf51f73d6af688fb6399e1ec1878c59830cb01c94481bce8a1b6ce0",
+      "bytes": 8926,
+      "tokens": 2223
+    },
+    {
+      "path": "scripts/corpus/generate.mjs",
+      "status": "scanned",
+      "sha256": "791830ec1145b6ae78d63f512378e71a994acc40f8a1ab87aaa3606cbff4a6d2",
+      "bytes": 7054,
+      "tokens": 1286
+    },
+    {
+      "path": "scripts/corpus/oracle.mjs",
+      "status": "scanned",
+      "sha256": "ec31ed0cda6505ba075140b15c71e04927aadc3b326e4644f6c5badbf5eb8672",
+      "bytes": 8900,
+      "tokens": 1987
+    },
+    {
+      "path": "scripts/corpus/pages.mjs",
+      "status": "scanned",
+      "sha256": "7a8e20dce1ae31173ad1ceb0f7810275745184d3324e069f7b363f6ff62602f8",
+      "bytes": 2314,
+      "tokens": 595
+    },
+    {
+      "path": "scripts/corpus/pdf-bytes.mjs",
+      "status": "scanned",
+      "sha256": "a652cfaa9810f70ea3ea3351b5beae4d055caf5da2007d356d798564299dba26",
+      "bytes": 6730,
+      "tokens": 1873
+    },
+    {
+      "path": "scripts/corpus/security.mjs",
+      "status": "scanned",
+      "sha256": "3c572e2310cc8e8fa816037c1ab2d5c257d2b83659e955cafdb69d9a8d7abaf8",
+      "bytes": 3495,
+      "tokens": 924
+    },
+    {
+      "path": "scripts/corpus/structure-recipes.mjs",
+      "status": "scanned",
+      "sha256": "4eee050159cd39f08b30de4ec0ba19431e5452224cddc04e7bcd560b3befd44d",
+      "bytes": 13420,
+      "tokens": 3689
+    },
+    {
+      "path": "scripts/corpus/verify.mjs",
+      "status": "scanned",
+      "sha256": "f8aafdd398fc2651767b59090ac535fc1c524c4c016698d0a02843219232a27b",
+      "bytes": 3200,
+      "tokens": 823
+    },
+    {
+      "path": "tests/baseline.test.mjs",
+      "status": "scanned",
+      "sha256": "ae1c2b6edf30bbd2a3bc2759dd69df7f9880826485b9fac7f0ecdbfe6880fb39",
+      "bytes": 5276,
+      "tokens": 1211
+    },
+    {
+      "path": "tests/clean-room.test.mjs",
+      "status": "scanned",
+      "sha256": "5cdac2a93921daf3a6a142393e23791e6b67bd1281794ceabcfa1029e255291e",
+      "bytes": 1572,
+      "tokens": 336
+    },
+    {
+      "path": "tests/corpus/phase0-corpus-generation.test.mjs",
+      "status": "scanned",
+      "sha256": "d99541d54a01d897074c36ac9e95ae6bd82b28607b2b66957ccb185c221c9e40",
+      "bytes": 13148,
+      "tokens": 3359
+    }
+  ],
+  "comparators": [
+    {
+      "id": "C001",
+      "status": "scanned",
+      "sha256": "72c052d97b4d5d9fa6cdbdcb7ad709f03d4ddb1122390cb3afeba4d88651d969",
+      "bytes": 523417,
+      "tokens": 188967
+    },
+    {
+      "id": "C002",
+      "status": "scanned",
+      "sha256": "3a88402882cfa3e7e72c2c9b5149f52f0f88baf1c5b62aa11a41abdbc2072440",
+      "bytes": 474284,
+      "tokens": 175323
+    },
+    {
+      "id": "C003",
+      "status": "scanned",
+      "sha256": "1e64c8240e54735ec5913b37acd5134747799cb8c6bb3777c70adbc01232d2aa",
+      "bytes": 1271915,
+      "tokens": 449423
+    },
+    {
+      "id": "C004",
+      "status": "scanned",
+      "sha256": "70150223396487e1ccfef7eac61fc780074ad7fcc9e843b702a8a3bc23107494",
+      "bytes": 132439,
+      "tokens": 99704
+    },
+    {
+      "id": "C005",
+      "status": "scanned",
+      "sha256": "2855f1590e7fd7abbbf204cd13a5c09d30c92fe2c9313fb72b64aa763fe8b4f3",
+      "bytes": 338458,
+      "tokens": 243806
+    },
+    {
+      "id": "C006",
+      "status": "scanned",
+      "sha256": "fe7930418e869791ce892567dbd0bc4698152b7e550b5cefa553992c56ddc325",
+      "bytes": 6232,
+      "tokens": 3143
+    }
+  ],
+  "inventorySha256": "6a36338589a1c48656cdfe0cd8774cbfa7fa6ab66244503fefc5a5eccd030c91",
+  "hits": [],
+  "controls": {
+    "normalizedCopy": true,
+    "unrelatedAndShort": true,
+    "exactCopy": true,
+    "invalidSyntaxRejected": true
+  },
+  "runtime": {
+    "equalToBase": true,
+    "files": 219,
+    "sha256": "7baf56ea9d8bdc64df7082460902fd432d8e260c1c13e45ddd7c292c7a081ef9"
+  }
+}

@@ -1,0 +1,58 @@
+%PDF-1.7
+%ηθικ
+% Synthetic MET-06
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica  >>
+endobj
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R  >>
+endobj
+4 0 obj
+<< /Type /Metadata /Subtype /XML /Length 294 >>
+stream
+<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<rdf:Description rdf:about="" xmlns:fixture="urn:pdf-editor-pwa:phase0:" fixture:id="MET-06" fixture:label="Tile observation"/>
+</rdf:RDF>
+</x:xmpmeta>
+
+endstream
+endobj
+5 0 obj
+<< /Type /XObject /Subtype /Form /BBox [0 0 36 29] /Resources << >> /Metadata 4 0 R /Length 29 >>
+stream
+.2 .66 .49 rg 0 0 36 29 re f
+
+endstream
+endobj
+6 0 obj
+<<  /Length 103 >>
+stream
+q .13 .34 .62 rg 24 232 16 9 re f Q
+BT /F0 13 Tf 24 255 Td (MET-06) Tj ET
+q 1 0 0 1 58 125 cm /Xm Do Q
+
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /Contents 6 0 R /Resources << /Font << /F0 3 0 R >> /XObject << /Xm 5 0 R >> >> >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 1 /Kids [7 0 R]  /MediaBox [0 0 320 290] /Resources << /Font << /F0 3 0 R >>  >> >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000105 00000 n 
+0000000972 00000 n 
+0000000034 00000 n 
+0000000155 00000 n 
+0000000530 00000 n 
+0000000690 00000 n 
+0000000845 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /ID [<512b457bb1d416b4f9c52923f6d276e7> <512b457bb1d416b4f9c52923f6d276e7>]   >>
+startxref
+1094
+%%EOF

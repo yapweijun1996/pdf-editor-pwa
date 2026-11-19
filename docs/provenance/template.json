@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "module": "REPLACE: module name and scope",
+  "revision": {
+    "baseCommit": "0000000000000000000000000000000000000000",
+    "files": {
+      "REPLACE/module-path": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  },
+  "author": { "id": "REPLACE: author identity", "role": "REPLACE: author role" },
+  "authoredOn": "2000-01-01",
+  "sources": [
+    { "sourceId": "REPLACE: source ledger ID", "sections": ["REPLACE: section or locator"], "notes": "REPLACE: how the source was used" }
+  ],
+  "notes": "REPLACE: independent derivation, assumptions, limitations and evidence references",
+  "review": {
+    "status": "pending",
+    "reviewer": null,
+    "reviewedOn": null,
+    "reviewedRevision": null,
+    "evidence": [],
+    "notes": "Awaiting independent review."
+  }
+}

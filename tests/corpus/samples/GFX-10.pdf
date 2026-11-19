@@ -1,0 +1,38 @@
+%PDF-1.7
+%ηθικ
+% Synthetic GFX-10
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica  >>
+endobj
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R  >>
+endobj
+4 0 obj
+<<  /Length 175 >>
+stream
+q .13 .34 .62 rg 24 232 16 9 re f Q
+BT /F0 13 Tf 24 255 Td (GFX-10) Tj ET
+q .82 .77 .62 rg 40 65 185 110 re f Q
+q /Mix gs .1 .35 .8 rg .46 .12 .35 RG 6 w 100 99 150 48 re B Q
+
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /Contents 4 0 R /Resources << /Font << /F0 3 0 R >> /ExtGState << /Mix << /Type /ExtGState /BM /Difference /ca 0.85 /CA 0.15000000000000002 >> >> >> >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 1 /Kids [5 0 R]  /MediaBox [0 0 320 290] /Resources << /Font << /F0 3 0 R >>  >> >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000105 00000 n 
+0000000578 00000 n 
+0000000034 00000 n 
+0000000155 00000 n 
+0000000382 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R /ID [<c91c363e3353f7192d637746504ef632> <c91c363e3353f7192d637746504ef632>]   >>
+startxref
+700
+%%EOF

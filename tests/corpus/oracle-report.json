@@ -1,0 +1,3796 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-19",
+  "purpose": "Implementation evidence, not independent QA or app behavior",
+  "manifestSha256": "fdaecccaf6f2dfdb27e1cfae0d2a40730129746ee632c0013139d1f5ac807d1a",
+  "tools": {
+    "qpdf": "qpdf version 12.4.2",
+    "pdfinfo": "pdfinfo version 25.04.0",
+    "pdftotext": "pdftotext version 25.04.0",
+    "pdftoppm": "pdftoppm version 25.04.0"
+  },
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v26.13.0",
+    "LC_ALL": "C",
+    "TZ": "UTC"
+  },
+  "command": "node scripts/corpus/oracle.mjs --report tests/corpus/oracle-report.json",
+  "scope": "qpdf structural check; pdfinfo counts/selected geometry; pdftotext ordered markers/selected text; pdftoppm 160 px raster smoke checks; synthetic password controls. Not feature-level visual or interactive preservation.",
+  "counts": {
+    "positive-open": 130,
+    "password-required-authorized-open": 8,
+    "empty-password-open": 2,
+    "recovered": 4,
+    "no-usable-page": 6
+  },
+  "mismatches": [],
+  "results": [
+    {
+      "id": "SYN-01",
+      "sha256": "6f7a6a61b8fb0d6349791d78643b8c9c927f650272e6f8714fa39a95f3c91550",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 106,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "SYN-02",
+      "sha256": "7d383a350273a969ff505f228a59d23a3d6fe1e93c242127def7612d7ac1f58c",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 111,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "SYN-03",
+      "sha256": "12a359ff53d70d8567d32d6e2fef8485afd09f26a747a42c004499322d28a612",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 112,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "SYN-04",
+      "sha256": "906c38e3f045faae1ef2cf59150d4858a22ed7f215cb5a553e110e7244f0ba0f",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 238,
+          "diagnostic": null
+        }
+      ],
+      "expectedTextFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "SYN-05",
+      "sha256": "d38a07c3b511e2a49a02af28e0a3d99b916233cb5d353ad0a874705ab1412e2f",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 189,
+          "diagnostic": null
+        }
+      ],
+      "expectedTextFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "SYN-06",
+      "sha256": "3e7ccf1758e9cffc8233bc21d819a940d8448eb00ced4a6560fe8fe4d2bc8fee",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 235,
+          "diagnostic": null
+        }
+      ],
+      "expectedTextFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "SYN-07",
+      "sha256": "cef1b4166de21a29ac410b9a1249ca3d44cb22a03b61aa51fe56964020320c64",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 215,
+          "diagnostic": null
+        }
+      ],
+      "expectedTextFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "SYN-08",
+      "sha256": "65fbc4317d937a6944271e0d7a629f09431dd727c1b3ee2117042c1d9ed99042",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 113,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "SYN-09",
+      "sha256": "46e93cbccdd35b62e42afd3bcdb23085e255f6acea98904f53f43cbcabb9be91",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 114,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "SYN-10",
+      "sha256": "fac4bf548e92fcd1f220c4c124ded1f0b46d9f918408edf9c72bfb252c7e75dd",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 163,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "SYN-11",
+      "sha256": "041c2e767ebf90fe0d6c98c7cca084588af59d01092e93e99d63c26e3c1371dd",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 159,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "SYN-12",
+      "sha256": "43078c4d347feb9faf97389b92cd3d6d9af8bcd67c7bac1a8a6c72e19c7bf5fd",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 0,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRT-01",
+      "sha256": "1daf2230bd72cc38c1795ddd3d5916d6475555f0f1ca26b5ce22e1135b772b17",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 110,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRT-02",
+      "sha256": "1347a0408063790d8695dc982d7a67a7dd3c975532be4592f555bc9bbbaeb12d",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 112,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRT-03",
+      "sha256": "77be5ab644912cb75995b50eaeac5d4f2e97b7838b367ae5d63fe8d6d00122b3",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 113,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRT-04",
+      "sha256": "69aa11c5f6825a692a9d420f807f7f2bb790f7cbb47ce02c99954197b4e74547",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 113,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRT-05",
+      "sha256": "1519edb8cf6cd55cab01aed6627e82cdb71b42c72fe3f7d29b8addbbffaa124a",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 115,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRT-06",
+      "sha256": "d250e4291a8934f3109ceb0803014888c3d1039fd16334a41673a71354c5a58f",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 114,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRT-07",
+      "sha256": "8713b6d9dc89bcdaede8f8e2b0f27b585728da303903a5bc2df875fd31d8a03e",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 251,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRT-08",
+      "sha256": "3eb17d830f48931c1ba99c43fbe7c90ee046dd8ada7557083f87100281b9be86",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 253,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRT-09",
+      "sha256": "5f601c56a6e12c37ec05c6c1169a62072c9c4b39025b5de0b08ead31d51cfe7e",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 115,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRT-10",
+      "sha256": "5a61f1a63165147b830c6d4ce8645c4d435f54321d15b0038e10a51d550444fe",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 109,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRS-01",
+      "sha256": "030f1598b23f372f9b442c609927766276d7cb1eddc2e987863ff525336c930d",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 117,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRS-02",
+      "sha256": "74c7d2ab86b3bf0f07dfe9e899c91be45a7f063706c27149d294afe756ba2713",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 122,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRS-03",
+      "sha256": "884c70a7c0cf9ac17b6f7064a19c8a937b99e7effa95f561ccc533e3947f161b",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 123,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRS-04",
+      "sha256": "dd657cb98740712dce1928749204b68f300b448dba42f30c8f06b7e4b9f77079",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 117,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRS-05",
+      "sha256": "766ff04c2ab50e03dfeb7d36fd60cbef5651d93f8f4f9e59bc6011291f7a1935",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 123,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRS-06",
+      "sha256": "99e29cd5ca154ad7f3992dfacb811b3302b2d54af91b11013a4438156870ae9e",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 123,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRS-07",
+      "sha256": "9dc25fb6e11a0540a87554692f10c71558c04c605c86c0ad23d0c75b9749da2c",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 118,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRS-08",
+      "sha256": "12eb3ef1ee2b9734be13aa26eca56056f9aa1af87586a37396343d8436ad4351",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 124,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRS-09",
+      "sha256": "8f5c5680d0f2575266af7a6768cb44dbe50ef6d5624cbc07ed804e1db4c99751",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 210,
+          "diagnostic": null
+        }
+      ],
+      "supplementalAnnotationResolved": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "XRS-10",
+      "sha256": "cdf1c34a284ba500950660398050779084434349dc16710065aed10934b38ed0",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 141,
+          "diagnostic": null
+        }
+      ],
+      "supplementalAnnotationResolved": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "OBJ-01",
+      "sha256": "0b7d7ef2a0e063fc42cfd0dc95a4d43996583999bce0499d8f2ee340dc8d0d69",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 361,
+          "diagnostic": null
+        }
+      ],
+      "resourceLabelsFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "OBJ-02",
+      "sha256": "aa22c2a0fe69126dc04c5730209cb092de15d86f09c2594f196a19a61bb3237d",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 370,
+          "diagnostic": null
+        }
+      ],
+      "resourceLabelsFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "OBJ-03",
+      "sha256": "ddb7bbd482ece609f320afa7181fbafcdaafea6c7251dc2d21f1dc90ca682abb",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 371,
+          "diagnostic": null
+        }
+      ],
+      "resourceLabelsFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "OBJ-04",
+      "sha256": "263887fb8e987d04334dda4e9d971da136c82d7b0e961a1d67d0cc6880d54140",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 365,
+          "diagnostic": null
+        }
+      ],
+      "resourceLabelsFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "OBJ-05",
+      "sha256": "8c0b20b5b30739825355b421ca78a6c80c6ff35e589fd85145ee859754dc26a1",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 371,
+          "diagnostic": null
+        }
+      ],
+      "resourceLabelsFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "OBJ-06",
+      "sha256": "644505d45e51d07d492d4eefd77f7e7225e11559bcafb607e0b29f49410294e0",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 372,
+          "diagnostic": null
+        }
+      ],
+      "resourceLabelsFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "OBJ-07",
+      "sha256": "f0e3ebc59195eeaa46b47a12b7ad81ae230f079335ece3a9712d64fc0b0b1acc",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 366,
+          "diagnostic": null
+        }
+      ],
+      "resourceLabelsFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "OBJ-08",
+      "sha256": "9f4294f5d6e6565d65e1e796c28c5cdea2ef9e323551030a0c97e993e4294b0d",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 372,
+          "diagnostic": null
+        }
+      ],
+      "resourceLabelsFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "INC-01",
+      "sha256": "950f9e3664b9f3c45e2cfb87ce18e1f2fad25abf61f74a097f7817d9735384c0",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 104,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "INC-02",
+      "sha256": "4925e650cb1f5d7596528bf47265739bac7fc535f73ea26dfbf315531262e989",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 106,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "INC-03",
+      "sha256": "d9c3a606f7f0e4393dd0ed401287e9cb10e27920c24651f34963ea12b2708313",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 3,
+      "orderedMarkerCount": 3,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 125,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "INC-04",
+      "sha256": "30fbb143c83cfc3f56816bd53fc09582077abd77c41c16448e808c70d5df4076",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 3,
+      "orderedMarkerCount": 3,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 127,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "INC-05",
+      "sha256": "1e791c5efdc07625827e430ba6b02d5b7ae0cf0241fcc9f754a67572bad3298c",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 127,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "INC-06",
+      "sha256": "b26d451876e5fbbcd9a391eed64333429899c19809eb0633165a9479470e897e",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 4,
+      "orderedMarkerCount": 4,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 125,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "INC-07",
+      "sha256": "0ab0ab067beac4f58fd6877d36bf63a587bf497aec4ab96514e8098f9fb8aa76",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 106,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "INC-08",
+      "sha256": "7f8a4eff02c64fa97e4c8ae9779a405ad56a3ef74c6240b45cfe60adbc94a0fc",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 108,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "INC-09",
+      "sha256": "ec2cdd0f219931168349ccc0ff05af547ce37af9cb48b62e4a53092be70f55ca",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 109,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "INC-10",
+      "sha256": "7180b7711210ea4467bcf5609cd5ea7f9222aa7e9a6a359327a0add66309c48a",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 96,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PAG-01",
+      "sha256": "b62a89c567605f2a7ee649c56b314192684fef6acdce7bb11b8d449788c7a63a",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 130,
+          "diagnostic": null
+        }
+      ],
+      "geometryMatched": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PAG-02",
+      "sha256": "0071ccc08df611540652635bc660d325aadeee0ce2fbe555101de3fa1feabf9f",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 5,
+      "orderedMarkerCount": 5,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 139,
+          "diagnostic": null
+        }
+      ],
+      "geometryMatched": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PAG-03",
+      "sha256": "12e199e490bdc81538bb44487fb36696f9ad614f053c2813feeecacc57d64e18",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 141,
+          "diagnostic": null
+        }
+      ],
+      "geometryMatched": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PAG-04",
+      "sha256": "4675b390250326f1edb8a49a3a5066dd30b43951e7fcef9694a9cd831b08fe02",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 10,
+      "orderedMarkerCount": 10,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 138,
+          "diagnostic": null
+        }
+      ],
+      "geometryMatched": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PAG-05",
+      "sha256": "9b0a1d7490fcf9ed19b881ba95e810f186c64db6ed6cfbc5453296ea44342f30",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            151,
+            160
+          ],
+          "nonwhitePixels": 138,
+          "diagnostic": null
+        }
+      ],
+      "geometryMatched": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PAG-06",
+      "sha256": "9f1045afeeedb896c7585f29b0e5e3caa1b57919cdae05610d573944138fa847",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            152,
+            160
+          ],
+          "nonwhitePixels": 133,
+          "diagnostic": null
+        }
+      ],
+      "geometryMatched": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PAG-07",
+      "sha256": "1a774b26e2f9817a7177ccfe833d424e8ecc915f0118f7a900d7410981b570e9",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            153,
+            160
+          ],
+          "nonwhitePixels": 122,
+          "diagnostic": null
+        }
+      ],
+      "geometryMatched": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PAG-08",
+      "sha256": "dab51e2debc473a792df37cc46b9b20d77e968f784f435b6d502a584f3e06d72",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            154,
+            160
+          ],
+          "nonwhitePixels": 119,
+          "diagnostic": null
+        }
+      ],
+      "geometryMatched": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PAG-09",
+      "sha256": "f73a3be5f528063186000a3c118bf211ac11e2e406b8cb13c670b05e7c72228e",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 124,
+          "diagnostic": null
+        }
+      ],
+      "geometryMatched": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PAG-10",
+      "sha256": "2b6693c368c2a2be6acc5b3d23a05205b21586d7cb4e85d8769d2f43bab99607",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 116,
+          "diagnostic": null
+        }
+      ],
+      "geometryMatched": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PAG-11",
+      "sha256": "f34ba665729083014e8c241d5adff145ce1e9b5eeac82a2d567409d47ec42eae",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 117,
+          "diagnostic": null
+        }
+      ],
+      "geometryMatched": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PAG-12",
+      "sha256": "55b3264f13d46cedb2373ed9fe8c75b7614c78d125e11beb30c3c3fcf93d94e8",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 136,
+          "diagnostic": null
+        }
+      ],
+      "geometryMatched": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PAG-13",
+      "sha256": "aece326b331b51e8f94a85793ab60b53b7e0ab8e16ec86652cc3b3d637481041",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            152
+          ],
+          "nonwhitePixels": 129,
+          "diagnostic": null
+        }
+      ],
+      "geometryMatched": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PAG-14",
+      "sha256": "4846c6152875ec000662a41c5b422970649c88ac0c01ee6f2392827f425411d8",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            153,
+            160
+          ],
+          "nonwhitePixels": 160,
+          "diagnostic": null
+        }
+      ],
+      "geometryMatched": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PAG-15",
+      "sha256": "e7479ab116e8090b2a561c070e95793fe782b98785f2a4f6d87663db41231260",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            154
+          ],
+          "nonwhitePixels": 137,
+          "diagnostic": null
+        }
+      ],
+      "geometryMatched": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PAG-16",
+      "sha256": "d6e08d861afe6f2dea4d3bdd66ac1f4d4e5d08edf86c343277425747054b60c4",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            155,
+            160
+          ],
+          "nonwhitePixels": 159,
+          "diagnostic": null
+        }
+      ],
+      "geometryMatched": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "TXT-01",
+      "sha256": "9749439e4dbbd5d24e4cdbb6cc7cfb43e7e59cb81690b11532be51b1e0e364fe",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 218,
+          "diagnostic": null
+        }
+      ],
+      "expectedTextFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "TXT-02",
+      "sha256": "ee809d9d6c4a91c72a5679c00830253cc00e63c2a39b9cad6a7d2ebe0d6a6ede",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 201,
+          "diagnostic": null
+        }
+      ],
+      "expectedTextFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "TXT-03",
+      "sha256": "0c8983e60c289d1c6dd613d27e0d62b3cf1d2cf46ed6c56c854e0badcd252dc0",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 199,
+          "diagnostic": null
+        }
+      ],
+      "expectedTextFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "TXT-04",
+      "sha256": "0f59816ce182b768170665e6d751dfb898d8bc03a42271de986b205da5ee806d",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 217,
+          "diagnostic": null
+        }
+      ],
+      "expectedTextFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "TXT-05",
+      "sha256": "76ae45943383582b7650e8025f1059b6e752ce52a20b6a999b3e4997940cf0ac",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 308,
+          "diagnostic": null
+        }
+      ],
+      "expectedTextFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "TXT-06",
+      "sha256": "b393c6c22ae4c60bc66061849b185756a785ecec870f99bee773ef8dff2288f1",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 362,
+          "diagnostic": null
+        }
+      ],
+      "expectedTextFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "TXT-07",
+      "sha256": "a454152a3f65f3595cc332e240dbb68215b95d4bc6c0cca53622d21ddd590984",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 295,
+          "diagnostic": null
+        }
+      ],
+      "expectedTextFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "TXT-08",
+      "sha256": "36f46a98cf8dc3ab7efa43a35b2d37229b7976521b71701c905aacc600c80f38",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 337,
+          "diagnostic": null
+        }
+      ],
+      "expectedTextFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "TXT-09",
+      "sha256": "b11e32581ac6a62f39a775eba7368d3337cce5053dd051f8d4cf5ff68f2b11d0",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 230,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "TXT-10",
+      "sha256": "b989255f9f381ce591f8b250803310cfac995f3212ccf45e18b37b83500c7bbf",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 281,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "TXT-11",
+      "sha256": "f05114828c621afbf879eb73c3024d766fc58d43fad7a9d4d58433d2d3993e15",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 251,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "TXT-12",
+      "sha256": "0b42d846d48ca0811ea1f5df162a9958077383f5a00b1f5583870c547a415143",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 247,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "TXT-13",
+      "sha256": "d4911b03e48beaba989d03b146575f8734c6a7813629c97e595ecf2a023a980e",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 172,
+          "diagnostic": null
+        }
+      ],
+      "expectedTextFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "TXT-14",
+      "sha256": "8f80f78c7d7cec694859d7823448f359e42e21ce29d2b2451a5cebebddf664de",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 166,
+          "diagnostic": null
+        }
+      ],
+      "expectedTextFound": true,
+      "outcome": "positive-open"
+    },
+    {
+      "id": "GFX-01",
+      "sha256": "f75ff8914d7d9c70e932490add9a55101c8b69167848f22405e9cdb062bfc635",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 5227,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "GFX-02",
+      "sha256": "c50ccac809e6af1d3a56cece852af8c92a587a56ef0b57a4e296828da7442974",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 5232,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "GFX-03",
+      "sha256": "4f4b7d7dc7ebbd0a344e2fab25de87538eb870f4f996b3ddd1d47fa34df70683",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 5233,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "GFX-04",
+      "sha256": "1128622241994dc51525f3555e14ae72d54d872e56f8b930977d3a3224ac1bb5",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 5227,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "GFX-05",
+      "sha256": "6f127d93bf9725f7eba7493c175165a23b14612b3d6d851ea7be4010007a8a98",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 5233,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "GFX-06",
+      "sha256": "f1326c82316c47c78b6b7c7ec88ceb3ab0570eb7cc6ee7098f34a122e07915b6",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 5233,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "GFX-07",
+      "sha256": "ed25dd91376dff9413b625cb951d39c90db6a563388d802463c3f11a9a19afdd",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 5606,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "GFX-08",
+      "sha256": "167e2d15ba4d02b05be8fb86c577266d906c675d928aed70fa6759ceea539892",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 5612,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "GFX-09",
+      "sha256": "17540a38a4f44f4a610d6bb7b112ad755148f516197b24c057c6ff8fdfda1a15",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 5613,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "GFX-10",
+      "sha256": "6cde7c5d9e6c0540dcddaaaedee9c553b735b2727b8711e3cebf72976948c90a",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 5599,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "GFX-11",
+      "sha256": "6dcfc20225fabf8278fde8f91955397962f53dcb55e44d57fab00426060b132c",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 5217,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "GFX-12",
+      "sha256": "d134352eb58ab69ff57616d8b4a6576944b5e82de285d8d0470cb6a7547a1a07",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 5222,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "IMG-01",
+      "sha256": "bec4bb4712b0e088b0336307e12faa2ea3579a4ac16b8d6f28809fbac5b619b1",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 4100,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "IMG-02",
+      "sha256": "61fe95b87ce89fe5195f5b3a769d51a5d6f39c624e624a33b6892b04dcf18653",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 4119,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "IMG-03",
+      "sha256": "c1242151450e2966dcc52346bb741f76a6f7fedf044365fe4faf8fabd84304c7",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 4113,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "IMG-04",
+      "sha256": "1ae9aeb85b8f09dec1d7e4fa531a7445b1ff57111608d155ac8017111ee499b2",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 4114,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "IMG-05",
+      "sha256": "b0f03ecf2952570cf6222ec4e212cda2141c4c59684358ee3e4370663283800b",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 4062,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "IMG-06",
+      "sha256": "cdffc8495410f88b04cfee64d4b5ad4a53029907a0c747564c6a6dc96b62509e",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 4120,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "IMG-07",
+      "sha256": "215b6fb0e32bdc296bbdd2791b3f6e7fdbc6c54144f2648215ef67bb9304d8ab",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 4065,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "IMG-08",
+      "sha256": "77e8e5473cdadf98afd13510fb95288355e796c7fe96000a29608b05ef54ef3a",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 4121,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "IMG-09",
+      "sha256": "373b84eafe8ad0f52ff5cae8389a4f6fc1b6dcd72e046e31322a36e16299ea28",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 4122,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "IMG-10",
+      "sha256": "f49e4de313416ed496a9a478d6b523bde456425ac0ed0140bf36f0173354dd67",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 4107,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "IMG-11",
+      "sha256": "257d5e93cbd1ed2e76ea96fba764d03d76392c2629e53ab218bb7d23ef63983c",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 4001,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "IMG-12",
+      "sha256": "1bafce716cd90c04fbeeed16c8ba1662170beaa82d0a4d68c7dd258ce0fd8fa4",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 4108,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "ANN-01",
+      "sha256": "b36a2fd75c2e47708c31668fb656607133816216eea9f92b01361aa4c06e3237",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 446,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "ANN-02",
+      "sha256": "b8b704f3c28d6654f722055901eef86812b3d8edd4195b9aab006ecb4fdae663",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 434,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "ANN-03",
+      "sha256": "18ce96946af02c740bba3b99a5dd9e837911406e8bc91b6bd5b503a0d20d299c",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 446,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "ANN-04",
+      "sha256": "abea6c143c8e0bc32138f86119f6421707708386a58199c7ea2dfa088545c0dc",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 2,
+      "orderedMarkerCount": 2,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 443,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "ANN-05",
+      "sha256": "b6ae6298bcb41a9d38587638353b325251fb154696de3349ce12c239de15244b",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 513,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "ANN-06",
+      "sha256": "b7cb733501bd67df6063d439f675dc98f42b4b2e7ff9574a18246162aecba546",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 399,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "ANN-07",
+      "sha256": "96091bdb8608d6e7a488bb98c9bdac4abbfdb911d5bd405789c4d8284e7428f4",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 792,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "ANN-08",
+      "sha256": "5da3ac6cc3de6e25b157acaf05130dc1a6570ae9a73b692c9cb9fdbec1f094ae",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 297,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "FRM-01",
+      "sha256": "a6e424dba964513a744c154ee6bed1af2907ae9fe9e1866ca08442cb0374dcf5",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 465,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "FRM-02",
+      "sha256": "83c5cb54690fd17e8abf4952e3da4cf10aa759521e2dc334858c53fd68850f85",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 467,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "FRM-03",
+      "sha256": "1e02c60978bbf006010dc96e0f9204e701a096e8db4f51b5ae19490ce50c779f",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 339,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "FRM-04",
+      "sha256": "fe7c7f975debaf5f5f8c9a47d323e7234f1b7440e0f0b1fb8bd898ff3058348c",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 309,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "FRM-05",
+      "sha256": "865799e3213afef3a6db2a97d439728597c1cff76d9311f26697f3d5eb4b107d",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 382,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "FRM-06",
+      "sha256": "326de7c5096d7d1f46e4746c6663ec2529225aa30d95d42b13ab2d4789041071",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 410,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "FRM-07",
+      "sha256": "c4e181247a5b6d3b295acb0e7125e2e493f3ffeff0337cf2fdbcd913057fe3bd",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 1246,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "FRM-08",
+      "sha256": "5a199a3ff79b2a44f1ea00f9d9cd013f2101a59da403e33a937d53b8137f9483",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 469,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "MET-01",
+      "sha256": "787b5e2ac3d3339f3f84681be534785ecefb4bf09f8023752e597c250a414273",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 107,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "MET-02",
+      "sha256": "b75ee19e0e3d62aa0abefb7cf410b8313708dd59dcbb394f3e0ea6f91572317c",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 116,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "MET-03",
+      "sha256": "00a3ecf64dcb1afd117eba56ae7ecf26ba0e29383f0d5c7cfecc4b4c2666e4de",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 118,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "MET-04",
+      "sha256": "bf52f9d0b2002bc28911c365a62c12a5af607e35f7ddb21def2db7cd139c6c78",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 115,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "MET-05",
+      "sha256": "dec893921e00d0dc34b3c907c8615a4f74d09bb2dfbecdb70fbc6d8110d22d8d",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 115,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "MET-06",
+      "sha256": "700b859360026748da6e4fdbfb8595d9104e4bde8f7ad7822375d1b1b4a2c88b",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 385,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "ENC-01",
+      "sha256": "0a4d734528b645daf105560caffdd7cbf82d67f96b2bdde088eb20894712e254",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "passwordControls": {
+        "noCredential": 2,
+        "pdfinfoNoCredential": 1,
+        "wrongCredential": 2,
+        "ownerCredential": 0,
+        "revision": 2,
+        "permissions": -4
+      },
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 264,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "password-required-authorized-open"
+    },
+    {
+      "id": "ENC-02",
+      "sha256": "a6dea63d10df5539774e2cb03b86600eb08546248fa572c1ae9e7a32f32ca72d",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "passwordControls": {
+        "noCredential": 2,
+        "pdfinfoNoCredential": 1,
+        "wrongCredential": 2,
+        "ownerCredential": 0,
+        "revision": 2,
+        "permissions": -8
+      },
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 278,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "password-required-authorized-open"
+    },
+    {
+      "id": "ENC-03",
+      "sha256": "dde1794bf88a3dae1ee37b78fa4709d18032f3a653c751d33a2cc20123bb16e7",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "passwordControls": {
+        "noCredential": 2,
+        "pdfinfoNoCredential": 1,
+        "wrongCredential": 2,
+        "ownerCredential": 0,
+        "revision": 2,
+        "permissions": -20
+      },
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 281,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "password-required-authorized-open"
+    },
+    {
+      "id": "ENC-04",
+      "sha256": "9f183ebf3d74cc5e32adf8a51ebe85ca7637dd15c81fe022d3f655949030533c",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "passwordControls": {
+        "noCredential": 2,
+        "pdfinfoNoCredential": 1,
+        "wrongCredential": 2,
+        "ownerCredential": 0,
+        "revision": 2,
+        "permissions": -12
+      },
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 272,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "password-required-authorized-open"
+    },
+    {
+      "id": "ENC-05",
+      "sha256": "cc423c7e24bf97a46076264ad7052a605abf62bdcaf6cafaacf888de43420909",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "passwordControls": {
+        "noCredential": 2,
+        "pdfinfoNoCredential": 1,
+        "wrongCredential": 2,
+        "ownerCredential": 0,
+        "revision": 4,
+        "permissions": -4
+      },
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 278,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "password-required-authorized-open"
+    },
+    {
+      "id": "ENC-06",
+      "sha256": "f2b3e577f2694aa4e7a823b76faaa7a2e592c3adeb948e2d1dd11d3a8fdb1b92",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "passwordControls": {
+        "noCredential": 2,
+        "pdfinfoNoCredential": 1,
+        "wrongCredential": 2,
+        "ownerCredential": 0,
+        "revision": 4,
+        "permissions": -8
+      },
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 278,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "password-required-authorized-open"
+    },
+    {
+      "id": "ENC-07",
+      "sha256": "057a3ea5b7cae99a23447c81f16a0f49ceb1f845873b27317e3e702d48c6a091",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "passwordControls": {
+        "noCredential": 2,
+        "pdfinfoNoCredential": 1,
+        "wrongCredential": 2,
+        "ownerCredential": 0,
+        "revision": 4,
+        "permissions": -20
+      },
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 271,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "password-required-authorized-open"
+    },
+    {
+      "id": "ENC-08",
+      "sha256": "7b5aae335da49d7fe7744579b8f4b179a8e65fe1bf4315d0430a2eccd15fb7be",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "passwordControls": {
+        "noCredential": 2,
+        "pdfinfoNoCredential": 1,
+        "wrongCredential": 2,
+        "ownerCredential": 0,
+        "revision": 4,
+        "permissions": -12
+      },
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 283,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "password-required-authorized-open"
+    },
+    {
+      "id": "ENC-09",
+      "sha256": "a89706dae9dc07fa696c2d2e16f21192f949cbd4b45abb440822f0af3b5a6135",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "passwordControls": {
+        "noCredential": 0,
+        "pdfinfoNoCredential": 0,
+        "wrongCredential": 2,
+        "ownerCredential": 0,
+        "revision": 2,
+        "permissions": -12
+      },
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 283,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "empty-password-open"
+    },
+    {
+      "id": "ENC-10",
+      "sha256": "a5ad8b2fa106481d0598fdcf7b37e25c14316384fb634d9a8361130970e2f788",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "passwordControls": {
+        "noCredential": 0,
+        "pdfinfoNoCredential": 0,
+        "wrongCredential": 2,
+        "ownerCredential": 0,
+        "revision": 4,
+        "permissions": -8
+      },
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 287,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "empty-password-open"
+    },
+    {
+      "id": "BAD-01",
+      "sha256": "1f16c9e0aa8f0b6b1b96127e3122a65e18d872a24f7608b69bb23a944a015c79",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 106,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "recovered"
+    },
+    {
+      "id": "BAD-02",
+      "sha256": "573e37fd5e8f665cbf6f45fc7d4df5cfa7efd1d121764f3e60fd8fe03fa68481",
+      "qpdfCheck": 3,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [
+        "WARNING: samples/BAD-02.pdf: file is damaged\nWARNING: samples/BAD-02.pdf (offset 6): xref not found\nWARNING: samples/BAD-02.pdf: Attempting to reconstruct cross-reference table\nqpdf: operation succeeded with warnings"
+      ],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 106,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "recovered"
+    },
+    {
+      "id": "BAD-03",
+      "sha256": "e6cb9a48b5a26cf56975df2cc417fd183252ad043f0e478afc5c8484b644ceb4",
+      "qpdfCheck": 3,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [
+        "WARNING: samples/BAD-03.pdf: file is damaged\nWARNING: samples/BAD-03.pdf (object 1 0, offset 3): expected n n obj\nWARNING: samples/BAD-03.pdf: Attempting to reconstruct cross-reference table\nqpdf: operation succeeded with warnings",
+        "Internal Error: xref num 1 not found but needed, try to reconstruct"
+      ],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 106,
+          "diagnostic": "Internal Error: xref num 1 not found but needed, try to reconstruct"
+        }
+      ],
+      "outcome": "recovered"
+    },
+    {
+      "id": "BAD-04",
+      "sha256": "10845925953b924854f56397cdfee751c6f029569fd8aa3f2fe0ead03e1e092b",
+      "qpdfCheck": 3,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 1,
+      "diagnostics": [
+        "WARNING: samples/BAD-04.pdf: file is damaged\nWARNING: samples/BAD-04.pdf: can't find startxref\nWARNING: samples/BAD-04.pdf: Attempting to reconstruct cross-reference table\nqpdf: operation succeeded with warnings"
+      ],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 106,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "recovered"
+    },
+    {
+      "id": "BAD-05",
+      "sha256": "dce8e47151e35d425ff423120e96d9c51e9572b6ffc2aff185b96805ddea2c02",
+      "qpdfCheck": 2,
+      "pdfinfo": 1,
+      "pdftotext": 1,
+      "reportedPages": null,
+      "orderedMarkerCount": 0,
+      "diagnostics": [
+        "WARNING: samples/BAD-05.pdf: file is damaged\nWARNING: samples/BAD-05.pdf: can't find startxref\nWARNING: samples/BAD-05.pdf: Attempting to reconstruct cross-reference table\nqpdf: samples/BAD-05.pdf: unable to find trailer dictionary while recovering damaged file",
+        "Syntax Error: Couldn't find trailer dictionary\nSyntax Error: Couldn't find trailer dictionary\nSyntax Error: Couldn't read xref table"
+      ],
+      "findings": [],
+      "outcome": "no-usable-page"
+    },
+    {
+      "id": "BAD-06",
+      "sha256": "0036400a21ae4ec834f31a918de0771f417c3780524016329f5f9b15dc7498d5",
+      "qpdfCheck": 2,
+      "pdfinfo": 1,
+      "pdftotext": 1,
+      "reportedPages": null,
+      "orderedMarkerCount": 0,
+      "diagnostics": [
+        "WARNING: samples/BAD-06.pdf: file is damaged\nWARNING: samples/BAD-06.pdf: can't find startxref\nWARNING: samples/BAD-06.pdf: Attempting to reconstruct cross-reference table\nWARNING: samples/BAD-06.pdf (object 1 0, offset 121): parse error while reading object\nWARNING: samples/BAD-06.pdf (object 1 0, offset 121): unexpected EOF\nqpdf: samples/BAD-06.pdf: unable to find trailer dictionary while recovering damaged file",
+        "Syntax Error: Couldn't find trailer dictionary\nSyntax Error: Couldn't find trailer dictionary\nSyntax Error: Couldn't read xref table"
+      ],
+      "findings": [],
+      "outcome": "no-usable-page"
+    },
+    {
+      "id": "BAD-07",
+      "sha256": "c1a10a3c0c89e9950368a8d7a8b06e56358860a82f185f9dc55ebcec933c8b60",
+      "qpdfCheck": 2,
+      "pdfinfo": 99,
+      "pdftotext": 99,
+      "reportedPages": null,
+      "orderedMarkerCount": 0,
+      "diagnostics": [
+        "qpdf: samples/BAD-07.pdf: unable to find page tree",
+        "Syntax Error: Catalog dictionary does not contain a valid \"Pages\" entry\nCommand Line Error: Wrong page range given: the first page (1) can not be after the last page (0)."
+      ],
+      "findings": [],
+      "outcome": "no-usable-page"
+    },
+    {
+      "id": "BAD-08",
+      "sha256": "9eb78539fd12e141d9ced8bb118f93ed952b3991937b9b75ab6825446f60fa5b",
+      "qpdfCheck": 2,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 1,
+      "orderedMarkerCount": 0,
+      "diagnostics": [
+        "Pages tree includes non-dictionary object; ignoring\nERROR: operation for dictionary attempted on object of type null: ignoring key replacement request\nqpdf: errors detected",
+        "Internal Error: xref num 4 not found but needed, try to reconstruct\nSyntax Error: Kid object (page 1) is wrong type (null)"
+      ],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            1,
+            1
+          ],
+          "nonwhitePixels": 0,
+          "diagnostic": "Internal Error: xref num 4 not found but needed, try to reconstruct\nSyntax Error: Kid object (page 1) is wrong type (null)"
+        }
+      ],
+      "outcome": "no-usable-page"
+    },
+    {
+      "id": "BAD-09",
+      "sha256": "ad0005073b4aa9b34bc1c6ffca0bd2736906390e9b3f98a4ed809c01b1e4360b",
+      "qpdfCheck": 2,
+      "pdfinfo": 99,
+      "pdftotext": 99,
+      "reportedPages": null,
+      "orderedMarkerCount": 0,
+      "diagnostics": [
+        "qpdf: samples/BAD-09.pdf: unable to find page tree",
+        "Internal Error: xref num 2 not found but needed, try to reconstruct\nSyntax Error: Top-level pages object is wrong type (null)\nCommand Line Error: Wrong page range given: the first page (1) can not be after the last page (0)."
+      ],
+      "findings": [],
+      "outcome": "no-usable-page"
+    },
+    {
+      "id": "BAD-10",
+      "sha256": "cec7ae381d0c46a9e9e868ed2c04e92757d63c3c7824139435e4702132cc11e6",
+      "qpdfCheck": 2,
+      "pdfinfo": 1,
+      "pdftotext": 1,
+      "reportedPages": null,
+      "orderedMarkerCount": 0,
+      "diagnostics": [
+        "WARNING: samples/BAD-10.pdf: file is damaged\nWARNING: samples/BAD-10.pdf: can't find startxref\nWARNING: samples/BAD-10.pdf: Attempting to reconstruct cross-reference table\nWARNING: samples/BAD-10.pdf (object 4 0, offset 263): expected endstream\nWARNING: samples/BAD-10.pdf (object 4 0, offset 188): attempting to recover stream length\nWARNING: samples/BAD-10.pdf (object 4 0, offset 188): unable to recover stream data; treating stream as empty\nWARNING: samples/BAD-10.pdf (object 4 0, offset 263): expected endobj\nWARNING: samples/BAD-10.pdf (object 4 0, offset 263): EOF after endobj\nWARNING: samples/BAD-10.pdf: unable to find trailer dictionary while recovering damaged file\nWARNING: object 2 0: operation for dictionary attempted on object of type null: returning false for a key containment request\nqpdf: samples/BAD-10.pdf: root of pages tree has no /Kids array",
+        "Syntax Error: Couldn't find trailer dictionary\nSyntax Error: Couldn't find trailer dictionary\nSyntax Error: Couldn't read xref table"
+      ],
+      "findings": [],
+      "outcome": "no-usable-page"
+    },
+    {
+      "id": "PER-01",
+      "sha256": "819044143a94e164852d92f84ed9f507fa037b1dbcade7bc5d362b53144dbe8d",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 50,
+      "orderedMarkerCount": 50,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 1144,
+          "diagnostic": null
+        },
+        {
+          "page": 25,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 1392,
+          "diagnostic": null
+        },
+        {
+          "page": 50,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 1289,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PER-02",
+      "sha256": "ca88b990bca521bd54c993185f5f4c4c763d16ac6a061497b095544b583a29ea",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 50,
+      "orderedMarkerCount": 50,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 6778,
+          "diagnostic": null
+        },
+        {
+          "page": 25,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 6807,
+          "diagnostic": null
+        },
+        {
+          "page": 50,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 6813,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PER-03",
+      "sha256": "579b492cbb1c478fbbe9dab0f8126ce0474ce541019a59f2e6e74a934cef61b3",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 500,
+      "orderedMarkerCount": 500,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 1163,
+          "diagnostic": null
+        },
+        {
+          "page": 250,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 1465,
+          "diagnostic": null
+        },
+        {
+          "page": 500,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 1376,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    },
+    {
+      "id": "PER-04",
+      "sha256": "73d9f7008993a549016e0014ee07d1c74606126193bc3cdb619fce5f2b97f668",
+      "qpdfCheck": 0,
+      "pdfinfo": 0,
+      "pdftotext": 0,
+      "reportedPages": 500,
+      "orderedMarkerCount": 500,
+      "diagnostics": [],
+      "findings": [],
+      "raster": [
+        {
+          "page": 1,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 6786,
+          "diagnostic": null
+        },
+        {
+          "page": 250,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 6833,
+          "diagnostic": null
+        },
+        {
+          "page": 500,
+          "exit": 0,
+          "dimensions": [
+            160,
+            145
+          ],
+          "nonwhitePixels": 6835,
+          "diagnostic": null
+        }
+      ],
+      "outcome": "positive-open"
+    }
+  ]
+}
