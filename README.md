@@ -1,5 +1,7 @@
 # Paperplane — Local PDF Studio
 
+> **Beta.** Desktop editing is tested; mobile editing is being improved after a first real iPhone test (long tool panels, repeated text placement on tap). Treat the public demo as a test version.
+
 Paperplane is a static, browser-first PDF editor. It reads files, renders pages, and generates new PDFs locally. There is no upload, no account, and no frontend build. Opened PDFs and edits are held in memory, not in the offline cache.
 
 ## Run locally
