@@ -1,0 +1,37 @@
+Supplemental third-party attributions for the inherited browser distributions
+
+pdf-lib 1.17.1 — official ESM source map attribution locators:
+* ../es/utils/base64.js and ../node_modules/@pdf-lib/standard-fonts/es/utils.js:
+  Base64 ArrayBuffer, Copyright (c) 2012 Niklas von Hertzen, MIT.
+* ../es/api/svgPath.js: originated from PDFKit, Copyright (c) 2014 Devon
+  Govett, MIT; updated for pdf-lib and TypeScript by Jeremy Messenger. The
+  source also credits Inkscape svgtopdf; separate source/version and applicable
+  terms for that credit have not been established.
+* ../es/core/streams/FlateStream.js: Copyright 1996-2003 Glyph & Cog, LLC
+  (Xpdf Flate implementation port, Apache 2.0 as stated by the release);
+  Copyright 2012 Mozilla Foundation (PDF.js port, Apache 2.0).
+* @pdf-lib/standard-fonts 1.0.0 README credits its predecessor, afm:
+  Copyright 2015–2018 Christopher Brown, MIT. The Adobe Core 14 metrics
+  are a separate data component. Their source AFM files were converted to
+  JSON and compressed by the dependency upstream, not by this project.
+  See adobe-core14-MustRead.html for Adobe's terms. Copyright notices
+  found in the compressed package data are listed in adobe-core14-notices.txt.
+
+PDF.js 6.5.438 — official reference source map attribution locators:
+* src/shared/murmurhash3.js (browser and worker): Copyright 2014 Opera
+  Software ASA, Apache License, Version 2.0. The release credits MurmurHash3.
+* src/core/flate_stream.js (worker): Copyright 2012 Mozilla Foundation and
+  Copyright 1996-2003 Glyph & Cog, LLC (Xpdf port, Apache 2.0 as stated by the
+  release). See vendor/pdfjs/LICENSE for the Apache terms.
+* external/brotli/decode.js (worker): Copyright 2017 Google Inc. All Rights
+  Reserved. MIT; see brotli-LICENSE.txt for the accompanying license.
+
+PDF.js 6.5.438 — pinned external/standard_fonts/README.md, Foxit fonts:
+  Copyright 2014 PDFium Authors. All rights reserved.
+   Use of this source code is governed by a BSD-style license that can be
+   found in the LICENSE file.
+
+  Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
+
+See sources.json for exact URLs and evidence locations. Copyright in the
+attributed material remains with the respective holders.

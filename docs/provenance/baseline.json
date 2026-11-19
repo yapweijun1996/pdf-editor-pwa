@@ -4,7 +4,7 @@
   "revision": {
     "baseCommit": "d3e79e3c1c4863bfd3a69dd5aa6d372dd2c9dba0",
     "files": {
-      "README.md": "eacd5726f81127d58dfa0a4e41277e0a9cdd87494e8962fa8a9400d096b13399",
+      "README.md": "0512d6b1d12f8eb5a642dd924af32040e7e04299c0b2a4ecd272719421e6d121",
       "docs/baseline/README.md": "ef2236f1fac3c114439e6ef67d794739002b0c0b951660ac17925d8411376399",
       "docs/baseline/results.json": "4280d88a0ca8a969eee3aaea148e4278c498eec2ecec5dfedcd851949f642c0a",
       "docs/baseline/run.log": "26809a6197f08e71181582267ade05b574c63fadfb621d0d922a8669f6541a6b",
@@ -42,18 +42,18 @@
       "notes": "Defines the local picker, rendering, rotation, download, and reopen user workflows."
     }
   ],
-  "notes": "Contributors: PDF Editor PWA / Phase 0 baseline harness agent (Clean-room baseline harness engineer); pi session 01a1f166-298d-7565-9860-bf3c26f5cac0 (gpt-6.2-sol), Baseline content-verification repair engineer; pi session 01a1f17b-53c3-7008-9139-574ab0abf50e (gpt-6.2-sol), Baseline page-identity repair engineer; and the required-stage repair author identified above. Earlier independent decisions apply only to their recorded digests, including docs/provenance/reviews/phase0-page-identity.md at the current base. Consulted on 2026-11-19: ENGINE-PLAN.md, docs/CLEAN-ROOM.md (Inputs and handoff), docs/notes/phase0-fixtures.md (Baseline harness handoff), tests/corpus/manifest.json (recovery and export expectations), prior authored baseline code and docs, and round-two black-box Chromium recovery evidence. Prior measurement work also consulted the local public Poppler pdftoppm 25.04.0 help for page range, crop box, scale and single-file options. Reproduced the QA result with its test preload before editing; the maintained control, required-stage comparisons, and CLI contract were authored for this repair. No app engine, PDF package or vendor implementation source was inspected by the repair author; runtime fingerprinting used opaque bytes. Raster agreement is limited to sampled appearances and referenced pages, not semantic fidelity or all-page preservation. Author tests, reconciliation and hashed downloads are retained under .aic/phase0-final-repair/.",
+  "notes": "Contributors: PDF Editor PWA / Phase 0 baseline harness agent (Clean-room baseline harness engineer); pi session 01a1f166-298d-7565-9860-bf3c26f5cac0 (gpt-6.2-sol), Baseline content-verification repair engineer; pi session 01a1f17b-53c3-7008-9139-574ab0abf50e (gpt-6.2-sol), Baseline page-identity repair engineer; and the required-stage repair author identified above. Earlier independent decisions apply only to their recorded digests, including docs/provenance/reviews/phase0-page-identity.md at the current base. Consulted on 2026-11-19: ENGINE-PLAN.md, docs/CLEAN-ROOM.md (Inputs and handoff), docs/notes/phase0-fixtures.md (Baseline harness handoff), tests/corpus/manifest.json (recovery and export expectations), prior authored baseline code and docs, and round-two black-box Chromium recovery evidence. Prior measurement work also consulted the local public Poppler pdftoppm 25.04.0 help for page range, crop box, scale and single-file options. Reproduced the QA result with its test preload before editing; the maintained control, required-stage comparisons, and CLI contract were authored for this repair. No app engine, PDF package or vendor implementation source was inspected by the repair author; runtime fingerprinting used opaque bytes. Raster agreement is limited to sampled appearances and referenced pages, not semantic fidelity or all-page preservation. Author tests, reconciliation and hashed downloads are retained under .aic/phase0-final-repair/. The policy and fixture-note consultations refer to the historical versions at the authored repair base, not the current amended documents. Record maintenance over dae14d4 rebinds the whole README.md after a policy-only paragraph added by pi session 01a1f1b1-89c6-7336-aaa1-7b9fb86626ea (gpt-6.2-sol), License and provenance policy researcher; that researcher did not contribute to the harness or measurements. The original authored repair base, baseline README scope, other file hashes, harness and measurements are unchanged. The independent license-policy integration reviewer maintained this record only, not the underlying deliverables.",
   "review": {
     "status": "approved",
     "reviewer": {
-      "id": "pi session 01a1f1a2-995a-7334-8479-5e7e1156a7a3 (gpt-6.2-sol)",
-      "role": "PDF Editor PWA / Independent final required-stage integration reviewer"
+      "id": "pi session 01a1f1bb-ad3d-72e9-9477-57c1bbd53524 (gpt-6.2-sol)",
+      "role": "Independent license-policy integration reviewer"
     },
     "reviewedOn": "2026-11-19",
     "reviewedRevision": {
       "baseCommit": "d3e79e3c1c4863bfd3a69dd5aa6d372dd2c9dba0",
       "files": {
-        "README.md": "eacd5726f81127d58dfa0a4e41277e0a9cdd87494e8962fa8a9400d096b13399",
+        "README.md": "0512d6b1d12f8eb5a642dd924af32040e7e04299c0b2a4ecd272719421e6d121",
         "docs/baseline/README.md": "ef2236f1fac3c114439e6ef67d794739002b0c0b951660ac17925d8411376399",
         "docs/baseline/results.json": "4280d88a0ca8a969eee3aaea148e4278c498eec2ecec5dfedcd851949f642c0a",
         "docs/baseline/run.log": "26809a6197f08e71181582267ade05b574c63fadfb621d0d922a8669f6541a6b",
@@ -67,7 +67,7 @@
         "tests/baseline.test.mjs": "d59bd8c1764b5ec80cf6ef69a959146d3713bd6593bb50a3bcd08da51344c8e8"
       }
     },
-    "evidence": ["docs/provenance/reviews/phase0-required-stage.md"],
-    "notes": "Independent provenance approval for the exact required-stage repair and retained baseline. Required-stage matrix, real Chromium controls, artifact reconciliation and scanner coverage passed. This decision does not waive QA round three or grant release clearance."
+    "evidence": ["docs/provenance/reviews/phase0-license-amendment.md#baseline-record-maintenance-and-exact-byte-checks"],
+    "notes": "Reopened the whole-README approval and independently reviewed the current exact binding. Historical required-stage approval is preserved in Git and its review report. Retained measurement evidence binds unchanged harness, corpus and runtime bytes; no fresh browser trial, QA verdict or release clearance is claimed."
   }
 }

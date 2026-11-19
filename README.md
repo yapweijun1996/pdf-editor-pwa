@@ -47,6 +47,8 @@ The Node suite checks immutable page operations, field updates, range extraction
 
 ## Vendored software and offline assets
 
+The [license and provenance policy](docs/CLEAN-ROOM.md) allows verified MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause and ISC dependencies. pdf-lib and PDF.js remain in use. We may read permissively licensed dependency source to understand behavior, debug or audit it, but we do not copy, translate or port third-party code into modules we write. GPL, AGPL and unknown licensing are barred. Each bundled file remains subject to independent license review; provenance and similarity checks also remain required.
+
 - `vendor/pdfjs/`: Mozilla `pdfjs-dist` **6.5.438**, Apache-2.0. Unmodified browser and worker bundles, packed CMaps, standard fonts, ICC profile and WASM/decoder assets. Asset licenses are in their corresponding directories.
 - `vendor/pdf-lib/`: `pdf-lib` **1.17.1**, MIT. Unmodified minified ES module and upstream license.
 

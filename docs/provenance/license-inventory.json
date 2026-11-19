@@ -1,0 +1,408 @@
+{
+  "schemaVersion": 1,
+  "module": "Phase 0 third-party notices, license and source inventory",
+  "revision": {
+    "baseCommit": "dae14d4ee2fd5ec9063e478499e4c864549e340a",
+    "files": {
+      "THIRD-PARTY-NOTICES": "84ae91ba0e1d8854e64913cc784deebe5d095227a483207775bcf01272935bcc",
+      "docs/licenses/README.md": "c2854cca3caa2b1edc2f9a498ee7e2aeefe161890bf1aa3f6e188915b28ff1e6",
+      "docs/licenses/adobe-core14-MustRead.html": "b226bfc00e1b8b8a80c7b3cfbbc322d13b4b0401f94cdeafdd93b2210ad802eb",
+      "docs/licenses/adobe-core14-notices.txt": "dfcf87c72328f028b9f173ba1865c13dbc8665e58a56874a6f4bcdadf53c368c",
+      "docs/licenses/attributions.txt": "d017585eb6826e8ea0573dd1f7467a42e8904d06d177c9f5a7c658cacaf4aa3a",
+      "docs/licenses/base64-arraybuffer-LICENSE.txt": "f3eca6ff762533fa5a77caf954a143e48afa204668cf97dce758c45a9e006be3",
+      "docs/licenses/brotli-LICENSE.txt": "2a57418d6b10947fe0dfbec3a600269e2745136c125cbf15b256e5ae18af23cb",
+      "docs/licenses/inventory.json": "651ff81f91b8483aa9adae9056af822d23df1807c2bec5400e3348941e15d97c",
+      "docs/licenses/pako-LICENSE.txt": "a04665b3b2de56c66730c1f720f528175739e4104f79073614aa611da1e85539",
+      "docs/licenses/pako-Zlib-notices.txt": "1730a0bb504f5bfdb017c09c33adc021f179596022c81af2a874e9f62bd098b7",
+      "docs/licenses/pdfkit-LICENSE.txt": "5f0d5197d2b5d91f41de43143b0be42fb55515bc2b894f2a9b62de9f7056c0f8",
+      "docs/licenses/playwright-LICENSE": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
+      "docs/licenses/playwright-NOTICE": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d",
+      "docs/licenses/playwright-ThirdPartyNotices.txt": "b17ac0bd6f4b8207e440639cc8e0ba1bf1d9eaf9b12236764ab93b346c7abd8e",
+      "docs/licenses/playwright-core-LICENSE": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
+      "docs/licenses/playwright-core-NOTICE": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d",
+      "docs/licenses/playwright-core-ThirdPartyNotices.txt": "a549d329bad8806fe279f0ecae0fc0270dec7e7c2dc8ec10f90e394f7c32b144",
+      "docs/licenses/poppler-COPYING.txt": "ab15fd526bd8dd18a9e77ebc139656bf4d33e97fc7238cd11bf60e2b9b8666c6",
+      "docs/licenses/qpdf-LICENSE.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "docs/licenses/qpdf-NOTICE.md": "b207f65a9e5491195ded63b2941199b19a4d30148871f2742c88eae7bfc513a6",
+      "docs/licenses/sources.json": "fe39b3aeb3e5fa2e7395bfd2ada92b069cb4ffa42dbf8da29abb38a87cc704c9",
+      "docs/licenses/standard-fonts-LICENSE.md": "45cc2bb9957ed43f5c7f5eb1912f9f670730394d614079510477cae626194649",
+      "docs/licenses/tslib-CopyrightNotice.txt": "19246466cb51e46c12b22e43b4d2703ac981cb4295d061d6e20609bd5845510b",
+      "docs/licenses/tslib-LICENSE.txt": "a7d00bfd54525bc694b6e32f64c7ebcf5e6b7ae3657be5cc12767bce74654a47",
+      "docs/licenses/typescript-LICENSE.txt": "a7d00bfd54525bc694b6e32f64c7ebcf5e6b7ae3657be5cc12767bce74654a47",
+      "docs/licenses/typescript-ThirdPartyNoticeText.txt": "1af3c68039c57e539422da82a4faada506ce6d0ea6f90e0b699d02dbcdb7a90c",
+      "docs/licenses/upng-LICENSE.txt": "c1fb8861eca211bf5aea574358aba7039396c0c1824c2a1477cc126d398efd89"
+    }
+  },
+  "author": {
+    "id": "pi session 01a1f1b1-8a34-73ec-b657-538194e317d5 (gpt-6.2-sol)",
+    "role": "Third-party license and notice investigator"
+  },
+  "authoredOn": "2026-11-19",
+  "sources": [
+    {
+      "sourceId": "phase0-plan",
+      "sections": [
+        "Sections 1–5, especially dependency permissions, notices, provenance, independence and no behavior change"
+      ],
+      "notes": "Local scope, existing terms, coverage, tool selection and gates."
+    },
+    {
+      "sourceId": "phase0-spotcheck",
+      "sections": [
+        "License spotcheck and Runtime check"
+      ],
+      "notes": "Local scope, existing terms, coverage, tool selection and gates."
+    },
+    {
+      "sourceId": "repository",
+      "sections": [
+        "README Vendored software and offline assets; package.json devDependencies; package-lock.json packages; docs/provenance README and schema; tests/corpus/oracle-report.json toolVersions; local vendor raw bytes"
+      ],
+      "notes": "Local scope, existing terms, coverage, tool selection and gates."
+    },
+    {
+      "sourceId": "npm-pdf-lib",
+      "sections": [
+        "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/"
+      ],
+      "notes": "Official distributions, mixed-license attribution and pinned version evidence."
+    },
+    {
+      "sourceId": "npm-pdfjs-dist",
+      "sections": [
+        "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/"
+      ],
+      "notes": "Official distributions, mixed-license attribution and pinned version evidence."
+    },
+    {
+      "sourceId": "pdf-lib.esm.min.js.map",
+      "sections": [
+        "package/dist/pdf-lib.esm.min.js.map: sources, sourcesContent and third-party headers; direct map of vendored ESM"
+      ],
+      "notes": "Official distributions, mixed-license attribution and pinned version evidence."
+    },
+    {
+      "sourceId": "pdf.mjs.map",
+      "sections": [
+        "package/build/pdf.mjs.map: sources and attribution headers in sourcesContent; companion unminified build, not a direct minified map"
+      ],
+      "notes": "Official distributions, mixed-license attribution and pinned version evidence."
+    },
+    {
+      "sourceId": "pdf.worker.mjs.map",
+      "sections": [
+        "package/build/pdf.worker.mjs.map: sources and attribution headers in sourcesContent; companion unminified build, not a direct minified map"
+      ],
+      "notes": "Official distributions, mixed-license attribution and pinned version evidence."
+    },
+    {
+      "sourceId": "pdf-lib-lock",
+      "sections": [
+        "tslib and direct/nested Pako, standard-fonts and upng resolutions; exact source versions checked where distinguishable"
+      ],
+      "notes": "Official distributions, mixed-license attribution and pinned version evidence."
+    },
+    {
+      "sourceId": "pdf-lib-rollup",
+      "sections": [
+        "ESM build configuration and dependency bundling"
+      ],
+      "notes": "Official distributions, mixed-license attribution and pinned version evidence."
+    },
+    {
+      "sourceId": "mozilla-build",
+      "sections": [
+        "Asset copy tasks (CMaps, ICCs, fonts, WASM) and npm distribution metadata"
+      ],
+      "notes": "Asset-level mapping limits, versions, source matches and inherited GPL conflict."
+    },
+    {
+      "sourceId": "mozilla-standard_fonts",
+      "sections": [
+        "Asset origin, build and/or license sections"
+      ],
+      "notes": "Asset-level mapping limits, versions, source matches and inherited GPL conflict."
+    },
+    {
+      "sourceId": "mozilla-iccs",
+      "sections": [
+        "Asset origin, build and/or license sections"
+      ],
+      "notes": "Asset-level mapping limits, versions, source matches and inherited GPL conflict."
+    },
+    {
+      "sourceId": "mozilla-jbig2",
+      "sections": [
+        "Asset origin, build and/or license sections"
+      ],
+      "notes": "Asset-level mapping limits, versions, source matches and inherited GPL conflict."
+    },
+    {
+      "sourceId": "mozilla-openjpeg",
+      "sections": [
+        "Asset origin, build and/or license sections"
+      ],
+      "notes": "Asset-level mapping limits, versions, source matches and inherited GPL conflict."
+    },
+    {
+      "sourceId": "mozilla-qcms",
+      "sections": [
+        "Asset origin, build and/or license sections"
+      ],
+      "notes": "Asset-level mapping limits, versions, source matches and inherited GPL conflict."
+    },
+    {
+      "sourceId": "mozilla-quickjs",
+      "sections": [
+        "Asset origin, build and/or license sections"
+      ],
+      "notes": "Asset-level mapping limits, versions, source matches and inherited GPL conflict."
+    },
+    {
+      "sourceId": "mozilla-brotli",
+      "sections": [
+        "Asset origin, build and/or license sections"
+      ],
+      "notes": "Asset-level mapping limits, versions, source matches and inherited GPL conflict."
+    },
+    {
+      "sourceId": "mozilla-cmapscompress",
+      "sections": [
+        "Asset origin, build and/or license sections"
+      ],
+      "notes": "Asset-level mapping limits, versions, source matches and inherited GPL conflict."
+    },
+    {
+      "sourceId": "mozilla-brotli-license",
+      "sections": [
+        "MIT text copied verbatim"
+      ],
+      "notes": "Asset-level mapping limits, versions, source matches and inherited GPL conflict."
+    },
+    {
+      "sourceId": "mozilla-brotli-bytes",
+      "sections": [
+        "License header and reference worker sourcesContent connection"
+      ],
+      "notes": "Asset-level mapping limits, versions, source matches and inherited GPL conflict."
+    },
+    {
+      "sourceId": "fedora-liberation",
+      "sections": [
+        "Red Hat GNU GPL v2 font exception; counterpart of TTF name IDs 13/14"
+      ],
+      "notes": "Asset-level mapping limits, versions, source matches and inherited GPL conflict."
+    },
+    {
+      "sourceId": "icc-original",
+      "sections": [
+        "Exact bytes match npm and vendor"
+      ],
+      "notes": "Asset-level mapping limits, versions, source matches and inherited GPL conflict."
+    },
+    {
+      "sourceId": "history-FoxitFixed.pfb",
+      "sections": [
+        "Last commit touching selected file at the pinned Mozilla revision: Include and use the 14 standard fonts files."
+      ],
+      "notes": "History evidence for identified upstream revisions; not an independent rebuild."
+    },
+    {
+      "sourceId": "history-LiberationSans-Regular.ttf",
+      "sections": [
+        "Last commit touching selected file at the pinned Mozilla revision: XFA - Add Liberation-Sans font as a substitution for some missing fonts"
+      ],
+      "notes": "History evidence for identified upstream revisions; not an independent rebuild."
+    },
+    {
+      "sourceId": "history-decode.js",
+      "sections": [
+        "Last commit touching selected file at the pinned Mozilla revision: Add support for Brotli decompression"
+      ],
+      "notes": "History evidence for identified upstream revisions; not an independent rebuild."
+    },
+    {
+      "sourceId": "history-jbig2.wasm",
+      "sections": [
+        "Last commit touching selected file at the pinned Mozilla revision: Update JBIG2 decoder to pdfium@bb1f9f71"
+      ],
+      "notes": "History evidence for identified upstream revisions; not an independent rebuild."
+    },
+    {
+      "sourceId": "history-openjpeg.wasm",
+      "sections": [
+        "Last commit touching selected file at the pinned Mozilla revision: Improve the performances of the jpx decoder and reduce its size and the jbig2 one"
+      ],
+      "notes": "History evidence for identified upstream revisions; not an independent rebuild."
+    },
+    {
+      "sourceId": "history-qcms_bg.wasm",
+      "sections": [
+        "Last commit touching selected file at the pinned Mozilla revision: Update qcms wrapper"
+      ],
+      "notes": "History evidence for identified upstream revisions; not an independent rebuild."
+    },
+    {
+      "sourceId": "history-quickjs-eval.wasm",
+      "sections": [
+        "Last commit touching selected file at the pinned Mozilla revision: Update quickjs to rev 3d5e064e9dd67c70f7962836505a7fa067bf0a4e"
+      ],
+      "notes": "History evidence for identified upstream revisions; not an independent rebuild."
+    },
+    {
+      "sourceId": "npm-pako",
+      "sections": [
+        "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/"
+      ],
+      "notes": "Embedded component source versions, legal terms, copyright and Adobe notice."
+    },
+    {
+      "sourceId": "npm-pako-1.0.10",
+      "sections": [
+        "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/"
+      ],
+      "notes": "Embedded component source versions, legal terms, copyright and Adobe notice."
+    },
+    {
+      "sourceId": "npm-standard-fonts",
+      "sections": [
+        "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/"
+      ],
+      "notes": "Embedded component source versions, legal terms, copyright and Adobe notice."
+    },
+    {
+      "sourceId": "npm-upng",
+      "sections": [
+        "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/"
+      ],
+      "notes": "Embedded component source versions, legal terms, copyright and Adobe notice."
+    },
+    {
+      "sourceId": "npm-tslib-1.11.1",
+      "sections": [
+        "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/"
+      ],
+      "notes": "Embedded component source versions, legal terms, copyright and Adobe notice."
+    },
+    {
+      "sourceId": "afm-notice",
+      "sections": [
+        "Original Adobe permission/conditions retained in project dependency source"
+      ],
+      "notes": "Embedded component source versions, legal terms, copyright and Adobe notice."
+    },
+    {
+      "sourceId": "afm-predecessor",
+      "sections": [
+        "Identical Adobe notice in predecessor"
+      ],
+      "notes": "Embedded component source versions, legal terms, copyright and Adobe notice."
+    },
+    {
+      "sourceId": "base64-license",
+      "sections": [
+        "MIT text and 2012 copyright corresponding to credited attribution"
+      ],
+      "notes": "Embedded component source versions, legal terms, copyright and Adobe notice."
+    },
+    {
+      "sourceId": "pdfkit-license",
+      "sections": [
+        "MIT text at commit credited by pdf-lib"
+      ],
+      "notes": "Embedded component source versions, legal terms, copyright and Adobe notice."
+    },
+    {
+      "sourceId": "npm-playwright",
+      "sections": [
+        "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/"
+      ],
+      "notes": "Non-shipped tooling notices, version checks and tool separation."
+    },
+    {
+      "sourceId": "npm-playwright-core",
+      "sections": [
+        "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/"
+      ],
+      "notes": "Non-shipped tooling notices, version checks and tool separation."
+    },
+    {
+      "sourceId": "npm-typescript",
+      "sections": [
+        "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/"
+      ],
+      "notes": "Non-shipped tooling notices, version checks and tool separation."
+    },
+    {
+      "sourceId": "qpdf-license",
+      "sections": [
+        "Upstream license matched local installation notice text"
+      ],
+      "notes": "Non-shipped tooling notices, version checks and tool separation."
+    },
+    {
+      "sourceId": "qpdf-notice",
+      "sections": [
+        "Upstream notice matched local installation notice text"
+      ],
+      "notes": "Non-shipped tooling notices, version checks and tool separation."
+    },
+    {
+      "sourceId": "poppler-release",
+      "sections": [
+        "COPYING (matched installed text); README.md History and GPL licensing"
+      ],
+      "notes": "Non-shipped tooling notices, version checks and tool separation."
+    },
+    {
+      "sourceId": "tool-local",
+      "sections": [
+        "qpdf --version / --copyright; pdftoppm -v; clean-room comparator parser SHA-256 from original review plus installed file comparison"
+      ],
+      "notes": "Non-shipped tooling notices, version checks and tool separation."
+    }
+  ],
+  "notes": "Source ledger extension: docs/licenses/sources.json. Independent derivation from local bytes and official release metadata, archive members, asset README and build mapping, scoped source-map attribution, font name records and upstream license texts. Original Liberation archive retrieval was unavailable (ledger entry not relied on); four exact files are confirmed release blockers via Mozilla and the fonts themselves. Other unknowns are retained as findings rather than cleared. No third-party implementation copied, no changes to runtime, no verification of release packaging or application behavior. This record is not an independent review or release approval.",
+  "review": {
+    "status": "approved",
+    "reviewer": {
+      "id": "pi session 01a1f1bb-ad3d-72e9-9477-57c1bbd53524 (gpt-6.2-sol)",
+      "role": "Independent license-policy integration reviewer"
+    },
+    "reviewedOn": "2026-11-19",
+    "reviewedRevision": {
+      "baseCommit": "dae14d4ee2fd5ec9063e478499e4c864549e340a",
+      "files": {
+        "THIRD-PARTY-NOTICES": "84ae91ba0e1d8854e64913cc784deebe5d095227a483207775bcf01272935bcc",
+        "docs/licenses/README.md": "c2854cca3caa2b1edc2f9a498ee7e2aeefe161890bf1aa3f6e188915b28ff1e6",
+        "docs/licenses/adobe-core14-MustRead.html": "b226bfc00e1b8b8a80c7b3cfbbc322d13b4b0401f94cdeafdd93b2210ad802eb",
+        "docs/licenses/adobe-core14-notices.txt": "dfcf87c72328f028b9f173ba1865c13dbc8665e58a56874a6f4bcdadf53c368c",
+        "docs/licenses/attributions.txt": "d017585eb6826e8ea0573dd1f7467a42e8904d06d177c9f5a7c658cacaf4aa3a",
+        "docs/licenses/base64-arraybuffer-LICENSE.txt": "f3eca6ff762533fa5a77caf954a143e48afa204668cf97dce758c45a9e006be3",
+        "docs/licenses/brotli-LICENSE.txt": "2a57418d6b10947fe0dfbec3a600269e2745136c125cbf15b256e5ae18af23cb",
+        "docs/licenses/inventory.json": "651ff81f91b8483aa9adae9056af822d23df1807c2bec5400e3348941e15d97c",
+        "docs/licenses/pako-LICENSE.txt": "a04665b3b2de56c66730c1f720f528175739e4104f79073614aa611da1e85539",
+        "docs/licenses/pako-Zlib-notices.txt": "1730a0bb504f5bfdb017c09c33adc021f179596022c81af2a874e9f62bd098b7",
+        "docs/licenses/pdfkit-LICENSE.txt": "5f0d5197d2b5d91f41de43143b0be42fb55515bc2b894f2a9b62de9f7056c0f8",
+        "docs/licenses/playwright-LICENSE": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
+        "docs/licenses/playwright-NOTICE": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d",
+        "docs/licenses/playwright-ThirdPartyNotices.txt": "b17ac0bd6f4b8207e440639cc8e0ba1bf1d9eaf9b12236764ab93b346c7abd8e",
+        "docs/licenses/playwright-core-LICENSE": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
+        "docs/licenses/playwright-core-NOTICE": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d",
+        "docs/licenses/playwright-core-ThirdPartyNotices.txt": "a549d329bad8806fe279f0ecae0fc0270dec7e7c2dc8ec10f90e394f7c32b144",
+        "docs/licenses/poppler-COPYING.txt": "ab15fd526bd8dd18a9e77ebc139656bf4d33e97fc7238cd11bf60e2b9b8666c6",
+        "docs/licenses/qpdf-LICENSE.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "docs/licenses/qpdf-NOTICE.md": "b207f65a9e5491195ded63b2941199b19a4d30148871f2742c88eae7bfc513a6",
+        "docs/licenses/sources.json": "fe39b3aeb3e5fa2e7395bfd2ada92b069cb4ffa42dbf8da29abb38a87cc704c9",
+        "docs/licenses/standard-fonts-LICENSE.md": "45cc2bb9957ed43f5c7f5eb1912f9f670730394d614079510477cae626194649",
+        "docs/licenses/tslib-CopyrightNotice.txt": "19246466cb51e46c12b22e43b4d2703ac981cb4295d061d6e20609bd5845510b",
+        "docs/licenses/tslib-LICENSE.txt": "a7d00bfd54525bc694b6e32f64c7ebcf5e6b7ae3657be5cc12767bce74654a47",
+        "docs/licenses/typescript-LICENSE.txt": "a7d00bfd54525bc694b6e32f64c7ebcf5e6b7ae3657be5cc12767bce74654a47",
+        "docs/licenses/typescript-ThirdPartyNoticeText.txt": "1af3c68039c57e539422da82a4faada506ce6d0ea6f90e0b699d02dbcdb7a90c",
+        "docs/licenses/upng-LICENSE.txt": "c1fb8861eca211bf5aea574358aba7039396c0c1824c2a1477cc126d398efd89"
+      }
+    },
+    "evidence": ["docs/provenance/reviews/phase0-license-amendment.md#inventory-and-release-disposition"],
+    "notes": "Independent documentation approval. All 207 vendored paths match the exact official distributions. Four inherited GPL v2 plus exception fonts block release; remaining build, notice, ancestry and policy findings are not cleared. No license waiver, owner acceptance or release certification."
+  }
+}

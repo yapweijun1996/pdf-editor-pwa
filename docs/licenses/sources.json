@@ -1,0 +1,377 @@
+{
+  "schemaVersion": 1,
+  "sources": {
+    "npm-pdfjs-dist": {
+      "url": "https://registry.npmjs.org/pdfjs-dist/6.5.438",
+      "version": "6.5.438",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/",
+      "sha256": "7efa1cc9f5a69987b1fd9d2da83fd2267c4d9e2914e1fe3aa7e04b3590091fd7"
+    },
+    "npm-pdf-lib": {
+      "url": "https://registry.npmjs.org/pdf-lib/1.17.1",
+      "version": "1.17.1",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/",
+      "sha256": "89934a7e887ac7f0c4d1a47a5e080c235ae6e3472e7a04cb2c34ae8bb7be5c04"
+    },
+    "npm-pako": {
+      "url": "https://registry.npmjs.org/pako/1.0.11",
+      "version": "1.0.11",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/",
+      "sha256": "0c380eb3d27a5a93fc5af301c13b9ff4f3e42085aadd2a5141c0bc9ddc30faad"
+    },
+    "npm-pako-1.0.10": {
+      "url": "https://registry.npmjs.org/pako/1.0.10",
+      "version": "1.0.10",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/",
+      "sha256": "c9b93538386b8ea99bbed04f8e6bf15653e8eead6b822fda5163b97eb404b19d"
+    },
+    "npm-tslib-1.11.1": {
+      "url": "https://registry.npmjs.org/tslib/1.11.1",
+      "version": "1.11.1",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/",
+      "sha256": "f501ba6cbaa5b876d76a341011af30f0b9b434209137680eeecfe8f49c912907"
+    },
+    "npm-standard-fonts": {
+      "url": "https://registry.npmjs.org/@pdf-lib/standard-fonts/1.0.0",
+      "version": "1.0.0",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/",
+      "sha256": "18fe130eaa90f04023ba5bac999b4557e85feebc0589a773868646701d4a4fd4"
+    },
+    "npm-upng": {
+      "url": "https://registry.npmjs.org/@pdf-lib/upng/1.0.1",
+      "version": "1.0.1",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/",
+      "sha256": "9e0150d9b294d8e23665e91f4546313b53239f4ec31b30dc25ed3a477176bfa3"
+    },
+    "npm-playwright": {
+      "url": "https://registry.npmjs.org/playwright/1.65.1",
+      "version": "1.65.1",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/",
+      "sha256": "142a893e43143a8660ccbf91827d6112169e1f24939cf78503d23d2e618a5715"
+    },
+    "npm-playwright-core": {
+      "url": "https://registry.npmjs.org/playwright-core/1.65.1",
+      "version": "1.65.1",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/",
+      "sha256": "7508a44c868fc36f8d35466b21293756d2c7ff3eda1da68fccf7b1249b829438"
+    },
+    "npm-typescript": {
+      "url": "https://registry.npmjs.org/typescript/5.9.3",
+      "version": "5.9.3",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "version, dist.tarball, dist.integrity, declared package license; package member paths relative to package/",
+      "sha256": "80f0d5d237c08c433b4cee823d75c4f54469beee86cc2fad5e1800f86b6243d8"
+    },
+    "phase0-plan": {
+      "url": "git:bcfda7a21d75af4e5c65cbaa4a1d7e4580cb3f22:ENGINE-PLAN.md",
+      "version": "bcfda7a",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Sections 1–5, especially dependency permissions, notices, provenance, independence and no behavior change",
+      "sha256": "45aacabcb091d56ec6078e15048e17fa2fa2722623a253cd23d71b5b9023a5cb"
+    },
+    "phase0-spotcheck": {
+      "url": "docs/provenance/reviews/phase0-review.md",
+      "version": "dae14d4",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "License spotcheck and Runtime check",
+      "sha256": "7575eb15286b2077ffefc96f242181e9f02fe7f4017e712ddac58e51c13e89de"
+    },
+    "repository": {
+      "url": "git:dae14d4ee2fd5ec9063e478499e4c864549e340a",
+      "version": "dae14d4",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "README Vendored software and offline assets; package.json devDependencies; package-lock.json packages; docs/provenance README and schema; tests/corpus/oracle-report.json toolVersions; local vendor raw bytes"
+    },
+    "mozilla-standard_fonts": {
+      "url": "https://raw.githubusercontent.com/mozilla/pdf.js/0a4153349dc473ba950fc17941c5ca7eda43c1de/external/standard_fonts/README.md",
+      "version": "0a4153349dc473ba950fc17941c5ca7eda43c1de",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Asset origin, build and/or license sections",
+      "sha256": "f21d2a0f65f7dd53bbe42ca51b40c4331f566fe91a71e689682c1b762889c47e"
+    },
+    "mozilla-iccs": {
+      "url": "https://raw.githubusercontent.com/mozilla/pdf.js/0a4153349dc473ba950fc17941c5ca7eda43c1de/external/iccs/README.md",
+      "version": "0a4153349dc473ba950fc17941c5ca7eda43c1de",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Asset origin, build and/or license sections",
+      "sha256": "237d0ee8abf1d4997e4657f60f0ea56655847382dac154a79ba5b3a5474974ad"
+    },
+    "mozilla-jbig2": {
+      "url": "https://raw.githubusercontent.com/mozilla/pdf.js/0a4153349dc473ba950fc17941c5ca7eda43c1de/external/jbig2/README.md",
+      "version": "0a4153349dc473ba950fc17941c5ca7eda43c1de",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Asset origin, build and/or license sections",
+      "sha256": "04d1a4f42b9812ff49bc414e8912c512ef138ebe76ac67928740486a94da4713"
+    },
+    "mozilla-openjpeg": {
+      "url": "https://raw.githubusercontent.com/mozilla/pdf.js/0a4153349dc473ba950fc17941c5ca7eda43c1de/external/openjpeg/README.md",
+      "version": "0a4153349dc473ba950fc17941c5ca7eda43c1de",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Asset origin, build and/or license sections",
+      "sha256": "bfa14fb932a9bb737b980a407148ac976d82f608f16641484286cc9041a10fa3"
+    },
+    "mozilla-qcms": {
+      "url": "https://raw.githubusercontent.com/mozilla/pdf.js/0a4153349dc473ba950fc17941c5ca7eda43c1de/external/qcms/README.md",
+      "version": "0a4153349dc473ba950fc17941c5ca7eda43c1de",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Asset origin, build and/or license sections",
+      "sha256": "9eed5608da83e2eb2ce6bb1cf70d91e083b01dbbf6c79a39129c81b1cab71e4f"
+    },
+    "mozilla-quickjs": {
+      "url": "https://raw.githubusercontent.com/mozilla/pdf.js/0a4153349dc473ba950fc17941c5ca7eda43c1de/external/quickjs/README.md",
+      "version": "0a4153349dc473ba950fc17941c5ca7eda43c1de",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Asset origin, build and/or license sections",
+      "sha256": "cb9cf523e87eec4839071856bb3c173f2f308426613ae0b55f9c9a9920cad002"
+    },
+    "mozilla-brotli": {
+      "url": "https://raw.githubusercontent.com/mozilla/pdf.js/0a4153349dc473ba950fc17941c5ca7eda43c1de/external/brotli/README.md",
+      "version": "0a4153349dc473ba950fc17941c5ca7eda43c1de",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Asset origin, build and/or license sections",
+      "sha256": "aba0e407fcdb787af2a52c12b60853468c9c1884a7eb3ea33a4873dd4882f35b"
+    },
+    "mozilla-cmapscompress": {
+      "url": "https://raw.githubusercontent.com/mozilla/pdf.js/0a4153349dc473ba950fc17941c5ca7eda43c1de/external/cmapscompress/README.md",
+      "version": "0a4153349dc473ba950fc17941c5ca7eda43c1de",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Asset origin, build and/or license sections",
+      "sha256": "f804bc358a8487e3987ac1d6e62b02b511c06231e1a3352315185cf4edc4edef"
+    },
+    "mozilla-build": {
+      "url": "https://raw.githubusercontent.com/mozilla/pdf.js/0a4153349dc473ba950fc17941c5ca7eda43c1de/gulpfile.mjs",
+      "version": "0a4153349dc473ba950fc17941c5ca7eda43c1de",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Asset copy tasks (CMaps, ICCs, fonts, WASM) and npm distribution metadata",
+      "sha256": "00c4125b7769cafe42fb5f3112f4ef7a7d1dfeebcf8a8381b83338e7802b4102"
+    },
+    "pdf.mjs.map": {
+      "url": "https://registry.npmjs.org/pdfjs-dist/-/pdfjs-dist-6.5.438.tgz",
+      "version": "6.5.438",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "package/build/pdf.mjs.map: sources and attribution headers in sourcesContent; companion unminified build, not a direct minified map",
+      "sha256": "f21c84ed1d3b14ec59441419ceffc0b6a381c3da5691ee2ae9c174c2eb73c213"
+    },
+    "pdf.worker.mjs.map": {
+      "url": "https://registry.npmjs.org/pdfjs-dist/-/pdfjs-dist-6.5.438.tgz",
+      "version": "6.5.438",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "package/build/pdf.worker.mjs.map: sources and attribution headers in sourcesContent; companion unminified build, not a direct minified map",
+      "sha256": "416acb0235d3f4dda4036b4465b339bd894a97a927ec17020115c88ec99241e5"
+    },
+    "pdf-lib.esm.min.js.map": {
+      "url": "https://registry.npmjs.org/pdf-lib/-/pdf-lib-1.17.1.tgz",
+      "version": "1.17.1",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "package/dist/pdf-lib.esm.min.js.map: sources, sourcesContent and third-party headers; direct map of vendored ESM",
+      "sha256": "b59b1e3497645411fb7cb3795549b066b882c3c92b87cdcefaa6621870550205"
+    },
+    "pdf-lib-lock": {
+      "url": "https://raw.githubusercontent.com/Hopding/pdf-lib/v1.17.1/yarn.lock",
+      "version": "v1.17.1",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "tslib and direct/nested Pako, standard-fonts and upng resolutions; exact source versions checked where distinguishable",
+      "sha256": "1ee25ea1250a44d0f188c66083a24af096f3fed77c1236ff95537dd7eb6f324c"
+    },
+    "pdf-lib-rollup": {
+      "url": "https://raw.githubusercontent.com/Hopding/pdf-lib/v1.17.1/rollup.config.js",
+      "version": "v1.17.1",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "ESM build configuration and dependency bundling",
+      "sha256": "4952bcd5a549dee3b45ddd2cbedb086a438dd74eecd9b3a36ed1cba38b11ed31"
+    },
+    "mozilla-brotli-license": {
+      "url": "https://raw.githubusercontent.com/mozilla/pdf.js/0a4153349dc473ba950fc17941c5ca7eda43c1de/external/brotli/LICENSE_BROTLI",
+      "version": "0a4153349dc473ba950fc17941c5ca7eda43c1de",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "MIT text copied verbatim",
+      "sha256": "2a57418d6b10947fe0dfbec3a600269e2745136c125cbf15b256e5ae18af23cb"
+    },
+    "mozilla-brotli-bytes": {
+      "url": "https://raw.githubusercontent.com/mozilla/pdf.js/0a4153349dc473ba950fc17941c5ca7eda43c1de/external/brotli/decode.js",
+      "version": "0a4153349dc473ba950fc17941c5ca7eda43c1de",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "License header and reference worker sourcesContent connection",
+      "sha256": "7fd3ecb658c9c7e389eaf0aaf7e0adcc8ba47e043c21bdefb8c3caa83d893d35"
+    },
+    "fedora-liberation": {
+      "url": "https://fedoraproject.org/w/index.php?title=Licensing:LiberationFontLicense&oldid=66741",
+      "version": "oldid 66741",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Red Hat GNU GPL v2 font exception; counterpart of TTF name IDs 13/14"
+    },
+    "liberation-original-archive": {
+      "url": "https://archive.fedoraproject.org/pub/archive/fedora/linux/releases/19/Everything/source/SRPMS/l/liberation-fonts-1.07.4-2.fc19.src.rpm",
+      "version": "1.07.4-2.fc19",
+      "consultedOn": "2026-11-19",
+      "status": "unavailable",
+      "sections": "Attempted original archive cross-check; not used for mapping"
+    },
+    "icc-original": {
+      "url": "https://raw.githubusercontent.com/saucecontrol/Compact-ICC-Profiles/bdd84663061bc4ae95ca70decff54f581e27f702/profiles/CGATS001Compat-v2-micro.icc",
+      "version": "bdd84663061bc4ae95ca70decff54f581e27f702",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Exact bytes match npm and vendor",
+      "sha256": "73e1ba37d2bad5bab2a964f40a9eed96209666efc067c3322626214bbef234a0"
+    },
+    "afm-notice": {
+      "url": "https://raw.githubusercontent.com/Hopding/standard-fonts/41a6440267de5456042c7bcbac5ec65065e2ef69/font_metrics/MustRead.html",
+      "version": "41a6440267de5456042c7bcbac5ec65065e2ef69",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Original Adobe permission/conditions retained in project dependency source",
+      "sha256": "b226bfc00e1b8b8a80c7b3cfbbc322d13b4b0401f94cdeafdd93b2210ad802eb"
+    },
+    "afm-predecessor": {
+      "url": "https://raw.githubusercontent.com/chbrown/afm/a1b78e92dc7aa5348d3c5b3700e8ad833ba24238/vendor/Adobe/Core14/MustRead.html",
+      "version": "a1b78e92dc7aa5348d3c5b3700e8ad833ba24238",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Identical Adobe notice in predecessor",
+      "sha256": "b226bfc00e1b8b8a80c7b3cfbbc322d13b4b0401f94cdeafdd93b2210ad802eb"
+    },
+    "pdfkit-license": {
+      "url": "https://raw.githubusercontent.com/foliojs/pdfkit/1e62e6ffe24b378eb890df507a47610f4c4a7b24/LICENSE",
+      "version": "1e62e6ffe24b378eb890df507a47610f4c4a7b24",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "MIT text at commit credited by pdf-lib",
+      "sha256": "5f0d5197d2b5d91f41de43143b0be42fb55515bc2b894f2a9b62de9f7056c0f8"
+    },
+    "base64-license": {
+      "url": "https://raw.githubusercontent.com/niklasvh/base64-arraybuffer/master/LICENSE",
+      "version": "master observed; adaptation revision unconfirmed",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "MIT text and 2012 copyright corresponding to credited attribution",
+      "sha256": "f3eca6ff762533fa5a77caf954a143e48afa204668cf97dce758c45a9e006be3"
+    },
+    "history-FoxitFixed.pfb": {
+      "url": "https://github.com/mozilla/pdf.js/commit/4c1dd47e65ae66135c6d9a55774a99a8066fbf37",
+      "version": "4c1dd47e65ae66135c6d9a55774a99a8066fbf37",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Last commit touching selected file at the pinned Mozilla revision: Include and use the 14 standard fonts files.",
+      "sha256": "ada0aac9caa5ee201c27e62363a033112e1cfe5a8d5a4ea89ee59630f45be3ba"
+    },
+    "history-LiberationSans-Regular.ttf": {
+      "url": "https://github.com/mozilla/pdf.js/commit/34a2fa72c70ee8722a740d4d328d68df3c6ecc75",
+      "version": "34a2fa72c70ee8722a740d4d328d68df3c6ecc75",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Last commit touching selected file at the pinned Mozilla revision: XFA - Add Liberation-Sans font as a substitution for some missing fonts",
+      "sha256": "ba25a13d7da1e827745881875a9e0805ac3d97e84e8e85bb076046c1fcb7799f"
+    },
+    "history-decode.js": {
+      "url": "https://github.com/mozilla/pdf.js/commit/43273fde27132d12caa8ffce632279e83b9dbc59",
+      "version": "43273fde27132d12caa8ffce632279e83b9dbc59",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Last commit touching selected file at the pinned Mozilla revision: Add support for Brotli decompression",
+      "sha256": "eee727de38533e346410d8134ce061ddc9fac4f85cd06f3f96a9e125d0b7a22c"
+    },
+    "history-jbig2.wasm": {
+      "url": "https://github.com/mozilla/pdf.js/commit/c3a2798726365a6a36f7dd78bcaa51dc298395f6",
+      "version": "c3a2798726365a6a36f7dd78bcaa51dc298395f6",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Last commit touching selected file at the pinned Mozilla revision: Update JBIG2 decoder to pdfium@bb1f9f71",
+      "sha256": "b3b6f9049278ab12d719771e5b13d62351a292529cd750d0dbcbec4ffc1b08d0"
+    },
+    "history-openjpeg.wasm": {
+      "url": "https://github.com/mozilla/pdf.js/commit/0d5441e67d5a4606eab311ec9aa72053496432a3",
+      "version": "0d5441e67d5a4606eab311ec9aa72053496432a3",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Last commit touching selected file at the pinned Mozilla revision: Improve the performances of the jpx decoder and reduce its size and the jbig2 one",
+      "sha256": "878ed7fd0c02d13fc327299fd6b8ecdf487b56e9349ef6c81442de1eed4d19d7"
+    },
+    "history-qcms_bg.wasm": {
+      "url": "https://github.com/mozilla/pdf.js/commit/e7acffcef36eec7e77ade4f77e5e8ca0639c44d2",
+      "version": "e7acffcef36eec7e77ade4f77e5e8ca0639c44d2",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Last commit touching selected file at the pinned Mozilla revision: Update qcms wrapper",
+      "sha256": "483d1aaf5e3819a5bed1d85c57cf1d50055ae2a7561812e2453892df8b21a0b1"
+    },
+    "history-quickjs-eval.wasm": {
+      "url": "https://github.com/mozilla/pdf.js/commit/7a7e4fd382481a76f55c6d735873f635c9178db1",
+      "version": "7a7e4fd382481a76f55c6d735873f635c9178db1",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Last commit touching selected file at the pinned Mozilla revision: Update quickjs to rev 3d5e064e9dd67c70f7962836505a7fa067bf0a4e",
+      "sha256": "035d1f8fe1072100cbd8f83add7f67304c5e1901ef5f9faa93da1a42ec120a81"
+    },
+    "qpdf-license": {
+      "url": "https://raw.githubusercontent.com/qpdf/qpdf/v12.4.2/LICENSE.txt",
+      "version": "12.4.2",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Upstream license matched local installation notice text",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    "qpdf-notice": {
+      "url": "https://raw.githubusercontent.com/qpdf/qpdf/v12.4.2/NOTICE.md",
+      "version": "12.4.2",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "Upstream notice matched local installation notice text",
+      "sha256": "b207f65a9e5491195ded63b2941199b19a4d30148871f2742c88eae7bfc513a6"
+    },
+    "poppler-release": {
+      "url": "https://poppler.freedesktop.org/poppler-25.04.0.tar.xz",
+      "version": "25.04.0",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "COPYING (matched installed text); README.md History and GPL licensing",
+      "sha256": "b010c596dce127fba88532fd2f1043e55ea30601767952d0f2c0a80e7dc0da3d"
+    },
+    "tool-local": {
+      "url": "tests/corpus/oracle-report.json",
+      "version": "dae14d4 plus local observations",
+      "consultedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": "qpdf --version / --copyright; pdftoppm -v; clean-room comparator parser SHA-256 from original review plus installed file comparison"
+    }
+  }
+}

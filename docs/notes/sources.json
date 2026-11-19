@@ -1,6 +1,6 @@
 {
   "ledgerVersion": 1,
-  "scope": "Phase 0 clean-room research references, not a fixture manifest or artifact dedication.",
+  "scope": "Phase 0 research references and current owner policy amendment, not a fixture manifest or artifact dedication. Original consultations and the artifact-policy planning status below are historical, not current audit or dedication evidence.",
   "sources": [
     {
       "id": "adobe-iso-32000-1-2008",
@@ -54,8 +54,23 @@
       "path": "ENGINE-PLAN.md",
       "accessedOn": "2026-11-19",
       "status": "consulted",
+      "sha256": "45aacabcb091d56ec6078e15048e17fa2fa2722623a253cd23d71b5b9023a5cb",
       "sections": { "1–5": "Project scope, licensing, provenance, Phase 0, independent gates and production targets." },
       "notes": "Project requirements, not PDF specification evidence."
+    },
+    {
+      "id": "owner-phase0-license-amendment",
+      "kind": "owner-direct",
+      "title": "Owner direction on Phase 0 license and provenance policy",
+      "version": "Direct task message for the amendment aligned to ENGINE-PLAN.md at bcfda7a",
+      "locator": "Owner task message: Goal, Scope, Invariants and Interpretation policy",
+      "accessedOn": "2026-11-19",
+      "status": "consulted",
+      "sections": {
+        "Goal and Scope": "Supersedes the blanket reading restriction; allows permissive dependency use and source reading for understanding, debugging and audit. Retains pdf-lib and PDF.js. No copying, translating or porting into our modules.",
+        "Invariants and Interpretation policy": "GPL, AGPL and unknown-license material are barred; reject LGPL absent an explicit compatible disposition. Keep historical work and the corpus and baseline intact, and require fresh independent review."
+      },
+      "notes": "Direct task instruction, summarized here; not a repository document, a grant of third-party rights, or release approval. No file digest applies to the message."
     },
     {
       "id": "project-spec",

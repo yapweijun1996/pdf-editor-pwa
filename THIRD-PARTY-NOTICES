@@ -1,0 +1,81 @@
+PDF Editor PWA — Third-party notices (Phase 0)
+================================================
+
+Release status: BLOCKED. This is a factual inventory, not a release approval
+or legal assurance. No runtime dependency was added or changed in this revision.
+The four inherited files below are Liberation Sans 1.07.4, GNU GPL v2 with the
+Liberation font exception, not the SIL OFL version and not Apache-licensed:
+
+  vendor/pdfjs/standard_fonts/LiberationSans-Bold.ttf
+  vendor/pdfjs/standard_fonts/LiberationSans-BoldItalic.ttf
+  vendor/pdfjs/standard_fonts/LiberationSans-Italic.ttf
+  vendor/pdfjs/standard_fonts/LiberationSans-Regular.ttf
+
+See vendor/pdfjs/standard_fonts/LICENSE_LIBERATION and the pinned Mozilla font
+README in docs/licenses/sources.json. All four font name tables identify 1.07.4
+and the Liberation license. The document-embedding exception is not a permissive
+license for redistribution of these standalone font files and is not a policy
+waiver. LICENSE_LIBERATION is a retained notice, not a fifth font binary.
+
+Bundled components and notices
+-----------------------------
+
+* pdf-lib 1.17.1: MIT for pdf-lib itself (vendor/pdf-lib/LICENSE.md).
+  The ESM bundle also contains tslib (Apache-2.0), Pako (MIT and Zlib),
+  @pdf-lib/upng (MIT) and @pdf-lib/standard-fonts (MIT for its code), with
+  Base64 ArrayBuffer (MIT), PDFKit path code (MIT) and the Apache-licensed
+  PDF.js/Xpdf Flate port. Core 14 Adobe font metrics carry separate Adobe
+  conditions, including notice retention and marking modifications. The Adobe
+  notice is retained here; treatment of the converted data and exact upstream
+  ancestry are open release questions. The bundle is not MIT-only.
+* PDF.js/pdfjs-dist 6.5.438: Apache-2.0 for PDF.js code (vendor/pdfjs/LICENSE).
+  Both JS bundles retain Mozilla's inline notice. The reference source maps
+  also attribute MurmurHash to Opera (Apache-2.0); the worker has the Xpdf Flate
+  attribution, embeds Google's Brotli decoder (MIT) and uses Mozilla wrappers
+  for qcms (MIT), JBIG2 (Apache-2.0 with PDFium notices), and OpenJPEG
+  (BSD-2-Clause). The same decoder families have separate assets below.
+* Packed Adobe CMaps: BSD-3-Clause terms (vendor/pdfjs/cmaps/LICENSE).
+* Foxit standard fonts: PDFium BSD-3-Clause terms and Foxit attribution
+  (vendor/pdfjs/standard_fonts/LICENSE_FOXIT and docs/licenses/attributions.txt).
+* Compact ICC profile: CC0-1.0 (vendor/pdfjs/iccs/LICENSE); this is the actual
+  upstream designation, not Apache-2.0 or a project policy determination.
+* JBIG2 WASM and fallback: PDFium BSD-3-Clause and Apache-2.0 notices plus
+  Mozilla Apache-2.0 wrapper notice. See LICENSE_JBIG2 and LICENSE_PDFJS_JBIG2
+  in vendor/pdfjs/wasm/ (full Apache terms also in vendor/pdfjs/LICENSE).
+* OpenJPEG WASM and fallback: BSD-2-Clause, upstream and Mozilla notices
+  (LICENSE_OPENJPEG and LICENSE_PDFJS_OPENJPEG in vendor/pdfjs/wasm/).
+* qcms WASM: MIT, upstream and Mozilla notices (LICENSE_QCMS and
+  LICENSE_PDFJS_QCMS in vendor/pdfjs/wasm/).
+* QuickJS sandbox JS and WASM: MIT, upstream and Mozilla notices
+  (LICENSE_QUICKJS and LICENSE_PDFJS_QUICKJS in vendor/pdfjs/wasm/).
+
+Exact official npm distributions:
+  https://registry.npmjs.org/pdf-lib/-/pdf-lib-1.17.1.tgz
+  https://registry.npmjs.org/pdfjs-dist/-/pdfjs-dist-6.5.438.tgz
+
+All 207 vendor files match their npm tarball members byte for byte. The
+per-file inventory is docs/licenses/inventory.json (path, SHA-256, official
+package/member, patch status, and component/notice/evidence keys); exact
+source URLs, versions, license texts and uncertainties are linked there and
+in docs/licenses/sources.json. Existing vendor notices are kept in place;
+additional upstream terms and attribution notices are under docs/licenses/.
+The exact npm match does not establish the complete build-input ancestry or
+all redistribution obligations. See the unresolved findings in the inventory.
+
+Development and external tools (not shipped with the app)
+---------------------------------------------------------
+
+* Playwright and Playwright Core 1.65.1: locked Apache-2.0 dev dependencies;
+  upstream LICENSE, NOTICE and ThirdPartyNotices are retained separately.
+  Browser downloads are test tools, not covered by a blanket Apache claim.
+* TypeScript 5.9.3: local Apache-2.0 comparator parser only; its exact parser
+  file matched official npm bytes. It is not a project or runtime dependency.
+  This is distinct from the tslib helpers embedded in pdf-lib.
+* qpdf 12.4.2 and Poppler 25.04.0: separately installed, nonredistributed CLI
+  test oracles. qpdf reports Apache-2.0; Poppler is GPL with GPLv2 text in its
+  distribution. Neither is bundled into the app. This is not an audit of their
+  linked dependencies, upstream license variants or downstream binaries.
+
+See docs/licenses/README.md for verification and update instructions. The
+plan permits MIT and specified permissive licenses with their notices; that
+permission does not clear these inherited GPL or unverified components.
