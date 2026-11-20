@@ -1,4 +1,4 @@
-import { PDFDocument, PDFName } from '../vendor/pdf-lib/dist/pdf-lib.esm.min.js';
+import { PDFContext, PDFDict, PDFDocument, PDFName, PDFObjectParser, PDFRawStream, PDFRef, decodePDFRawStream } from '../vendor/pdf-lib/dist/pdf-lib.esm.min.js';
 
 // IDB publishes completed journal pointers; the corresponding bytes live in OPFS.
 const namespace = 'paperplane-save-v1';
@@ -42,9 +42,108 @@ async function write(handle, bytes, beforeClose) {
     if (stream && !closed) { try { await stream.abort(); } catch { /* Preserve the primary failure. */ } }
   }
 }
+// Validate a standalone export, not arbitrary incremental or hybrid revisions.
+// PDFDocument.load can reconstruct a catalog even when no trailer exists on disk.
+const latin = new TextDecoder('latin1'); // one code unit per byte, including stream data
+function requireStructure(ok) {
+  if (!ok) throw new Error('Incomplete or unsupported PDF export structure.');
+}
+function exportIndex(bytes) {
+  const text = latin.decode(bytes);
+  requireStructure(/^%PDF-\d\.\d[\r\n]/.test(text));
+  const footer = /[\r\n]startxref[\t \r\n]+(\d+)[\t \r\n]+%%EOF[\t \r\n]*$/.exec(text);
+  const at = Number(footer?.[1]);
+  requireStructure(footer && at > 0 && at < footer.index);
+  const section = text.slice(at, footer.index);
+  const rows = new Map();
+  function row(id, type, field, gen) {
+    requireStructure(Number.isSafeInteger(id) && !rows.has(id) && type <= 2);
+    if (type === 1) {
+      const header = /^(\d+)\s+(\d+)\s+obj\b/.exec(text.slice(field, field + 64));
+      requireStructure(field <= at && header && +header[1] === id && +header[2] === gen);
+    }
+    rows.set(id, { type, field, gen });
+  }
+  const get = (dict, key) => dict.get(PDFName.of(key));
+  const parse = start => PDFObjectParser.forBytes(bytes.subarray(at + start, footer.index), PDFContext.create());
+  let dict;
+  if (/^xref[\r\n]/.test(section)) {
+    const lines = section.split(/\r\n|[\r\n]/);
+    let i = 1;
+    while (lines[i] !== 'trailer') {
+      const group = /^(\d+) (\d+) *$/.exec(lines[i++]);
+      requireStructure(group && +group[2] > 0 && +group[2] <= lines.length - i);
+      for (let j = 0; j < +group[2]; j++) {
+        const entry = /^(\d{10}) (\d{5}) ([nf]) ?$/.exec(lines[i++]);
+        requireStructure(entry);
+        row(+group[1] + j, Number(entry[3] === 'n'), +entry[1], +entry[2]);
+      }
+      while (lines[i] === '') i++;
+    }
+    const start = section.indexOf('trailer') + 7, parser = parse(start);
+    dict = parser.parseObject();
+    requireStructure(dict instanceof PDFDict && !section.slice(start + parser.bytes.offset()).trim());
+  } else {
+    const header = /^(\d+) (\d+) obj\s+/.exec(section);
+    requireStructure(header);
+    const start = header[0].length, parser = parse(start), stream = parser.parseObject();
+    requireStructure(stream instanceof PDFRawStream && section.slice(start + parser.bytes.offset()).trim() === 'endobj');
+    dict = stream.dict;
+    requireStructure(get(dict, 'Type') === PDFName.of('XRef') && get(dict, 'Length')?.asNumber() === stream.getContentsSize());
+    const numbers = array => array.asArray().map(n => n.asNumber());
+    const widths = numbers(get(dict, 'W'));
+    requireStructure(widths.length === 3 && widths.every(w => Number.isInteger(w) && w >= 0 && w <= 6));
+    const stride = widths.reduce((a, b) => a + b);
+    const data = decodePDFRawStream(stream).decode();
+    const index = get(dict, 'Index');
+    const ranges = index ? numbers(index) : [0, get(dict, 'Size').asNumber()];
+    requireStructure(stride && ranges.length % 2 === 0 && ranges.every(n => Number.isSafeInteger(n) && n >= 0));
+    let pos = 0;
+    function field(width, fallback) {
+      let n = 0;
+      for (let i = 0; i < width; i++) n = n * 256 + data[pos++];
+      return width ? n : fallback;
+    }
+    for (let i = 0; i < ranges.length; i += 2) {
+      const count = ranges[i + 1];
+      requireStructure(count <= (data.length - pos) / stride);
+      for (let j = 0; j < count; j++) row(ranges[i] + j, field(widths[0], 1), field(widths[1], 0), field(widths[2], 0));
+    }
+    requireStructure(pos === data.length && rows.get(+header[1])?.field === at && rows.get(+header[1]).type === 1);
+  }
+  const size = get(dict, 'Size')?.asNumber(), root = get(dict, 'Root');
+  requireStructure(Number.isSafeInteger(size) && rows.get(0)?.type === 0 && root instanceof PDFRef &&
+    !get(dict, 'Prev') && !get(dict, 'XRefStm'));
+  const containers = new Map();
+  for (const [id, entry] of rows) {
+    requireStructure(id < size);
+    if (entry.type !== 2) continue;
+    // A compressed entry points to an object stream and a slot, not a byte offset.
+    if (!containers.has(entry.field)) {
+      const parent = rows.get(entry.field);
+      requireStructure(parent?.type === 1);
+      const head = /^\d+\s+\d+\s+obj\s+/.exec(text.slice(parent.field, parent.field + 64));
+      requireStructure(head);
+      const stream = PDFObjectParser.forBytes(bytes.subarray(parent.field + head[0].length), PDFContext.create()).parseObject();
+      requireStructure(stream instanceof PDFRawStream && get(stream.dict, 'Type') === PDFName.of('ObjStm'));
+      const first = get(stream.dict, 'First').asNumber();
+      const ids = latin.decode(decodePDFRawStream(stream).decode().subarray(0, first)).trim().split(/\s+/);
+      requireStructure(ids.length === 2 * get(stream.dict, 'N').asNumber());
+      containers.set(entry.field, ids);
+    }
+    requireStructure(Number(containers.get(entry.field)[2 * entry.gen]) === id);
+  }
+  return { root, rows };
+}
 export async function validatePDF(bytes, count) {
+  const index = exportIndex(bytes);
   const pdf = await PDFDocument.load(bytes, { updateMetadata: false, throwOnInvalidObject: true });
-  const root = pdf.context.lookup(pdf.context.trailerInfo.Root);
+  for (const [ref] of pdf.context.enumerateIndirectObjects()) {
+    const row = index.rows.get(ref.objectNumber);
+    requireStructure(row && (row.type === 2 ? ref.generationNumber === 0 : row.type === 1 && row.gen === ref.generationNumber));
+  }
+  requireStructure(pdf.context.trailerInfo.Root === index.root);
+  const root = pdf.context.lookup(index.root);
   const pages = pdf.getPages();
   if (root !== pdf.catalog || root.get(PDFName.of('Type')) !== PDFName.of('Catalog') ||
       !pages.length || pdf.catalog.Pages().Count().asNumber() !== pages.length || (count != null && pages.length !== count)) {

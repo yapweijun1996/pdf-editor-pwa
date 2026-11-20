@@ -127,6 +127,60 @@ test('S1 native OPFS round trip, backup before writer, xref/catalog and no doubl
   await inspect(await target(page));
 });
 
+// Intercept only the serializer output, not validation, storage or the save action.
+for (const mode of ['classic', 'stream', 'truncated', 'no EOF', 'no startxref', 'offset outside',
+  'offset to ordinary object', 'no trailer', 'no Root', 'wrong Root', 'bad table entry', 'wrong stream type']) {
+  test(`S1 intended export: ${mode}`, async t => {
+    const { page } = await connected(t);
+    await rotate(page);
+    await page.evaluate(async mode => {
+      const { PDFDocument } = await import('/vendor/pdf-lib/dist/pdf-lib.esm.min.js');
+      const serializer = PDFDocument.prototype.save;
+      PDFDocument.prototype.save = async function(options) {
+        const stream = mode === 'stream' || mode === 'wrong stream type';
+        const bytes = await serializer.call(this, { ...options, useObjectStreams: stream });
+        const text = new TextDecoder('latin1').decode(bytes);
+        const pointer = /startxref\s+(\d+)\s+%%EOF$/.exec(text);
+        const offset = Number(pointer[1]);
+        const tail = text.slice(offset);
+        if (mode === 'classic' || mode === 'stream') return bytes;
+        if (mode === 'truncated') return bytes.slice(0, offset);
+        if (mode === 'wrong stream type') {
+          const at = text.indexOf('/Type /XRef', offset);
+          if (at < 0) throw Error('Invalid stream fixture');
+          bytes[at + 7] = 89;
+          return bytes;
+        }
+        const altered = {
+          'no EOF': tail.replace('%%EOF', ''), 'no startxref': tail.replace(/startxref\s+\d+/, ''),
+          'offset outside': tail.replace(pointer[0], `startxref\n${bytes.length}\n%%EOF`),
+          'offset to ordinary object': tail.replace(pointer[0], `startxref\n${text.indexOf('1 0 obj')}\n%%EOF`),
+          'no trailer': tail.replace(/trailer[\s\S]*?startxref/, 'startxref'),
+          'no Root': tail.replace(/\/Root \d+ \d+ R/, ''), 'wrong Root': tail.replace(/\/Root \d+ \d+ R/, '/Root 1 0 R'),
+          'bad table entry': tail.replace(/\d{10} 00000 n/, '0000000001 00000 n'),
+        }[mode];
+        if (!altered || altered === tail) throw Error('Invalid classic fixture');
+        const suffix = new TextEncoder().encode(altered), output = new Uint8Array(offset + suffix.length);
+        output.set(bytes.subarray(0, offset)); output.set(suffix, offset);
+        return output;
+      };
+    }, mode);
+    await save(page);
+    if (mode === 'classic' || mode === 'stream') {
+      await status(page, /Saved and verified/);
+      const actual = await target(page), [entry] = await writes(page);
+      assert.equal(hash(actual), hash(entry.intended));
+      await inspect(actual);
+      assert.match(Buffer.from(actual).toString('latin1'), mode === 'stream' ? /\/Type \/XRef/ : /\ntrailer\n/);
+      return;
+    }
+    await status(page, /PDF export structure|catalog or page count/);
+    await dirty(page);
+    assert.equal((await writes(page)).length, 0);
+    assert.equal(hash(await target(page)), hash(original));
+  });
+}
+
 for (const action of ['Save a copy', 'Reload from disk', 'Overwrite anyway']) {
   test(`S1 same-size/mtime external conflict: ${action}`, async t => {
     const { page } = await connected(t);

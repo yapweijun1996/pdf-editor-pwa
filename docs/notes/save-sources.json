@@ -1,7 +1,22 @@
 {
   "ledgerVersion": 1,
-  "scope": "Save provenance extension to sources.json; author consultations transcribed from goal 6638c3e8-7b45-41da-ac7e-331670aece32, thread message 2. No additional reviewer consultations are implied.",
+  "scope": "Save provenance extension to sources.json. Original implementation and repair inputs come from goal 6638c3e8-7b45-41da-ac7e-331670aece32, thread messages 2 and 14. The repair author reported no external PDF specification consultation; the public references below are historical only and were not independently reconsulted for this review.",
   "sources": [
+    {
+      "id": "paperplane-save-integrity-r4",
+      "kind": "project-context",
+      "title": "Paperplane save integrity repair brief",
+      "version": "Goal 6638c3e8-7b45-41da-ac7e-331670aece32, specification revision 4",
+      "path": ".aic/save-integrity-repair.md",
+      "accessedOn": "2026-11-20",
+      "status": "consulted",
+      "sections": {
+        "Scope": "Check intended bytes before any target writer and repeat verification after writing.",
+        "Invariants": "Keep both standalone cross-reference formats and preserve raw original bytes.",
+        "Tests": "Reproduce QA1 in the public transaction and retain existing fault and browser checks."
+      },
+      "notes": "Internal brief. QA1 report e627dcb7-9bac-4dc7-bd5e-80e57f259671 describes the earlier failure; the reviewer reproduced it independently."
+    },
     {
       "id": "paperplane-save-contract-r3",
       "kind": "project-context",
