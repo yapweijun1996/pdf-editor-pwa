@@ -144,7 +144,14 @@ function pageGestures({ stage, overlay, canTap, canViewTap, canPinch, canPan, is
   return { cancel, canStartTouchStroke: () => touches.size === 1 };
 }
 
-export function createViewer({ stage, paper, canvas, overlay, thumbs, getSource, onSelect, onError,
+// Construct a private viewport; PDF.js source page proxies can be shared by many entries.
+export function entryView(page, entry, scale) {
+  const rotation = (page.rotate + entry.rotation) % 360;
+  const v = page.getViewport({ scale, rotation });
+  return entry.crop ? new v.constructor({ viewBox: [...entry.crop], userUnit: page.userUnit, scale, rotation }) : v;
+}
+
+export function createViewer({ stage, paper, canvas, overlay, thumbs, getSource, onSelect, onCheck, onDrop, onPosition, checked, onError,
   canTap, canViewTap, canPinch, canPan, isPhone, onTap, onViewTap, onPinch, onMultitouch, beginEdit, selectedMarkId }) {
   let generation = 0, task, viewport, active, observer, thumbnailKey;
   const jobs = new Map();
@@ -194,8 +201,9 @@ export function createViewer({ stage, paper, canvas, overlay, thumbs, getSource,
       const [x, y] = viewport.convertToViewportPoint(mark.x, mark.y);
       const scale = viewport.scale * viewport.userUnit;
       const transform = `translate(${x} ${y}) rotate(${viewport.rotation - mark.angle})`;
-      if (mark.kind === 'text') {
-        const node = svg('text', { transform, fill: mark.color, 'font-family': 'Helvetica, Arial, sans-serif', 'font-size': mark.size * scale, 'xml:space': 'preserve' });
+      if (mark.kind === 'text' || mark.kind === 'stamp') {
+        const node = svg('text', { transform, fill: mark.color, 'font-family': 'Helvetica, Arial, sans-serif', 'font-size': mark.size * scale, 'xml:space': 'preserve',
+          ...(mark.kind === 'stamp' ? { opacity: mark.opacity, textLength: mark.advance * scale, lengthAdjust: 'spacingAndGlyphs' } : {}) });
         node.textContent = mark.text;
         append(node);
       } else {
@@ -223,12 +231,11 @@ export function createViewer({ stage, paper, canvas, overlay, thumbs, getSource,
     try {
       const page = await getSource(entry.source).pdf.getPage(entry.index + 1);
       if (id !== generation) return;
-      const rotation = (page.rotate + entry.rotation) % 360;
-      const original = page.getViewport({ scale: 1, rotation });
+      const original = entryView(page, entry, 1);
       const style = getComputedStyle(stage);
       const available = stage.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) - (isPhone() ? 0 : 2);
       const scale = Math.max(1, Math.min(available, 1100)) / original.width * zoom;
-      const view = page.getViewport({ scale, rotation });
+      const view = entryView(page, entry, scale);
       const ratio = Math.min(devicePixelRatio || 1, 2, 4096 / Math.max(view.width, view.height),
         Math.sqrt(10_000_000 / (view.width * view.height)));
       const width = Math.max(1, Math.ceil(view.width * ratio));
@@ -236,8 +243,10 @@ export function createViewer({ stage, paper, canvas, overlay, thumbs, getSource,
       const buffer = document.createElement('canvas');
       buffer.width = width;
       buffer.height = height;
-      task = page.render({ canvas: buffer, viewport: view, transform: [ratio, 0, 0, ratio, 0, 0], annotationMode });
-      await task.promise;
+      if (!entry.blank) {
+        task = page.render({ canvas: buffer, viewport: view, transform: [ratio, 0, 0, ratio, 0, 0], annotationMode });
+        await task.promise;
+      }
       if (id !== generation) return;
       viewport = view;
       paper.style.width = `${view.width}px`;
@@ -278,23 +287,30 @@ export function createViewer({ stage, paper, canvas, overlay, thumbs, getSource,
     try {
       const page = await getSource(entry.source).pdf.getPage(entry.index + 1);
       if (jobs.get(button) !== job) return;
-      const rotation = (page.rotate + entry.rotation) % 360;
-      const original = page.getViewport({ scale: 1, rotation });
-      const view = page.getViewport({ scale: Math.min(105 / original.width, 100 / original.height), rotation });
+      const original = entryView(page, entry, 1);
+      const view = entryView(page, entry, Math.min(105 / original.width, 100 / original.height));
       const tile = document.createElement('canvas');
       tile.width = Math.ceil(view.width);
       tile.height = Math.ceil(view.height);
-      job.task = page.render({ canvas: tile, viewport: view, annotationMode });
-      await job.task.promise;
+      if (!entry.blank) {
+        job.task = page.render({ canvas: tile, viewport: view, annotationMode });
+        await job.task.promise;
+      }
       if (jobs.get(button) === job) button.firstChild.append(tile);
     } catch {
       // A failed or canceled preview keeps its page number and remains navigable.
     }
   }
 
+  let drag;
+  const cancelDrag = () => { if (drag) { drag.grip.classList.remove('moving'); drag = undefined; } };
+  window.addEventListener('pointerdown', e => { if (drag && drag.pointer !== e.pointerId) cancelDrag(); }, true);
+  window.addEventListener('blur', cancelDrag);
+  window.addEventListener('keydown', e => { if (e.key === 'Escape') cancelDrag(); });
   function list(pages, selected, reveal = false) {
-    const key = pages.map(p => `${p.id}/${p.rotation}`).join(',');
+    const key = pages.map(p => `${p.id}/${p.rotation}/${p.crop ?? ''}`).join(',');
     if (thumbnailKey !== key) {
+      cancelDrag();
       thumbnailKey = key;
       observer?.disconnect();
       for (const button of jobs.keys()) cancelThumb(button);
@@ -314,12 +330,37 @@ export function createViewer({ stage, paper, canvas, overlay, thumbs, getSource,
         button.setAttribute('aria-label', `Go to page ${index + 1}`);
         button.append(surface, `${index + 1}${page.marks.length ? ' •' : ''}`);
         button.onclick = () => onSelect(index, false);
-        return button;
+        const row = document.createElement('div'), box = document.createElement('input'), grip = document.createElement('input');
+        row.className = 'thumb-row'; row.dataset.id = page.id;
+        box.type = 'checkbox'; box.setAttribute('aria-label', `Select page ${index+1}`);
+        box.onchange = () => onCheck(page.id, box.checked);
+        grip.type = 'button'; grip.value = '↕'; grip.className = 'thumb-grip';
+        grip.setAttribute('aria-label', `Move page ${index+1}`);
+        grip.onclick = e => { if (e.detail === 0) onPosition(page.id); };
+        grip.onpointerdown = e => {
+          if (!e.isPrimary || e.button !== 0) return;
+          drag = { pointer:e.pointerId, grip, x:e.clientX, y:e.clientY };
+          // Direct touch has implicit capture; capture mouse drags as well.
+          if (e.pointerType !== 'touch') grip.setPointerCapture(e.pointerId);
+          grip.classList.add('moving');
+        };
+        grip.onlostpointercapture = grip.onpointercancel = cancelDrag;
+        grip.onpointerup = e => {
+          if (drag?.pointer !== e.pointerId) return;
+          const moved = Math.hypot(e.clientX-drag.x,e.clientY-drag.y) > 6;
+          const target = document.elementFromPoint(e.clientX,e.clientY)?.closest('.thumb-row');
+          cancelDrag();
+          if (moved && thumbs.contains(target) && target !== row) onDrop(page.id,target.dataset.id);
+        };
+        row.append(button,box,grip);
+        return row;
       });
       thumbs.replaceChildren(...buttons);
-      for (const button of buttons) observer.observe(button);
+      for (const row of buttons) observer.observe(row.firstChild);
     }
-    Array.from(thumbs.children).forEach((button, index) => {
+    Array.from(thumbs.children).forEach((row, index) => {
+      const button = row.firstChild;
+      row.children[1].checked = checked.has(pages[index].id);
       button.lastChild.textContent = `${index + 1}${pages[index].marks.length ? ' •' : ''}`;
       if (selected === index) {
         button.setAttribute('aria-current', 'page');
@@ -333,6 +374,7 @@ export function createViewer({ stage, paper, canvas, overlay, thumbs, getSource,
   }
 
   return {
+    get view() { return viewport; },
     stop, show, paint, list, cancelGestures, canStartTouchStroke,
     update(entry) { active = entry; paint(); },
     point(clientX, clientY) {

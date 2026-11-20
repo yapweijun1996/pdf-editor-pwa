@@ -1,7 +1,7 @@
 import * as renderer from '../vendor/pdfjs/build/pdf.min.mjs';
 import {
   PDFDocument, PDFTextField, PDFCheckBox, PDFRadioGroup, PDFDropdown, PDFOptionList,
-  StandardFonts, degrees, rgb, LineCapStyle, PDFName, PDFPageLeaf, PDFString, PDFDict, PDFArray, PDFRef, PDFStream,
+  StandardFonts, degrees, rgb, LineCapStyle, PDFName, PDFPage, PDFPageLeaf, PDFString, PDFDict, PDFArray, PDFRef, PDFStream,
 } from '../vendor/pdf-lib/dist/pdf-lib.esm.min.js';
 import { rotatePoint } from './model.js';
 
@@ -13,7 +13,7 @@ export const annotationMode = renderer.AnnotationMode.ENABLE_STORAGE;
 
 export async function openPDF(file) {
   const bytes = new Uint8Array(await file.arrayBuffer());
-  const { clean, marks } = await unpack(bytes);
+  const { clean, marks, splitIndices } = await unpack(bytes);
   const task = renderer.getDocument({
     data: (clean ?? bytes).slice(), cMapUrl: asset('cmaps/'), cMapPacked: true,
     standardFontDataUrl: asset('standard_fonts/'), wasmUrl: asset('wasm/'),
@@ -23,7 +23,7 @@ export async function openPDF(file) {
     const pdf = await task.promise;
     if (!pdf.numPages) throw new Error('Empty document');
     await pdf.getPage(1);
-    return { bytes, clean, marks, pdf, name: file.name, destroy: () => task.destroy() };
+    return { bytes, clean, marks, splitIndices, pdf, name: file.name, destroy: () => task.destroy() };
   } catch (error) {
     await task.destroy().catch(() => {});
     throw new Error(error.name === 'PasswordException'
@@ -69,7 +69,15 @@ async function unpack(bytes) {
     }
     if (items.length) { page.node.set(key('Annots'), doc.context.obj(kept)); marks[p] = items; changed = true; }
   }
-  if (!changed) return {};
+  let splitIndices;
+  const plan = doc.catalog.get(key('PaperplaneSplitV1'));
+  if (plan instanceof PDFString) {
+    try {
+      const groups = JSON.parse(plan.asString()), count = doc.getPageCount();
+      if (Array.isArray(groups) && groups.length && groups.every(g => Array.isArray(g) && g.length && g.every(i => Number.isInteger(i) && i >= 0 && i < count))) splitIndices = groups;
+    } catch { /* Ignore unknown split metadata. */ }
+  }
+  if (!changed) return { splitIndices };
   // pdf-lib serializes even detached objects. Remove only superseded managed
   // objects, and only when no retained object still references them.
   const stack = Object.values(doc.context.trailerInfo);
@@ -85,7 +93,7 @@ async function unpack(bytes) {
     if (obj instanceof PDFArray) for (const value of obj.asArray()) stack.push(value);
   }
   for (const ref of detached) doc.context.delete(ref);
-  return { clean: await doc.save({ updateFieldAppearances: false }), marks };
+  return { clean: await doc.save({ updateFieldAppearances: false }), marks, splitIndices };
 }
 
 function writeShape(doc, page, mark) {
@@ -105,6 +113,18 @@ export function checkText(value) {
   // Standard Helvetica uses WinAnsi, not arbitrary Unicode. Reject unsupported text before editing.
   const available = /^[\x20-\x7E\xA0-\xFF€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ]*$/u;
   if (!available.test(value)) throw new Error('Use Latin text and standard punctuation for this tool.');
+}
+
+let stampFont;
+export async function measureStampText(text) {
+  checkText(text);
+  stampFont ??= PDFDocument.create().then(doc => doc.embedFont(StandardFonts.Helvetica));
+  const font = await stampFont;
+  font.encodeText(text);
+  // drawText emits a single text run without pair kerning.
+  const advance = [...text].reduce((sum, char) => sum + font.widthOfTextAtSize(char, 1), 0);
+  const rise = font.heightAtSize(1, { descender: false });
+  return { advance, rise, depth: font.heightAtSize(1) - rise };
 }
 
 export async function describeFields(source) {
@@ -168,10 +188,11 @@ const color = hex => rgb(...hex.match(/\w\w/g).map(part => parseInt(part, 16) / 
 
 async function writeMark(doc, page, mark, resources) {
   if (isShape(mark.kind)) return writeShape(doc, page, mark);
-  if (mark.kind === 'text') {
+  if (mark.kind === 'text' || mark.kind === 'stamp') {
     resources.font ??= await doc.embedFont(StandardFonts.Helvetica);
     page.drawText(mark.text, { x: mark.x, y: mark.y, size: mark.size,
-      color: color(mark.color), font: resources.font, rotate: degrees(mark.angle) });
+      color: color(mark.color), font: resources.font, rotate: degrees(mark.angle),
+      ...(mark.kind === 'stamp' ? { opacity: mark.opacity } : {}) });
   } else if (mark.kind === 'image') {
     if (!resources.images.has(mark.image)) {
       const { type, bytes } = mark.image;
@@ -197,12 +218,23 @@ export async function createPDF(sources, state, pages, baseId, extract = false) 
     parsed.set(id, doc);
   }
   const base = parsed.get(baseId);
-  const preserve = !extract && parsed.size === 1 && base && pages.length === base.getPageCount();
+  const preserve = !extract && parsed.size === 1 && base && pages.filter(p => !p.blank).length === base.getPageCount();
+  function makeBlank(output, entry) {
+    const source = parsed.get(entry.source).getPage(entry.index);
+    const page = PDFPage.create(output);
+    const media = source.getMediaBox(), crop = source.getCropBox();
+    page.setMediaBox(media.x, media.y, media.width, media.height);
+    page.setCropBox(crop.x, crop.y, crop.width, crop.height);
+    page.setRotation(source.getRotation());
+    const unit = source.node.lookup(PDFName.of('UserUnit'));
+    if (unit) page.node.set(PDFName.of('UserUnit'), unit.clone());
+    return page;
+  }
   let output, targets;
   if (preserve) {
     output = base;
     const originals = base.getPages();
-    targets = pages.map(page => originals[page.index]);
+    targets = pages.map(page => page.blank ? makeBlank(output,page) : originals[page.index]);
     if (targets.some((page, index) => page !== originals[index])) {
       // Reinsertion changes page parents. Keep each page's effective inherited entries
       // without cloning the pages or breaking references from the catalog and form widgets.
@@ -224,17 +256,26 @@ export async function createPDF(sources, state, pages, baseId, extract = false) 
     }
     const copies = new Map();
     for (const [id, doc] of parsed) {
-      const indices = pages.filter(page => page.source === id).map(page => page.index);
+      const indices = pages.filter(page => page.source === id && !page.blank).map(page => page.index);
       const copied = await output.copyPages(doc, indices);
       indices.forEach((index, i) => copies.set(`${id}:${index}`, copied[i]));
     }
-    targets = pages.map(page => output.addPage(copies.get(page.id)));
+    targets = pages.map(page => output.addPage(page.blank ? makeBlank(output,page) : copies.get(page.id)));
   }
   const resources = { images: new Map() };
   for (let index = 0; index < pages.length; index++) {
     const entry = pages[index], page = targets[index];
+    if (entry.crop) {
+      const [x,y,r,t] = entry.crop;
+      page.setCropBox(x,y,r-x,t-y);
+    }
     if (entry.rotation) page.setRotation(degrees((page.getRotation().angle + entry.rotation) % 360));
     for (const mark of entry.marks) await writeMark(output, page, mark, resources);
   }
-  return output.save({ updateFieldAppearances: false });
+  const planKey = PDFName.of('PaperplaneSplitV1');
+  if (!extract && state.splitPlan) {
+    const indices = new Map(pages.map((p,i) => [p.id,i]));
+    output.catalog.set(planKey, PDFString.of(JSON.stringify(state.splitPlan.map(g => g.map(id => indices.get(id))))));
+  } else output.catalog.delete(planKey);
+  return output.save({ updateFieldAppearances: false, useObjectStreams: false });
 }

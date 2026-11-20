@@ -1,0 +1,7 @@
+# S3b stamps integration provenance review
+
+Reviewer: `work-01f98a83-c2aa-4768-b0e1-fa98d2b539de`, independent page tools test and provenance integrator, 2026-11-20. Review applies only to the exact runtime and specification digests in `stamps.json`, not to my own tests, standing QA, release or owner acceptance.
+
+Reviewed range selection and validation, displayed-to-PDF baseline conversion, immutable batch application, and the common page materialization route. The runtime writes ordinary PDF text with a graphics state for watermark opacity; it does not encode stamp content only in private metadata. Geometry follows the visible viewport, including crop, rotation and UserUnit. No new library, font or vendor implementation was added in the integration.
+
+Independent Chromium and WebKit runs reopened nine-page exports in PDF.js and pdf-lib. Pages 2, 3 and 5 carried exactly four new labels each; six other pages retained identical streams and rendered pixels. The 29-degree watermark and lower placement were measured in viewport coordinates, and decoded page operators referenced `/ca` 0.37 with corroborating gray pixels. Undo restored full model and readback equality; Redo restored the exact applied model. Chromium's native OPFS combined blank/crop/stamps/split plan was recovered through the real UI and exported again with identical text and pixels, without doubling the stamps. WebKit native OPFS was not verified; the same emulated context returned `UnknownError` on baseline and candidate. See `npm run test:pages`.

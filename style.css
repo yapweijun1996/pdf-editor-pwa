@@ -163,6 +163,22 @@ body.dragging main{outline:3px dashed var(--accent);outline-offset:-5px}dialog{c
   #sheet-status,#sheet-details{display:block;margin:.35rem 0 0;color:var(--muted);font-size:.85rem;overflow-wrap:anywhere}
   #sheet-status[data-error=true]{color:var(--error)}
 }
+.thumb-row{display:grid;flex:none;grid-template-columns:1fr 1fr;justify-items:center;align-items:center;border:1px solid transparent;border-radius:.55rem}
+.thumb-row>button{grid-column:span 2;width:100%}
+.thumb-row:has(:checked){border-color:var(--accent);background:var(--active)}
+.thumb-row input{min-width:44px;min-height:44px;width:44px;height:44px;margin:0;padding:0}
+.thumb-grip{touch-action:none;cursor:grab}.thumb-grip.moving{outline:3px solid var(--accent);cursor:grabbing}
+#crop-preview{display:block;margin:auto;width:100%;height:26vh;background:var(--soft);touch-action:none;cursor:crosshair}
+#crop-preview rect:last-child{fill:#1885ff22;stroke:#287bea;stroke-width:2;vector-effect:non-scaling-stroke}
+:is(#pages-dialog,#crop-dialog,#stamps-dialog){overscroll-behavior:contain;overflow:auto}
+:is(#pages-dialog,#crop-dialog,#stamps-dialog,#page-operations) :is(button,input,select){min-height:44px;min-width:44px}
+#stamp-fields{min-width:0}
+#stamp-fields :is(input,select){max-width:100%}
+/* iOS WebKit constrains the native select's painted height. Keep its picker but draw our own arrow. */
+#stamp-position{appearance:none;padding-inline-end:2.25rem;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:right 1.23rem center,right .83rem center;background-size:.4rem .4rem;background-repeat:no-repeat}
+#stamp-fields input[type=number]{width:7rem}
+#stamp-fields p{font-size:.85rem;color:var(--muted);margin:.3rem 0 .8rem}
+@media(max-width:768px){.visual-viewport-reduced :is(#pages-dialog,#crop-dialog,#stamps-dialog){top:var(--phone-visual-top);bottom:auto;max-height:var(--phone-visual-height);margin-block:0}}
 #save-mode{display:block;font-size:.65rem;line-height:1.05;font-weight:600;white-space:nowrap}
 #choices button{max-width:100%;overflow-wrap:anywhere}
 #view-copy{color:var(--text);text-decoration:underline}

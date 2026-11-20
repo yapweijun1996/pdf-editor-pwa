@@ -2,17 +2,21 @@
   "schemaVersion": 1,
   "module": "Paperplane original-file save integrity, recovery and regression evidence",
   "revision": {
-    "baseCommit": "856a184cfc3f0bafcbf1c51ae1cd6dec8d8399f7",
+    "baseCommit": "970d3413fd028dc83ab9fea59f938db43bd85a80",
     "files": {
       "src/save.js": "f74ec0b13a62dc3319f5b04ae875fa6c58caefa3fc2115291ee72738e27ebda7",
-      "src/app.js": "dbdb4e3ea3b1698e4fb709f4b6dc432bf243973ef85b2f1ce6f8d5e9ec8373c2",
-      "src/pdf.js": "acd9755d2aad1fa03e2b0a3e50e55cfb7d2c012db2b686274e7786e30de541eb",
+      "src/app.js": "1e018ff2b851ba88b340c6b425f99c70ac0a89ae34029f5b36d2c7872a8d3ac4",
+      "src/pdf.js": "cee0f17ffef278a20e2ead1fab82c22b74a93ccfb268f5bfcd9637b513f5fd3c",
       "src/shapes.js": "8389a339fa1512ba2bba72973c54c1aa4955b6e1bcc2c9a85b01c1321f5f7fda",
-      "index.html": "30882165534cf897e0313f71f3543b828f0b42792a8af65454d83757991dc436",
-      "style.css": "cb20c8f801ddaf01225f1b434d8866ab0393571cb71ad47d76b48ac2279d71b6",
-      "precache.js": "874cd07b02d8babdd1a012d90b559cb36be82d6ea40f0791b0ccab9238a553f0",
+      "index.html": "212aa99ea269dd2df2a2bd2cec830c3a6ba21170cbdfca57e9be09e9ed3a6b37",
+      "style.css": "23db8631a5eeb5df27006637fbc74382c5f461cee601a619fbf0fbe8cb039e56",
+      "precache.js": "e7f14683b9bbb76c247213ad163fcffec4a8692c7194cf1d266ff5f32a68f4d9",
       "tests/save.mjs": "c6a8edabeb4fbec0905866c52063328b1170f31458bd5a0ccbe961bf2eb3493a",
-      "tests/fixtures/save-storage.mjs": "d59d7c30b67da8071a3792975c8d5021630dae4550a68500a9cf44b436a8aeb6"
+      "tests/fixtures/save-storage.mjs": "d59d7c30b67da8071a3792975c8d5021630dae4550a68500a9cf44b436a8aeb6",
+      "src/model.js": "14844339a337937c1760dd00ffe4c8e31bea5906ac99f1b169a4a08c8b35813e",
+      "src/viewer.js": "0f92974637dcf22e805870c3a22113aa7f74c8f2cb25b4f26bfe929ed42f76f2",
+      "src/stamps.js": "7cda2cc9ba36f435ac0c2b877dec9e9a573c41af8d4b3b3d9004fcbabca1183c",
+      "sw.js": "f549ebf871b0c10279c4ddcaff143bff78158061c5ea90bae1b648eb23142ec4"
     }
   },
   "author": {
@@ -23,48 +27,72 @@
   "sources": [
     {
       "sourceId": "paperplane-save-integrity-r4",
-      "sections": ["Scope", "Invariants", "Tests"],
+      "sections": [
+        "Scope",
+        "Invariants",
+        "Tests"
+      ],
       "notes": "Repair of the QA1 S1 blocker; validate the intended export and readback, preserving classic xref tables and xref streams. Uses existing pdf-lib APIs."
     },
     {
       "sourceId": "paperplane-save-contract-r3",
-      "sections": ["S1–S3"],
+      "sections": [
+        "S1–S3"
+      ],
       "notes": "Historical implementation contract for transaction, fallback and recovery."
     },
     {
       "sourceId": "whatwg-fs-create-writable",
-      "sections": ["FileSystemFileHandle.createWritable()"],
+      "sections": [
+        "FileSystemFileHandle.createWritable()"
+      ],
       "notes": "Historical runtime author consultation; no new consultation claimed."
     },
     {
       "sourceId": "w3c-web-share-share-method",
-      "sections": ["share() method"],
+      "sections": [
+        "share() method"
+      ],
       "notes": "Historical runtime author consultation; no new consultation claimed."
+    },
+    {
+      "sourceId": "pages-contract-r2",
+      "sections": [
+        "Save / annotation / phone safety",
+        "Tests / reader evidence"
+      ],
+      "notes": "S3b integration requirements; historical author sources above are retained."
     }
   ],
-  "notes": "The repair author changed src/save.js, tests/save.mjs and generated precache.js, and reported no external PDF specification consultation or third-party source copying. Original runtime author: work-976263da-3145-42fa-8116-eb43e05f2e81. Prior regression and fixture author: work-f6504733-70af-4b09-b69e-15f0304fa84a. See the source ledger and review for attribution and evidence boundaries. S3a refreshes the integration fingerprints only, extends them to the shape materializer and records a new runtime-only review. Prior review remains historical.",
+  "notes": "The repair author changed src/save.js, tests/save.mjs and generated precache.js, and reported no external PDF specification consultation or third-party source copying. Original runtime author: work-976263da-3145-42fa-8116-eb43e05f2e81. Prior regression and fixture author: work-f6504733-70af-4b09-b69e-15f0304fa84a. See the source ledger and review for attribution and evidence boundaries. S3a refreshes the integration fingerprints only, extends them to the shape materializer and records a new runtime-only review. Prior review remains historical. S3b refresh: prior runtime approvals remain historical in the linked review and Git history; current review binds the listed raw bytes.",
   "review": {
     "status": "approved",
     "reviewer": {
-      "id": "work-0e0752a8-2d9c-4ca1-9d61-d3a5a6698a0b",
-      "role": "Independent Save integration provenance review"
+      "id": "work-01f98a83-c2aa-4768-b0e1-fa98d2b539de",
+      "role": "Independent page tools tests and runtime provenance integration"
     },
     "reviewedOn": "2026-11-20",
     "reviewedRevision": {
-      "baseCommit": "856a184cfc3f0bafcbf1c51ae1cd6dec8d8399f7",
+      "baseCommit": "970d3413fd028dc83ab9fea59f938db43bd85a80",
       "files": {
         "src/save.js": "f74ec0b13a62dc3319f5b04ae875fa6c58caefa3fc2115291ee72738e27ebda7",
-        "src/app.js": "dbdb4e3ea3b1698e4fb709f4b6dc432bf243973ef85b2f1ce6f8d5e9ec8373c2",
-        "src/pdf.js": "acd9755d2aad1fa03e2b0a3e50e55cfb7d2c012db2b686274e7786e30de541eb",
+        "src/app.js": "1e018ff2b851ba88b340c6b425f99c70ac0a89ae34029f5b36d2c7872a8d3ac4",
+        "src/pdf.js": "cee0f17ffef278a20e2ead1fab82c22b74a93ccfb268f5bfcd9637b513f5fd3c",
         "src/shapes.js": "8389a339fa1512ba2bba72973c54c1aa4955b6e1bcc2c9a85b01c1321f5f7fda",
-        "index.html": "30882165534cf897e0313f71f3543b828f0b42792a8af65454d83757991dc436",
-        "style.css": "cb20c8f801ddaf01225f1b434d8866ab0393571cb71ad47d76b48ac2279d71b6",
-        "precache.js": "874cd07b02d8babdd1a012d90b559cb36be82d6ea40f0791b0ccab9238a553f0",
+        "index.html": "212aa99ea269dd2df2a2bd2cec830c3a6ba21170cbdfca57e9be09e9ed3a6b37",
+        "style.css": "23db8631a5eeb5df27006637fbc74382c5f461cee601a619fbf0fbe8cb039e56",
+        "precache.js": "e7f14683b9bbb76c247213ad163fcffec4a8692c7194cf1d266ff5f32a68f4d9",
         "tests/save.mjs": "c6a8edabeb4fbec0905866c52063328b1170f31458bd5a0ccbe961bf2eb3493a",
-        "tests/fixtures/save-storage.mjs": "d59d7c30b67da8071a3792975c8d5021630dae4550a68500a9cf44b436a8aeb6"
+        "tests/fixtures/save-storage.mjs": "d59d7c30b67da8071a3792975c8d5021630dae4550a68500a9cf44b436a8aeb6",
+        "src/model.js": "14844339a337937c1760dd00ffe4c8e31bea5906ac99f1b169a4a08c8b35813e",
+        "src/viewer.js": "0f92974637dcf22e805870c3a22113aa7f74c8f2cb25b4f26bfe929ed42f76f2",
+        "src/stamps.js": "7cda2cc9ba36f435ac0c2b877dec9e9a573c41af8d4b3b3d9004fcbabca1183c",
+        "sw.js": "f549ebf871b0c10279c4ddcaff143bff78158061c5ea90bae1b648eb23142ec4"
       }
     },
-    "evidence": ["docs/provenance/reviews/save.md"],
-    "notes": "S3a Save integration provenance for these exact runtime and unchanged Save regression digests; not approval of the new annotation tests, standing QA, security clearance, release approval or owner review."
+    "evidence": [
+      "docs/provenance/reviews/save.md"
+    ],
+    "notes": "Independent integration provenance only. No approval of the reviewer’s tests, standing QA, release, security or owner acceptance."
   }
 }

@@ -33,10 +33,49 @@ export function edit(state, action) {
   const page = state.pages[at];
   const replace = next => ({ ...state, pages: state.pages.map((p, i) => i === at ? next : p) });
   switch (action.type) {
+    case 'blank': {
+      if (!page || !action.newId || state.pages.some(p => p.id === action.newId)) return state;
+      const blank = { ...page, id: action.newId, blank: true, marks: [] };
+      const pages = [...state.pages];
+      pages.splice(at + (action.after ? 1 : 0), 0, blank);
+      return { ...state, pages };
+    }
+    case 'crop': {
+      if (!page || !insideBox(action.box, page.crop ?? action.bounds)) return state;
+      return replace({ ...page, crop: [...action.box] });
+    }
+    case 'splitPlan': {
+      const plan = action.expression.split(';').map(part => selectPages(state.pages, part).map(p => p.id));
+      return { ...state, splitPlan: plan };
+    }
+    case 'group': {
+      const ids = new Set(action.ids);
+      const group = state.pages.filter(p => ids.has(p.id));
+      const rest = state.pages.filter(p => !ids.has(p.id));
+      if (!group.length || ids.size !== group.length) return state;
+      if (action.op === 'rotate') return { ...state, pages: state.pages.map(p => ids.has(p.id) ? { ...p, rotation: (p.rotation + 90) % 360 } : p) };
+      if (action.op === 'delete') {
+        if (!rest.length) return state;
+        const { splitPlan, ...next } = state;
+        return { ...next, pages: rest, ...(splitPlan && !splitPlan.some(part => part.some(id => ids.has(id))) ? { splitPlan } : {}) };
+      }
+      const pos = action.position;
+      if (action.op !== 'move' || !Number.isInteger(pos) || pos < 1 || pos > rest.length + 1) return state;
+      const pages = [...rest.slice(0,pos-1), ...group, ...rest.slice(pos-1)];
+      return pages.every((p,i) => p === state.pages[i]) ? state : { ...state, pages };
+    }
     case 'rotate':
       return page ? replace({ ...page, rotation: (page.rotation + 90) % 360 }) : state;
     case 'mark':
       return page ? replace({ ...page, marks: [...page.marks, structuredClone(action.mark)] }) : state;
+    case 'stampBatch': {
+      const additions = new Map(action.edits.map(({ id, marks }) => [id, marks]));
+      if (!additions.size || additions.size !== action.edits.length ||
+          state.pages.filter(p => additions.has(p.id)).length !== additions.size ||
+          [...additions.values()].some(marks => !marks.length || marks.some(m => m.kind !== 'stamp'))) return state;
+      return { ...state, pages: state.pages.map(p => additions.has(p.id)
+        ? { ...p, marks: [...p.marks, ...structuredClone(additions.get(p.id))] } : p) };
+    }
     case 'editMark':
     case 'removeMark': {
       const index = page?.marks.findIndex(mark => mark.markId === action.markId);
@@ -110,6 +149,12 @@ export function selectPages(pages, expression) {
     for (let index = start; index <= end; index++) indices.add(index - 1);
   }
   return pages.filter((_, index) => indices.has(index));
+}
+
+// Both boxes are [left, bottom, right, top] in unrotated page coordinates.
+export function insideBox(box, bounds) {
+  return [box,bounds].every(b => Array.isArray(b) && b.length === 4 && b.every(Number.isFinite)) &&
+    box[0] < box[2] && box[1] < box[3] && box[0] >= bounds[0] && box[1] >= bounds[1] && box[2] <= bounds[2] && box[3] <= bounds[3];
 }
 
 export function rotatePoint(x, y, angle) {

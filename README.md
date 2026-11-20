@@ -25,6 +25,15 @@ Wait for **Offline ready** on the first online visit. Afterwards the app can rel
 - Rotate clockwise, move pages earlier/later, or delete all but the final page. **Merge PDF** appends another file; **Extract pages** downloads a separate copy of your selection in displayed order, e.g. `1, 3-5`. Extraction does not change the open document.
 - **Fill forms** lists the plain fields from the PDF that supplied the selected page. Apply text, checkbox, radio, dropdown or list changes as one edit. Use **Undo**/**Redo** (up to 100 recent edits) or Ctrl/Cmd+Z and Ctrl/Cmd+Shift+Z. Ctrl/Cmd+S uses the current save mode.
 
+## Page tools
+
+On phones, open **Pages** to show thumbnails and page actions. Check any thumbnails to select a group, or use **Page tools → Select all pages**. Rotate, delete, or extract the selection together. The last page cannot be deleted. Drag a thumbnail by its grip; swiping the thumbnail body scrolls instead. Without dragging, use **Move earlier**, **Move later**, or **Move to position** (the final one-based position of the group's first page). A keyboard-activated grip opens the position field.
+
+- **Insert blank before/after** copies the current page's visible size and orientation, not its contents or annotations.
+- **Crop current page** lets you draw a visible box or enter X, Y, width, and height in PDF points. Crop hides content rather than removing it: **it is not redaction**. Undo to expand a crop.
+- **Split into PDFs** takes semicolon-separated outputs, for example `1-2; 3, 5`. Prepare the plan, then download each PDF individually. Split and extract create copies, not a replacement for the original; their form appearances are fixed. Undo removes the plan, not files already downloaded.
+- **Add stamps** applies header, footer, page numbers, and/or a text watermark to a page range such as `1, 3-5`. Use `{n}` for the numbering sequence from your chosen start, `{page}` for the current position, and `{total}` for the document page count. Numbers are frozen when applied. Watermarks have opacity, angle, and vertical placement controls. Stamps use Helvetica Latin/WinAnsi text. They become regular PDF page content on save and are no longer individually editable; Undo removes the entire batch before saving.
+
 ## Save and recover
 
 - **Overwrites the original** appears when **Open PDF** connects a writable file handle. **Save original** checks for an external change and offers **Reload from disk**, **Overwrite anyway**, or **Save a copy**. Before opening the original-file writer, the app checks the export’s cross-reference table or stream, trailer information, catalog and page count, and verifies a private backup. After writing, it rereads the original, compares its SHA-256 with the intended export, and repeats the PDF checks. If readback verification fails, it attempts to restore the backup and reports the outcome. If backup storage fails or permission is denied, use **Save a copy** instead. The browser file API cannot prevent another app from writing in the final check-to-close window.
@@ -109,6 +118,7 @@ npx playwright install chromium webkit
 npm test
 npm run test:save
 npm run test:browser
+npm run test:pages
 npm run test:annotate
 npm run test:mobile
 node --test --test-concurrency=1 tests/mobile.mjs
@@ -118,6 +128,8 @@ node scripts/assets.mjs --check
 The Node suite checks immutable page operations, field updates, range extraction, annotation coordinates and undo/redo. The browser suite starts its own loopback server, generates PDFs, drives the editor, parses the downloaded PDFs, and checks rendered pixels. It covers denied downloads and exports of PDFs with inherited page attributes. If qpdf is installed, use `qpdf --check` on each `test-results/inherited-*.pdf` input and export for an additional structural check. For the offline scenario it stops the HTTP server and sets the Chromium context offline before reloading. Artifacts, including PDFs and screenshots, go to `test-results/` (ignored). `tests/fixtures/locked.pdf` is a synthetic one-page PDF encrypted with qpdf to exercise the password error; browser verification does not require qpdf.
 
 `npm run test:annotate` checks selection and exact undo/redo in Chromium and touch-emulated WebKit. It opens synthetic exports in PDF.js and pdf-lib, checks actual PDF annotation counts and types, samples rendered colors, and tests reopening without duplicate marks. The keyboard checks use our own Playwright accessibility-tree assertions for roles and names, visible focus, and annotation actions. Use the hex field for keyboard color entry; OS color pickers are not tested. Axe-core was not used because its MPL-2.0 license is outside the allowlist. These are our own targeted checks, not a full accessibility audit, a screen-reader test, or a physical-device test. AX snapshots and focus screenshots are written under `test-results/`.
+
+`npm run test:pages` exercises synthetic mixed-size, rotated, non-zero-origin pages in Chromium and touch-emulated WebKit. It checks raw boxes and page content with pdf-lib, plus effective boxes, text, and rendered pixels with PDF.js. It also checks exact undo, group actions, named keyboard controls and 44 CSS-pixel targets. Playwright WebKit touch dispatch checks grip/body gesture routing; programmatic strip scrolling checks that movement does not reorder pages. Native swipe arbitration still needs physical-device verification.
 
 ## Phase 0 baseline
 

@@ -2,44 +2,93 @@
   "schemaVersion": 1,
   "module": "Paperplane annotation geometry, selection, gesture arbitration and editing controls, six shape tools and managed PDF annotation appearances",
   "revision": {
-    "baseCommit": "856a184cfc3f0bafcbf1c51ae1cd6dec8d8399f7",
+    "baseCommit": "970d3413fd028dc83ab9fea59f938db43bd85a80",
     "files": {
-      "src/model.js": "0c9ce72cf7a955a554d9a1eaa362ffb5eff732d8b183f9f60d6b20429dc1e536",
+      "src/model.js": "14844339a337937c1760dd00ffe4c8e31bea5906ac99f1b169a4a08c8b35813e",
       "src/shapes.js": "8389a339fa1512ba2bba72973c54c1aa4955b6e1bcc2c9a85b01c1321f5f7fda",
-      "src/pdf.js": "acd9755d2aad1fa03e2b0a3e50e55cfb7d2c012db2b686274e7786e30de541eb",
-      "src/app.js": "dbdb4e3ea3b1698e4fb709f4b6dc432bf243973ef85b2f1ce6f8d5e9ec8373c2",
-      "src/viewer.js": "b8534453a637913e8bbfee0dd51ef004e47010708e577fba131df3a830536da5",
-      "index.html": "30882165534cf897e0313f71f3543b828f0b42792a8af65454d83757991dc436",
-      "style.css": "cb20c8f801ddaf01225f1b434d8866ab0393571cb71ad47d76b48ac2279d71b6",
-      "precache.js": "874cd07b02d8babdd1a012d90b559cb36be82d6ea40f0791b0ccab9238a553f0"
+      "src/pdf.js": "cee0f17ffef278a20e2ead1fab82c22b74a93ccfb268f5bfcd9637b513f5fd3c",
+      "src/app.js": "1e018ff2b851ba88b340c6b425f99c70ac0a89ae34029f5b36d2c7872a8d3ac4",
+      "src/viewer.js": "0f92974637dcf22e805870c3a22113aa7f74c8f2cb25b4f26bfe929ed42f76f2",
+      "index.html": "212aa99ea269dd2df2a2bd2cec830c3a6ba21170cbdfca57e9be09e9ed3a6b37",
+      "style.css": "23db8631a5eeb5df27006637fbc74382c5f461cee601a619fbf0fbe8cb039e56",
+      "precache.js": "e7f14683b9bbb76c247213ad163fcffec4a8692c7194cf1d266ff5f32a68f4d9",
+      "src/stamps.js": "7cda2cc9ba36f435ac0c2b877dec9e9a573c41af8d4b3b3d9004fcbabca1183c",
+      "src/save.js": "f74ec0b13a62dc3319f5b04ae875fa6c58caefa3fc2115291ee72738e27ebda7",
+      "sw.js": "f549ebf871b0c10279c4ddcaff143bff78158061c5ea90bae1b648eb23142ec4",
+      "tests/annotate.mjs": "ebdf48c17138c7f3f41f80cc113d7ca36c19c74a7d4c47035aa5a9814f7a36c1",
+      "tests/fixtures/annotation-page.mjs": "d7229bc08a3132ec04d55eabb097fb3e02c48e1d4cb9329cf77f52080b3c5539"
     }
   },
-  "author": { "id": "work-adb87329-be69-40a6-bed0-aed6db43e892", "role": "Annotation selection and touch architecture" },
+  "author": {
+    "id": "work-adb87329-be69-40a6-bed0-aed6db43e892",
+    "role": "Annotation selection and touch architecture"
+  },
   "authoredOn": "2026-11-20",
   "sources": [
-    { "sourceId": "annotations-contract-r2", "sections": ["W-select", "W-shapes", "Product decisions/invariants", "D1", "D2"], "notes": "Requirements for immutable selection and editing, gesture routing, geometry and standard PDF annotations. See docs/notes/annotations-spec.md for attribution and the source ledger." },
-    { "sourceId": "paperplane-engine-plan", "sections": ["1–5"], "notes": "Ownership, dependency policy and independent review boundaries." },
-    { "sourceId": "annotations-continuation-r3", "sections": ["Scope/dependencies", "Tests"], "notes": "Verbatim retained packet admission before current Playwright accessibility-tree validation; only the measured selection color keyboard gap was patched." }
+    {
+      "sourceId": "annotations-contract-r2",
+      "sections": [
+        "W-select",
+        "W-shapes",
+        "Product decisions/invariants",
+        "D1",
+        "D2"
+      ],
+      "notes": "Requirements for immutable selection and editing, gesture routing, geometry and standard PDF annotations. See docs/notes/annotations-spec.md for attribution and the source ledger."
+    },
+    {
+      "sourceId": "paperplane-engine-plan",
+      "sections": [
+        "1–5"
+      ],
+      "notes": "Ownership, dependency policy and independent review boundaries."
+    },
+    {
+      "sourceId": "annotations-continuation-r3",
+      "sections": [
+        "Scope/dependencies",
+        "Tests"
+      ],
+      "notes": "Verbatim retained packet admission before current Playwright accessibility-tree validation; only the measured selection color keyboard gap was patched."
+    },
+    {
+      "sourceId": "pages-contract-r2",
+      "sections": [
+        "Save / annotation / phone safety",
+        "Tests / reader evidence"
+      ],
+      "notes": "S3b integration requirements; historical author sources above are retained."
+    }
   ],
-  "notes": "The author above owns the original W-select runtime. W-select-admit contributor work-a462ddd3-dd69-4075-94d5-7e37f60c85e1, 2026-11-20: verified verbatim packet 9eff6c437ea14906994f45b00805f12bfd177407309f6ecfa071c6f3dbfa2a66, then added a keyboard alternative to the selection color picker in index.html and src/app.js and regenerated precache.js. Historical D1 UNKNOWN remains unchanged. W-shapes contributor work-c972bba2-40dd-4a87-a718-25b072edd66b (Annotation geometry and PDF appearance architecture), 2026-11-20: authored src/shapes.js, managed standard PDF appearances and rehydration in src/pdf.js, model/viewer/app integration and palette/options. No new runtime libraries. Derived from W-shapes/D2 requirements and observed library APIs; producer probes only. See docs/notes/annotations-spec.md for the original hashes and stage evidence.",
+  "notes": "The author above owns the original W-select runtime. W-select-admit contributor work-a462ddd3-dd69-4075-94d5-7e37f60c85e1, 2026-11-20: verified verbatim packet 9eff6c437ea14906994f45b00805f12bfd177407309f6ecfa071c6f3dbfa2a66, then added a keyboard alternative to the selection color picker in index.html and src/app.js and regenerated precache.js. Historical D1 UNKNOWN remains unchanged. W-shapes contributor work-c972bba2-40dd-4a87-a718-25b072edd66b (Annotation geometry and PDF appearance architecture), 2026-11-20: authored src/shapes.js, managed standard PDF appearances and rehydration in src/pdf.js, model/viewer/app integration and palette/options. No new runtime libraries. Derived from W-shapes/D2 requirements and observed library APIs; producer probes only. See docs/notes/annotations-spec.md for the original hashes and stage evidence. S3b refresh: prior runtime approvals remain historical in the linked review and Git history; current review binds the listed raw bytes.",
   "review": {
     "status": "approved",
-    "reviewer": { "id": "work-0e0752a8-2d9c-4ca1-9d61-d3a5a6698a0b", "role": "Independent annotation runtime provenance review" },
+    "reviewer": {
+      "id": "work-01f98a83-c2aa-4768-b0e1-fa98d2b539de",
+      "role": "Independent page tools tests and runtime provenance integration"
+    },
     "reviewedOn": "2026-11-20",
     "reviewedRevision": {
-      "baseCommit": "856a184cfc3f0bafcbf1c51ae1cd6dec8d8399f7",
+      "baseCommit": "970d3413fd028dc83ab9fea59f938db43bd85a80",
       "files": {
-        "src/model.js": "0c9ce72cf7a955a554d9a1eaa362ffb5eff732d8b183f9f60d6b20429dc1e536",
+        "src/model.js": "14844339a337937c1760dd00ffe4c8e31bea5906ac99f1b169a4a08c8b35813e",
         "src/shapes.js": "8389a339fa1512ba2bba72973c54c1aa4955b6e1bcc2c9a85b01c1321f5f7fda",
-        "src/pdf.js": "acd9755d2aad1fa03e2b0a3e50e55cfb7d2c012db2b686274e7786e30de541eb",
-        "src/app.js": "dbdb4e3ea3b1698e4fb709f4b6dc432bf243973ef85b2f1ce6f8d5e9ec8373c2",
-        "src/viewer.js": "b8534453a637913e8bbfee0dd51ef004e47010708e577fba131df3a830536da5",
-        "index.html": "30882165534cf897e0313f71f3543b828f0b42792a8af65454d83757991dc436",
-        "style.css": "cb20c8f801ddaf01225f1b434d8866ab0393571cb71ad47d76b48ac2279d71b6",
-        "precache.js": "874cd07b02d8babdd1a012d90b559cb36be82d6ea40f0791b0ccab9238a553f0"
+        "src/pdf.js": "cee0f17ffef278a20e2ead1fab82c22b74a93ccfb268f5bfcd9637b513f5fd3c",
+        "src/app.js": "1e018ff2b851ba88b340c6b425f99c70ac0a89ae34029f5b36d2c7872a8d3ac4",
+        "src/viewer.js": "0f92974637dcf22e805870c3a22113aa7f74c8f2cb25b4f26bfe929ed42f76f2",
+        "index.html": "212aa99ea269dd2df2a2bd2cec830c3a6ba21170cbdfca57e9be09e9ed3a6b37",
+        "style.css": "23db8631a5eeb5df27006637fbc74382c5f461cee601a619fbf0fbe8cb039e56",
+        "precache.js": "e7f14683b9bbb76c247213ad163fcffec4a8692c7194cf1d266ff5f32a68f4d9",
+        "src/stamps.js": "7cda2cc9ba36f435ac0c2b877dec9e9a573c41af8d4b3b3d9004fcbabca1183c",
+        "src/save.js": "f74ec0b13a62dc3319f5b04ae875fa6c58caefa3fc2115291ee72738e27ebda7",
+        "sw.js": "f549ebf871b0c10279c4ddcaff143bff78158061c5ea90bae1b648eb23142ec4",
+        "tests/annotate.mjs": "ebdf48c17138c7f3f41f80cc113d7ca36c19c74a7d4c47035aa5a9814f7a36c1",
+        "tests/fixtures/annotation-page.mjs": "d7229bc08a3132ec04d55eabb097fb3e02c48e1d4cb9329cf77f52080b3c5539"
       }
     },
-    "evidence": ["docs/provenance/reviews/annotations.md"],
-    "notes": "Runtime provenance only. Does not approve the reviewer's new tests, standing QA, security, licensing for release or owner acceptance."
+    "evidence": [
+      "docs/provenance/reviews/annotations.md"
+    ],
+    "notes": "Independent integration provenance only. No approval of the reviewer’s tests, standing QA, release, security or owner acceptance."
   }
 }

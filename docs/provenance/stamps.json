@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "module": "Paperplane page content stamps and numbering",
+  "revision": {
+    "baseCommit": "970d3413fd028dc83ab9fea59f938db43bd85a80",
+    "files": {
+      "src/stamps.js": "7cda2cc9ba36f435ac0c2b877dec9e9a573c41af8d4b3b3d9004fcbabca1183c",
+      "src/model.js": "14844339a337937c1760dd00ffe4c8e31bea5906ac99f1b169a4a08c8b35813e",
+      "src/pdf.js": "cee0f17ffef278a20e2ead1fab82c22b74a93ccfb268f5bfcd9637b513f5fd3c",
+      "src/viewer.js": "0f92974637dcf22e805870c3a22113aa7f74c8f2cb25b4f26bfe929ed42f76f2",
+      "src/app.js": "1e018ff2b851ba88b340c6b425f99c70ac0a89ae34029f5b36d2c7872a8d3ac4",
+      "index.html": "212aa99ea269dd2df2a2bd2cec830c3a6ba21170cbdfca57e9be09e9ed3a6b37",
+      "style.css": "23db8631a5eeb5df27006637fbc74382c5f461cee601a619fbf0fbe8cb039e56",
+      "precache.js": "e7f14683b9bbb76c247213ad163fcffec4a8692c7194cf1d266ff5f32a68f4d9",
+      "docs/notes/stamps-spec.md": "2f0b86a198558cdbc9772954327ad5f16a71abf15ca3f258f4ffd12e659cce9f"
+    }
+  },
+  "author": {
+    "id": "work-6a745a79-017e-41b5-8d9b-2275929fc764",
+    "role": "Page content stamp and numbering engineer"
+  },
+  "authoredOn": "2026-11-20",
+  "sources": [
+    {
+      "sourceId": "pages-contract-r2",
+      "sections": [
+        "Stamps decisions / invariants",
+        "Save / annotation / phone safety",
+        "Tests / reader evidence"
+      ],
+      "notes": "Product behavior, undo invariants, accessible modal and actual PDF readback requirements."
+    },
+    {
+      "sourceId": "paperplane-engine-plan",
+      "sections": [
+        "What developed by us means",
+        "License and provenance rules"
+      ],
+      "notes": "Independence and packaging constraints."
+    },
+    {
+      "sourceId": "paperplane-pages-handoff",
+      "sections": [
+        "Page identities and geometry",
+        "History, groups and downloads",
+        "Viewer and PDF export interfaces"
+      ],
+      "notes": "Existing application APIs, PDF.js viewport and pdf-lib font/content APIs exercised locally; no imported implementation."
+    }
+  ],
+  "notes": "See docs/notes/stamps-spec.md for the stamp batch contract and source ledger. Existing page geometry author retained in pages.json. No new dependency, font, or vendor change. S3b refresh: prior runtime approvals remain historical in the linked review and Git history; current review binds the listed raw bytes.",
+  "review": {
+    "status": "approved",
+    "reviewer": {
+      "id": "work-01f98a83-c2aa-4768-b0e1-fa98d2b539de",
+      "role": "Independent page tools tests and runtime provenance integration"
+    },
+    "reviewedOn": "2026-11-20",
+    "reviewedRevision": {
+      "baseCommit": "970d3413fd028dc83ab9fea59f938db43bd85a80",
+      "files": {
+        "src/stamps.js": "7cda2cc9ba36f435ac0c2b877dec9e9a573c41af8d4b3b3d9004fcbabca1183c",
+        "src/model.js": "14844339a337937c1760dd00ffe4c8e31bea5906ac99f1b169a4a08c8b35813e",
+        "src/pdf.js": "cee0f17ffef278a20e2ead1fab82c22b74a93ccfb268f5bfcd9637b513f5fd3c",
+        "src/viewer.js": "0f92974637dcf22e805870c3a22113aa7f74c8f2cb25b4f26bfe929ed42f76f2",
+        "src/app.js": "1e018ff2b851ba88b340c6b425f99c70ac0a89ae34029f5b36d2c7872a8d3ac4",
+        "index.html": "212aa99ea269dd2df2a2bd2cec830c3a6ba21170cbdfca57e9be09e9ed3a6b37",
+        "style.css": "23db8631a5eeb5df27006637fbc74382c5f461cee601a619fbf0fbe8cb039e56",
+        "precache.js": "e7f14683b9bbb76c247213ad163fcffec4a8692c7194cf1d266ff5f32a68f4d9",
+        "docs/notes/stamps-spec.md": "2f0b86a198558cdbc9772954327ad5f16a71abf15ca3f258f4ffd12e659cce9f"
+      }
+    },
+    "evidence": [
+      "docs/provenance/reviews/stamps.md"
+    ],
+    "notes": "Independent integration provenance only. No approval of the reviewer’s tests, standing QA, release, security or owner acceptance."
+  }
+}

@@ -107,6 +107,7 @@
             </label>
             <div id="page-operations" class="tool-group" role="group" aria-label="Page operations">
               <button id="rotate">Rotate ↻</button><button id="earlier">Move earlier</button><button id="later">Move later</button><button id="delete">Delete page</button>
+              <button id="page-tools">Page tools</button>
             </div>
           </div>
           <div id="phone-pages" class="mobile-only"></div>
@@ -139,6 +140,45 @@
     <button data-close>Close</button>
   </dialog>
   <dialog id="save-choice" aria-labelledby="choice-title"><h2 id="choice-title"></h2><p id="choice-description"></p><div id="choices" class="dialog-actions"></div></dialog>
+  <dialog id="pages-dialog" aria-labelledby="pages-title">
+    <h2 id="pages-title">Page tools</h2>
+    <p id="selection-summary"></p><div class="tool-group"><button id="select-all-pages">Select all pages</button><button id="clear-pages">Clear selection</button></div>
+    <label>First position of moved group (1-based) <input id="move-position" type="number" step="1" min="1"></label>
+    <div class="tool-group"><button id="move-group">Move to position</button><button id="extract-group">Extract selection</button></div>
+    <h3>Current page</h3><div class="tool-group"><button id="blank-before">Insert blank before</button><button id="blank-after">Insert blank after</button><button id="crop-page">Crop current page</button><button id="open-stamps" aria-haspopup="dialog" aria-controls="stamps-dialog">Add stamps</button></div>
+    <h3>Split into PDFs</h3><p>Separate outputs with semicolons. Undo changes the plan, not downloaded files. Derived copies have fixed form appearances.</p>
+    <label>Output ranges <input id="split-ranges" placeholder="1-2; 3, 5"></label><button id="plan-split">Prepare split</button>
+    <div id="split-outputs" class="tool-group"></div><p id="pages-message" role="status"></p><button data-close>Close</button>
+  </dialog>
+  <dialog id="crop-dialog" aria-labelledby="crop-title"><h2 id="crop-title">Crop current page</h2>
+    <p>Draw a box or enter PDF points from the unrotated origin. Crop only hides content; it is not redaction.</p>
+    <svg id="crop-preview" aria-label="Crop preview"><image/><g/><rect/></svg>
+    <div class="tool-group"><label>X <input id="crop-x" type="number" step="any"></label><label>Y <input id="crop-y" type="number" step="any"></label><label>Width <input id="crop-w" type="number" step="any"></label><label>Height <input id="crop-h" type="number" step="any"></label></div>
+    <p id="crop-message" role="status"></p><div class="dialog-actions"><button data-close>Cancel</button><button id="apply-crop">Apply crop</button></div>
+  </dialog>
+  <dialog id="stamps-dialog" aria-labelledby="stamps-title">
+    <form id="stamps-form" novalidate>
+      <h2 id="stamps-title">Add page stamps</h2>
+      <p>Fill in the stamps you want. One Undo removes everything added by Apply. Saved stamps become page content.</p>
+      <fieldset id="stamp-fields">
+        <legend>Stamp options</legend>
+        <label>Stamp page range <input id="stamp-range" required autofocus placeholder="1, 3-5" aria-describedby="stamp-range-help"></label>
+        <p id="stamp-range-help">Use current page numbers, e.g. 1, 3-5. These ranges apply to all stamps below.</p>
+        <label>Header text <input id="stamp-header" maxlength="250" autocomplete="off"></label>
+        <label>Footer text <input id="stamp-footer" maxlength="250" autocomplete="off"></label>
+        <label>Page number format <input id="stamp-format" maxlength="120" placeholder="Page {n}" autocomplete="off" aria-describedby="stamp-format-help"></label>
+        <p id="stamp-format-help">{n} counts stamped pages from the start number; {page} and {total} use the current document.</p>
+        <label>Start number <input id="stamp-start" type="number" min="1" step="1" value="1"></label>
+        <label>Watermark text <input id="stamp-watermark" maxlength="250" autocomplete="off"></label>
+        <label>Watermark opacity (%) <input id="stamp-opacity" type="number" min="1" max="100" step="any" value="25"></label>
+        <label>Watermark angle (degrees) <input id="stamp-angle" type="number" min="-180" max="180" step="any" value="30" aria-describedby="stamp-angle-help"></label>
+        <p id="stamp-angle-help">Positive angles tilt up to the right from horizontal.</p>
+        <label>Watermark position <select id="stamp-position"><option value="top">Top center</option><option value="center" selected>Center</option><option value="bottom">Bottom center</option></select></label>
+      </fieldset>
+      <p id="stamp-message" role="alert"></p>
+      <div class="dialog-actions"><button type="button" data-close>Cancel</button><button id="apply-stamps" class="primary">Apply stamps</button></div>
+    </form>
+  </dialog>
   <dialog id="extract-dialog" aria-labelledby="extract-title">
     <form id="extract-form">
       <h2 id="extract-title">Extract pages</h2>

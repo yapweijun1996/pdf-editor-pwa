@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { once } from 'node:events';
 import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { chromium, webkit } from 'playwright';
+import { chromium, errors, webkit } from 'playwright';
 import { PDFArray, PDFDict, PDFDocument, PDFName, PDFStream } from '../vendor/pdf-lib/dist/pdf-lib.esm.min.js';
 import { serve } from '../scripts/serve.mjs';
 import { validatePDF } from '../src/save.js';
@@ -33,10 +34,102 @@ const point = async (page, x, y) => {
 };
 const checkEvidence = (file, data) => writeFile(join(evidence, file), JSON.stringify(data, null, 2));
 
+const hash = bytes => createHash('sha256').update(bytes).digest('hex');
+const file = (bytes, name) => ({ name, mimeType: 'application/pdf', buffer: bytes });
+// The application reveals paper only after copying the current render and painting
+// its overlay. Workspace installation invalidates the old render and hides paper.
+const observer = `
+  let annotationReadyAt = null;
+  void initialization.then(() => { annotationReadyAt = performance.now(); });
+  const annotationHashes = new WeakMap();
+  window.annotationTestSnapshot = () => structuredClone(session?.current);
+  window.annotationTestDrafts = () => vault.drafts();
+  window.annotationTestDraftBytes = async record => [...await vault.readVersion(record)];
+  window.annotationTestState = () => {
+    const source = sources.get(baseId);
+    if (source && !annotationHashes.has(source)) {
+      const fingerprint = { hash: null };
+      annotationHashes.set(source, fingerprint);
+      void vault.fingerprint({ size: source.bytes.length }, source.bytes)
+        .then(stamp => { fingerprint.hash = stamp.hash; });
+    }
+    return {
+      time: performance.now(), readyAt: annotationReadyAt, busy, source: baseId ?? null,
+      currentPageSource: session ? activePage()?.source : null,
+      name: source?.name, hash: source && annotationHashes.get(source).hash,
+      bindingId: binding?.id, draftId, committed: !!session && draftState === session.current,
+      dirty: !!session?.dirty, paper: !$('paper').hidden && !$('workspace').hidden && $('canvas').width > 0,
+      dialog: document.querySelector('dialog[open]')?.id ?? null,
+      status: $('status').textContent, error: $('status').dataset.error === 'true',
+    };
+  };`;
+const appState = page => page.evaluate(() => window.annotationTestState?.());
+const drafts = page => page.evaluate(() => window.annotationTestDrafts());
+const waitState = async (page, predicate, arg, options) => {
+  const handle = await page.waitForFunction(predicate, arg, options);
+  try { return await handle.jsonValue(); } finally { await handle.dispose(); }
+};
+const initialized = (page, options) => waitState(page, () => {
+  const state = window.annotationTestState?.();
+  return state?.readyAt != null && !state.busy && state;
+}, undefined, options);
+const recoveryGate = page => waitState(page, () => {
+  const state = window.annotationTestState?.();
+  return state && (state.readyAt != null || state.dialog === 'save-choice') && state;
+});
+const rendered = (page, expected, options) => waitState(page, ({ name, digest, previousSource }) => {
+  const state = window.annotationTestState?.();
+  return state?.readyAt != null && !state.busy && !state.error && !state.dialog && state.paper &&
+    state.source !== previousSource && state.currentPageSource === state.source &&
+    state.name === name && state.hash === digest && state;
+}, expected, options);
+
+async function knownRecovery(page, previous, gate, expectedRecord) {
+  assert.equal(gate.readyAt, null, 'Recovery must precede fulfilled initialization');
+  assert.equal(gate.source, null);
+  assert.equal(gate.paper, false);
+  const records = await drafts(page);
+  assert.equal(records.length, 1, 'Never act on an unknown recovery journal');
+  const [record] = records;
+  assert.equal(record.id, previous.draftId);
+  assert.equal(record.doc.id, previous.bindingId);
+  assert.equal(record.doc.name, previous.name);
+  assert.ok(!record.doc.handle, 'Only synthetic copy-only drafts may be reset');
+  if (expectedRecord) assert.deepEqual(record, expectedRecord);
+  const description = await page.evaluate(({ name, time }) =>
+    `${name} · ${new Date(time).toLocaleString()}. Restores the last autosaved PDF, without undo history.`,
+  { name: record.doc.name, time: record.time });
+  const dialog = page.getByRole('dialog', { name: 'Recover unsaved work?', exact: true });
+  assert.ok(await dialog.isVisible());
+  assert.equal(await dialog.locator('#choice-description').textContent(), description);
+  return { dialog, record };
+}
+
+async function reloadForSyntheticReset(page, previous) {
+  await page.reload();
+  const gate = await recoveryGate(page);
+  if (gate.dialog) {
+    const { dialog, record } = await knownRecovery(page, previous, gate);
+    // This scenario explicitly starts a different synthetic iteration/export.
+    await dialog.getByRole('button', { name: 'Discard recovery', exact: true }).click();
+    console.log(`Synthetic reset: discarded ${record.doc.name} (${record.hash}) after recovery prompt at ${Math.round(gate.time)} ms`);
+  }
+  const state = await initialized(page);
+  assert.equal(state.error, false, state.status);
+  assert.equal(state.dialog, null);
+  assert.equal(state.source, null);
+  assert.deepEqual(await drafts(page), [], 'Reset must not leave an unexpected recovery draft');
+}
+
 async function open(page, bytes = input, name = 'annotations.pdf') {
-  await page.locator('#file').setInputFiles({ name, mimeType: 'application/pdf', buffer: bytes });
-  await page.waitForFunction(name => document.querySelector('#status').textContent.includes(`Opened ${name}.`), name);
-  await page.locator('#paper').waitFor({ state: 'visible' });
+  const before = await initialized(page);
+  assert.equal(before.error, false, before.status);
+  assert.equal(before.dialog, null, 'Resolve the known UI choice before providing a file');
+  assert.equal(before.dirty, false, 'A dirty workspace requires an explicit reset');
+  await page.locator('#file').setInputFiles(file(bytes, name));
+  const state = await rendered(page, { name, digest: hash(bytes), previousSource: before.source });
+  assert.equal(state.status.includes(`Opened ${name}.`), true);
+  return state;
 }
 
 async function run(browserType, name, phone, check, instrument = true) {
@@ -53,9 +146,9 @@ async function run(browserType, name, phone, check, instrument = true) {
     if (instrument) {
       // Read-only observer in this loopback response only. No test writes to the model.
       await page.route('**/src/app.js', route => route.fulfill({ contentType: 'text/javascript',
-        body: `${app}\nwindow.annotationTestSnapshot = () => structuredClone(session?.current);\n` }));
+        body: `${app}\n${observer}\n` }));
     }
-    await page.goto(origin);
+    if (instrument) await page.goto(origin);
     await check(page, phone, label);
     console.log(`PASS ${label}`);
   } catch (error) {
@@ -115,8 +208,9 @@ async function hitPoint(locator) {
 
 async function selection(page, phone, label) {
   const rows = [];
-  for (const kind of ['text', 'ink', 'highlight', 'image']) {
-    await open(page);
+  const kinds = ['text', 'ink', 'highlight', 'image'];
+  for (const kind of kinds) {
+    const opened = await open(page);
     const tap = async p => phone ? page.touchscreen.tap(...p) : page.mouse.click(...p);
     await click(page, `[data-mode=${kind}]`);
     if (kind === 'text') {
@@ -207,8 +301,7 @@ async function selection(page, phone, label) {
     await editHistory(page, styled, deleted);
     rows.push({ kind, counts: [1, 1, resized.pages[0].marks.length, styled.pages[0].marks.length, 0],
       before: anchor(original), after: anchor(translated), handles: [[move.width, move.height], [resize.width, resize.height]], deepEqual: true });
-    // Clear the dirty document before the next synthetic input.
-    await page.reload();
+    if (kind !== kinds.at(-1)) await reloadForSyntheticReset(page, opened);
   }
   await checkEvidence(`${label}.json`, rows);
   console.log(label, JSON.stringify(rows));
@@ -285,8 +378,7 @@ async function download(page, label) {
   return readFile(path);
 }
 
-async function roundTrip(page, phone, label) {
-  await open(page);
+async function placeShapes(page, phone) {
   for (const [kind, , y0, y1, hex] of shapes) {
     await click(page, '#more-tools');
     await click(page, `[data-shape=${kind}]`);
@@ -302,6 +394,12 @@ async function roundTrip(page, phone, label) {
   for (const [i, mark] of initial.entries()) {
     assert.equal(mark.color, shapes[i][4]); assert.equal(mark.size, 6);
   }
+  return initial;
+}
+
+async function roundTrip(page, phone, label) {
+  let opened = await open(page);
+  const initial = await placeShapes(page, phone);
   let expected = initial;
   const outputs = [];
   for (let generation = 0; generation < 3; generation++) {
@@ -309,8 +407,8 @@ async function roundTrip(page, phone, label) {
     const parsed = await readPDF(page, bytes, generation ? 1 : 0);
     assert.deepEqual(parsed.ids.sort(), initial.map(m => `paperplane:${m.markId}`).sort());
     outputs.push(parsed);
-    await page.reload();
-    await open(page, bytes, `round-${generation}.pdf`);
+    await reloadForSyntheticReset(page, opened);
+    opened = await open(page, bytes, `round-${generation}.pdf`);
     assert.deepEqual(await marks(page), expected);
     assert.equal(await page.locator('#overlay > [data-mark-id]').count(), 6);
     // The six live overlays must not also appear in the app's base canvas.
@@ -520,12 +618,234 @@ async function keyboard(page, phone, label) {
   console.log(`${label}: ${Object.values(inventories).reduce((a, b) => a+b)} named controls, ${focusChecks.length} visible focus checks, 2 negative controls`);
 }
 
+async function recovery(page, phone, label) {
+  const name = 'six-shape-recovery.pdf';
+  const original = await open(page, input, name);
+  const initial = await placeShapes(page, phone);
+  // Native autosave ticks every 10 seconds. Allow two ticks plus commit time
+  // (the first can already be saving an earlier edit). Never call autosave here.
+  const committed = await waitState(page, () => {
+    const state = window.annotationTestState();
+    return state.committed && state.dirty && state;
+  }, undefined, { timeout: 25000 });
+  const [record, ...others] = await drafts(page);
+  assert.equal(others.length, 0);
+  assert.equal(record.id, original.draftId);
+  assert.equal(record.doc.id, original.bindingId);
+  const draftBytes = async () => Buffer.from(await page.evaluate(r => window.annotationTestDraftBytes(r), record));
+  const saved = await draftBytes();
+  assert.equal(saved.byteLength, record.size);
+  assert.equal(hash(saved), record.hash);
+  assert.notEqual(record.hash, hash(input));
+  const nativeDraft = await readPDF(page, saved, 0);
+  assert.deepEqual(nativeDraft.ids.sort(), initial.map(m => `paperplane:${m.markId}`).sort());
+
+  // Hold the actual app response before module evaluation. The readiness probe
+  // must fail while held; releasing the response must reveal real recovery.
+  const { promise: requested, resolve: requestSeen } = Promise.withResolvers();
+  const { promise: release, resolve: allowResponse } = Promise.withResolvers();
+  await page.route('**/src/app.js', async route => {
+    requestSeen();
+    await release;
+    await route.fallback();
+  }, { times: 1 });
+  await page.reload({ waitUntil: 'commit' });
+  try {
+    await Promise.race([requested, page.waitForLoadState('load')]);
+    assert.equal(await appState(page), undefined);
+    await assert.rejects(initialized(page, { timeout: 300 }), errors.TimeoutError);
+  } finally { allowResponse(); }
+  await page.waitForLoadState('load');
+
+  const pending = await recoveryGate(page);
+  await knownRecovery(page, original, pending, record);
+  await assert.rejects(initialized(page, { timeout: 300 }), errors.TimeoutError);
+  // Causal negative control only: intentionally reproduce the OLD driver in
+  // this realm. Reload unanswered before the positive flow so the queued
+  // legacy import cannot continue after our real Recover workspace choice.
+  await page.evaluate(() => document.addEventListener('change', event => {
+    if (event.target.id === 'file') window.annotationLegacyFileAt = performance.now();
+  }, { capture: true }));
+  await page.locator('#file').setInputFiles(file(input, name));
+  const legacyFileAt = await page.evaluate(() => window.annotationLegacyFileAt);
+  assert.ok(legacyFileAt >= pending.time, 'The old helper supplied input during recovery');
+  await assert.rejects(page.waitForFunction(n => document.querySelector('#status').textContent.includes(`Opened ${n}.`), name), errors.TimeoutError);
+  const blocked = await appState(page);
+  assert.equal(blocked.readyAt, null);
+  assert.equal(blocked.source, null);
+  assert.equal(blocked.paper, false);
+  assert.equal(blocked.dialog, 'save-choice');
+  assert.deepEqual(await drafts(page), [record]);
+  assert.deepEqual(await draftBytes(), saved, 'An unanswered prompt and queued import must not lose the draft');
+
+  await page.reload();
+  const prompt = await recoveryGate(page);
+  const { dialog } = await knownRecovery(page, original, prompt, record);
+  const choiceAt = (await appState(page)).time;
+  await dialog.getByRole('button', { name: 'Recover workspace', exact: true }).click();
+  const restored = await rendered(page, { name, digest: record.hash, previousSource: prompt.source });
+  assert.ok(restored.readyAt >= choiceAt);
+  assert.equal(restored.status, 'Recovered unsaved edits. The original has not been changed.');
+  assert.equal(restored.bindingId, original.bindingId);
+  assert.notEqual(restored.draftId, original.draftId);
+  assert.equal(restored.dirty, true);
+  assert.equal(restored.committed, true);
+  assert.equal(await page.locator('#dirty').textContent(), 'Unsaved edits');
+  assert.deepEqual(await marks(page), initial);
+  assert.equal(await page.locator('#overlay > [data-mark-id]').count(), 6);
+  const [restoredRecord, ...restoredOthers] = await drafts(page);
+  assert.equal(restoredOthers.length, 0);
+  assert.equal(restoredRecord.id, restored.draftId);
+  assert.equal(restoredRecord.hash, record.hash);
+
+  // Same name, same page count, visible paper: independently reject wrong
+  // bytes and a stale source even though every other condition is satisfied.
+  await assert.rejects(rendered(page, { name, digest: hash(input), previousSource: null }, { timeout: 300 }), errors.TimeoutError);
+  await assert.rejects(rendered(page, { name, digest: record.hash, previousSource: restored.source }, { timeout: 300 }), errors.TimeoutError);
+  const reexport = await readPDF(page, await download(page, label), 0);
+  assert.deepEqual(reexport.ids.sort(), nativeDraft.ids);
+  await reloadForSyntheticReset(page, restored);
+  const opened = await open(page, input, name);
+  assert.deepEqual(await marks(page), []);
+  const timeline = { committedAt: committed.time, pending, legacyFileAt, blocked, prompt, choiceAt, restored, opened };
+  await checkEvidence(`${label}.json`, { timeline, record, restoredRecord, nativeDraft, reexport,
+    rejected: ['response held', 'unanswered recovery', 'old status wait', 'same name wrong bytes', 'stale source'] });
+  console.log(`${label}: six native committed/restored shapes; ${JSON.stringify(timeline)}`);
+}
+
+// The generated manifest is a JSON literal assigned to self.PAPERPLANE_ASSETS.
+// Match the actual sw.js namespace (scope + revision), then check the contents
+// of that cache, not a global caches.match() that could use an older revision.
+async function offlineManifest() {
+  const source = await readFile(new URL('../precache.js', import.meta.url), 'utf8');
+  const manifest = JSON.parse(source.split('self.PAPERPLANE_ASSETS = ')[1].trim().replace(/;$/, ''));
+  const scope = new URL('/', origin).href;
+  return { scope, scriptURL: new URL('sw.js', scope).href,
+    cacheName: `paperplane:${scope}:${manifest.revision}`, manifest,
+    urls: manifest.paths.map(path => new URL(path, scope).href) };
+}
+
+const legacyOfflineReady = () => navigator.serviceWorker.controller &&
+  document.querySelector('#offline').textContent.includes('Offline ready');
+
+async function offlineReady(page, expected, timeout) {
+  await waitState(page, scriptURL => {
+    const controller = navigator.serviceWorker.controller;
+    return controller?.scriptURL === scriptURL && controller.state === 'activated' &&
+      document.querySelector('#offline')?.textContent.trim() === 'Offline ready';
+  }, expected.scriptURL, { timeout });
+  // Install awaits addAll before activation. Read the completed cache once;
+  // do not pass an async predicate to Playwright's truthiness poll.
+  const problem = await page.evaluate(async ({ scope, scriptURL, cacheName, urls }) => {
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (registration?.scope !== scope || registration.active?.scriptURL !== scriptURL) return 'Unexpected worker registration';
+    if (!(await caches.has(cacheName))) return `Missing current cache: ${cacheName}`;
+    const cache = await caches.open(cacheName);
+    const cached = new Set((await cache.keys()).map(request => request.url));
+    const missing = (await Promise.all(urls.map(async url =>
+      cached.has(url) && (await cache.match(url))?.ok ? null : url))).filter(Boolean);
+    return missing.length ? `Missing usable current-cache responses: ${missing.join(', ')}` : null;
+  }, expected);
+  assert.equal(problem, null);
+}
+
 async function offline(page, _phone, label) {
-  await page.waitForFunction(() => navigator.serviceWorker.controller && document.querySelector('#offline').textContent.includes('Offline ready'));
+  const expected = await offlineManifest();
+  // Hold an actual install request, without intercepting the application or
+  // worker code. The old deadline is a negative control, not a product SLO.
+  const heldURL = new URL('icons/icon-512.png', expected.scope).href;
+  assert.ok(expected.urls.includes(heldURL));
+  const { promise: hold, resolve: release } = Promise.withResolvers();
+  const start = performance.now();
+  const timeline = [];
+  const log = (event, data = {}) => timeline.push({ event, ms: Math.round(performance.now() - start), ...data });
+  const state = () => page.evaluate(async () => {
+    const worker = entry => entry && { scriptURL: entry.scriptURL, state: entry.state };
+    const registration = await navigator.serviceWorker.getRegistration();
+    const keys = await caches.keys();
+    return { origin: location.origin, scope: registration?.scope,
+      controller: worker(navigator.serviceWorker.controller), installing: worker(registration?.installing),
+      active: worker(registration?.active), ui: document.querySelector('#offline')?.textContent.trim(), keys,
+      contents: await Promise.all(keys.map(async key => ({ key,
+        urls: (await (await caches.open(key)).keys()).map(request => request.url).sort() }))) };
+  });
+  const [serveRequest] = server.listeners('request');
+  server.removeListener('request', serveRequest);
+  let held = false;
+  server.on('request', async (request, response) => {
+    if (new URL(request.url, origin).href === heldURL && request.method === 'GET') {
+      held = true;
+      log('held asset', { url: heldURL });
+      await hold;
+    }
+    await serveRequest(request, response);
+  });
+  try {
+    const cdp = await page.context().newCDPSession(page);
+    cdp.on('ServiceWorker.workerVersionUpdated', ({ versions }) => {
+      for (const { status, scriptURL } of versions) log('worker version', { status, scriptURL });
+    });
+    await cdp.send('ServiceWorker.enable');
+    await page.goto(origin);
+    await assert.rejects(waitState(page, legacyOfflineReady), errors.TimeoutError);
+    assert.ok(held, 'The old deadline must expire while a real precache request is held');
+    log('legacy deadline expired', await state());
+    await assert.rejects(offlineReady(page, expected, 300), errors.TimeoutError);
+    log('readiness rejected while install held');
+    release();
+    log('released asset');
+    // Bound only the worker install/activation phase; keep the ordinary UI
+    // timeout unchanged. A release alone does not establish offline readiness.
+    await offlineReady(page, expected, 15000);
+    const ready = await state();
+    log('ready', ready);
+    const cached = ready.contents.find(({ key }) => key === expected.cacheName);
+    assert.deepEqual(cached.urls, [...expected.urls].sort());
+    console.log(`${label}: ${ready.origin}, ${ready.controller.scriptURL} ${ready.controller.state}; raw cache keys ${JSON.stringify(ready.keys)}, ${cached.urls.length}/${expected.urls.length} manifest URLs`);
+    await checkOfflineExport(page, label);
+    log('server stopped; offline export verified');
+
+    // Negative control after the real export: move one good entry to a stale
+    // revision in this disposable context. Global coverage and the old UI /
+    // controller condition still pass, but the serving cache is incomplete.
+    const stale = `${expected.cacheName}-stale-test`;
+    await page.evaluate(async ({ cacheName, stale, heldURL }) => {
+      const current = await caches.open(cacheName);
+      const old = await caches.open(stale);
+      await old.put(heldURL, await current.match(heldURL));
+      await current.delete(heldURL);
+    }, { cacheName: expected.cacheName, stale, heldURL });
+    assert.ok(await page.evaluate(async url => (await caches.match(url))?.ok, heldURL));
+    // The real offline label changes with network state. Return online with the
+    // server still stopped so the original UI predicate can be tested again.
+    await page.context().setOffline(false);
+    await waitState(page, legacyOfflineReady);
+    log('missing current entry despite stale hit', await state());
+    await assert.rejects(offlineReady(page, expected, 300), /Missing usable current-cache responses:/);
+    log('missing current entry rejected');
+  } finally {
+    release();
+    await checkEvidence(`${label}-cache.json`, { expected, timeline });
+  }
+}
+
+async function checkOfflineExport(page, label) {
   await new Promise((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
   await page.context().setOffline(true);
   await page.reload();
-  await open(page);
+  // No instrumented response in this server-stopped case. This fresh workspace
+  // has no draft or prior canvas: load has evaluated the module, then the public
+  // Open button unlocks only after startup recovery completes.
+  assert.equal(await page.locator('#filename').textContent(), 'No document open');
+  assert.equal(await page.locator('#paper').isVisible(), false);
+  await page.waitForFunction(() => {
+    const open = document.querySelector('#open');
+    return open.onclick && !open.disabled && !document.querySelector('dialog[open]');
+  });
+  const name = 'offline-shape-input.pdf';
+  await page.locator('#file').setInputFiles(file(input, name));
+  await page.waitForFunction(name => document.querySelector('#status').textContent.includes(`Opened ${name}.`), name);
+  await page.locator('#paper').waitFor({ state: 'visible' });
   await click(page, '#more-tools');
   await click(page, '[data-shape=rectangle]');
   await click(page, '#keyboard-place');
@@ -542,6 +862,7 @@ try {
     await run(browserType, 'round-trip', phone, roundTrip);
     await run(browserType, 'keyboard', phone, keyboard);
   }
+  await run(chromium, 'native-recovery', false, recovery);
   await run(chromium, 'offline-shape', false, offline, false);
 } finally {
   if (server.listening) await new Promise((resolve, reject) => server.close(error => error ? reject(error) : resolve()));

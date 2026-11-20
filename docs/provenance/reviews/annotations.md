@@ -4,7 +4,15 @@
 - Reviewer: `work-0e0752a8-2d9c-4ca1-9d61-d3a5a6698a0b`, Independent annotation tests and provenance integration, 2026-11-20 UTC. Dispatcher generation `239f591b-90ec-458b-9c50-e1e12d66c662`.
 - Scope: **approved for runtime provenance only**, for the eight raw SHA-256 fingerprints in [the record](../annotations.json). The reviewer wrote the new browser tests and documentation, but none of the runtime files under review. This does not sign off the tests, standing QA, release licensing, security, or owner review.
 
-## Derivation and integration
+The approval above is historical; it does not revise the historical S3a goal outcome.
+
+## S3b integration — current
+
+Reviewer: `work-01f98a83-c2aa-4768-b0e1-fa98d2b539de`, 2026-11-20. Reviewed runtime integration for the current raw digests in [annotations.json](../annotations.json). `src/shapes.js` matches base. Reviewed crop/blank projections, gesture ownership and the preserved managed-annotation export/import path; ordinary PDF stamps are not rehydrated as managed marks. Foreign note and form remained on the expected pages in the two-reader workflow. No runtime repair or annotation driver edit by this reviewer.
+
+The B0 driver bytes (`ebdf48c17138c7f3f41f80cc113d7ca36c19c74a7d4c47035aa5a9814f7a36c1`) ran 8/8 unchanged on the integrated runtime. It observed an activated `/sw.js`, the real scope/revision CacheStorage key, and 222/222 current manifest URLs, then exported an offline shape with the HTTP server stopped. Native six-shape restore, its negative controls, and the existing AX/keyboard checks passed. Attributed driver integration: `work-9558ce5d-e1b0-4f73-85b0-6ea6935ae831`. This review is not standing QA, approval of my own tests, or a license, security, release or owner sign-off.
+
+## Historical S3a derivation and integration
 
 Recomputed all eight SHA-256 digests in the dispatched snapshot before testing. They match the W-shapes producer record. The [producer ledger](../../notes/annotations-spec.md) preserves the original selection author (`work-adb87329-be69-40a6-bed0-aed6db43e892`), the admission and hex-field contributor (`work-a462ddd3-dd69-4075-94d5-7e37f60c85e1`), and the shape and appearance author (`work-c972bba2-40dd-4a87-a718-25b072edd66b`). Historical D1 UNKNOWN was not reclassified.
 

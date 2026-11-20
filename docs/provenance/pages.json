@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "module": "Paperplane page geometry, insertion, crop, range split and thumbnail group operations",
+  "revision": {
+    "baseCommit": "970d3413fd028dc83ab9fea59f938db43bd85a80",
+    "files": {
+      "src/model.js": "14844339a337937c1760dd00ffe4c8e31bea5906ac99f1b169a4a08c8b35813e",
+      "src/pdf.js": "cee0f17ffef278a20e2ead1fab82c22b74a93ccfb268f5bfcd9637b513f5fd3c",
+      "src/viewer.js": "0f92974637dcf22e805870c3a22113aa7f74c8f2cb25b4f26bfe929ed42f76f2",
+      "src/app.js": "1e018ff2b851ba88b340c6b425f99c70ac0a89ae34029f5b36d2c7872a8d3ac4",
+      "index.html": "212aa99ea269dd2df2a2bd2cec830c3a6ba21170cbdfca57e9be09e9ed3a6b37",
+      "style.css": "23db8631a5eeb5df27006637fbc74382c5f461cee601a619fbf0fbe8cb039e56",
+      "precache.js": "e7f14683b9bbb76c247213ad163fcffec4a8692c7194cf1d266ff5f32a68f4d9",
+      "docs/notes/pages-spec.md": "b12a3b2ce69014688c4e8756fe908895fe2031674be6f1b5a507ade3ffb0e178"
+    }
+  },
+  "author": {
+    "id": "work-8db7210e-db81-46b1-8630-80bdd2ae9030",
+    "role": "Page geometry and touch-safe group operations architect"
+  },
+  "authoredOn": "2026-11-20",
+  "sources": [
+    {
+      "sourceId": "pages-contract-r2",
+      "sections": [
+        "Page model, undo and selection invariants",
+        "Crop and split decisions"
+      ],
+      "notes": "Product requirements and acceptance boundaries."
+    },
+    {
+      "sourceId": "paperplane-engine-plan",
+      "sections": [
+        "What developed by us means",
+        "License and provenance rules"
+      ],
+      "notes": "Project authorship and dependency constraints."
+    },
+    {
+      "sourceId": "paperplane-base-970d",
+      "sections": [
+        "Page model, viewer and export",
+        "Save and annotation integration"
+      ],
+      "notes": "Local application interfaces and synthetic behavior; implementation changes independently authored."
+    }
+  ],
+  "notes": "Source-ID ledger and geometry/export contracts in docs/notes/pages-spec.md. Shared files updated by stamp integration contributor work-6a745a79-017e-41b5-8d9b-2275929fc764 on 2026-11-20; see stamps.json. No new dependencies or vendor modifications. S3b refresh: prior runtime approvals remain historical in the linked review and Git history; current review binds the listed raw bytes.",
+  "review": {
+    "status": "approved",
+    "reviewer": {
+      "id": "work-01f98a83-c2aa-4768-b0e1-fa98d2b539de",
+      "role": "Independent page tools tests and runtime provenance integration"
+    },
+    "reviewedOn": "2026-11-20",
+    "reviewedRevision": {
+      "baseCommit": "970d3413fd028dc83ab9fea59f938db43bd85a80",
+      "files": {
+        "src/model.js": "14844339a337937c1760dd00ffe4c8e31bea5906ac99f1b169a4a08c8b35813e",
+        "src/pdf.js": "cee0f17ffef278a20e2ead1fab82c22b74a93ccfb268f5bfcd9637b513f5fd3c",
+        "src/viewer.js": "0f92974637dcf22e805870c3a22113aa7f74c8f2cb25b4f26bfe929ed42f76f2",
+        "src/app.js": "1e018ff2b851ba88b340c6b425f99c70ac0a89ae34029f5b36d2c7872a8d3ac4",
+        "index.html": "212aa99ea269dd2df2a2bd2cec830c3a6ba21170cbdfca57e9be09e9ed3a6b37",
+        "style.css": "23db8631a5eeb5df27006637fbc74382c5f461cee601a619fbf0fbe8cb039e56",
+        "precache.js": "e7f14683b9bbb76c247213ad163fcffec4a8692c7194cf1d266ff5f32a68f4d9",
+        "docs/notes/pages-spec.md": "b12a3b2ce69014688c4e8756fe908895fe2031674be6f1b5a507ade3ffb0e178"
+      }
+    },
+    "evidence": [
+      "docs/provenance/reviews/pages.md"
+    ],
+    "notes": "Independent integration provenance only. No approval of the reviewer’s tests, standing QA, release, security or owner acceptance."
+  }
+}

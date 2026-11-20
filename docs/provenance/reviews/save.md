@@ -1,6 +1,12 @@
 # Save provenance reviews
 
-## S3a annotation integration — current
+## S3b page and stamp integration — current
+
+Reviewer: `work-01f98a83-c2aa-4768-b0e1-fa98d2b539de`, 2026-11-20. Runtime integration provenance only for the raw hashes in [save.json](../save.json). The original transaction implementation remains byte-identical at `f74ec0b13a62dc3319f5b04ae875fa6c58caefa3fc2115291ee72738e27ebda7`, and the Save test and fixture are unchanged. Derived downloads leave original dirty state alone; the materializer still supplies standalone bytes and the validator was not changed. Native Chromium OPFS recovery restored combined blank/crop/stamps/split through the UI. WebKit returned `UnknownError` obtaining native OPFS in both 970d and candidate emulation, so persistence there was not verified.
+
+Save 33/33; Node 18 pass, five opt-in skips; Chromium 9/9 including server stopped; mobile WebKit 63/63 default and 63/63 serial; annotation 8/8; pages 6/6; asset check 222 at `4f4a902077fbb4547b38`. Suites were run sequentially under the browser lease. No approval of this reviewer's tests, standing QA, security, release or owner acceptance.
+
+## S3a annotation integration — historical
 
 Reviewer: `work-0e0752a8-2d9c-4ca1-9d61-d3a5a6698a0b`, Independent Save integration provenance review, 2026-11-20 UTC. Goal `606aea52-61e9-4831-8a66-cc24f0367fa8` revision 3, generation `239f591b-90ec-458b-9c50-e1e12d66c662`, base `856a184cfc3f0bafcbf1c51ae1cd6dec8d8399f7`.
 

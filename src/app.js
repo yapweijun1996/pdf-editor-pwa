@@ -1,7 +1,8 @@
-import { documentState, edit, history, rotatePoint, selectPages, transformMark } from './model.js';
+import { documentState, edit, history, insideBox, rotatePoint, selectPages, transformMark } from './model.js';
 import { checkText, createPDF, describeFields, openPDF, previewFields, validateFields } from './pdf.js';
 import * as vault from './save.js';
 import { createViewer } from './viewer.js';
+import { prepareStamps } from './stamps.js';
 
 import { isShape, subtypes } from './shapes.js';
 
@@ -61,7 +62,18 @@ let markId;
 let mode = 'view', image, stroke, formSource, warned = false;
 const colors = { text: '#15386a', ink: '#15386a', highlight: '#ffd12a' };
 for (const kind of Object.keys(subtypes)) colors[kind] = '#15386a';
+const checked = new Set();
 const viewer = createViewer({
+  checked, onCheck(id, value) { if (value) checked.add(id); else checked.delete(id); controls(); },
+  onPosition(id) { if (!ready()) return; focusGroup(id); openPageTools(); $('move-position').focus(); },
+  onDrop(id, target) {
+    if (!ready()) return;
+    focusGroup(id);
+    if (checked.has(target)) return;
+    const pages = session.current.pages, rest = pages.filter(p => !checked.has(p.id));
+    const after = pages.findIndex(p => p.id === target) > pages.findIndex(p => p.id === id);
+    groupAction('move', rest.findIndex(p => p.id === target) + 1 + Number(after));
+  },
   stage: $('stage'), paper: $('paper'), canvas: $('canvas'), overlay: $('overlay'), thumbs: $('thumbs'),
   getSource: id => sources.get(id), onSelect: (index, reveal) => go(index, reveal), onError: message => status(message, true),
   canTap: () => ready() && (mode === 'image' || (mode === 'text' && Boolean($('mark-text').value.trim()))),
@@ -165,9 +177,14 @@ function controls() {
   $('zoom-out').disabled = busy || zoom <= .5;
   $('undo').disabled = busy || !session?.canUndo;
   $('redo').disabled = busy || !session?.canRedo;
-  $('prev').disabled = $('earlier').disabled = busy || selected === 0;
-  $('next').disabled = $('later').disabled = busy || selected >= count - 1;
-  $('delete').disabled = busy || count < 2;
+  $('prev').disabled = busy || selected === 0;
+  $('next').disabled = busy || selected >= count - 1;
+  const group = hasDocument ? groupPages() : [];
+  const first = hasDocument ? session.current.pages.indexOf(group[0]) : 0;
+  $('earlier').disabled = busy || first <= 0;
+  $('later').disabled = busy || first >= count - group.length;
+  $('delete').disabled = busy || count === group.length;
+  $('page-tools').disabled = busy || !hasDocument;
 }
 
 function lock(value) {
@@ -340,14 +357,169 @@ if ('launchQueue' in window) {
   });
 }
 
-const pageAction = (type, message, delta) => {
+function groupPages() {
+  const group = session.current.pages.filter(p => checked.has(p.id));
+  return group.length ? group : [activePage()];
+}
+function focusGroup(id) {
+  if (!checked.has(id)) { checked.clear(); checked.add(id); }
+  viewer.list(session.current.pages, selected); controls();
+}
+function groupAction(op, position) {
+  const ids = groupPages().map(p => p.id);
+  return change({ type:'group', op, ids, position }, `${ids.length} page(s): ${op}.`);
+}
+for (const op of ['rotate','delete']) $(op).onclick = () => ready() && groupAction(op);
+for (const [key,delta] of [['earlier',-1],['later',1]]) $(key).onclick = () => ready() && groupAction('move', session.current.pages.indexOf(groupPages()[0])+1+delta);
+function pageToolsState() {
+  const pages = session.current.pages, group = groupPages();
+  $('selection-summary').textContent = `Selected pages: ${group.map(p => pages.indexOf(p)+1).join(', ')}`;
+  $('move-position').max = pages.length-group.length+1;
+  $('move-position').value = pages.indexOf(group[0])+1;
+  $('split-outputs').replaceChildren();
+  for (const [index,ids] of (session.current.splitPlan ?? []).entries()) {
+    const button = document.createElement('button');
+    button.textContent = `Download part ${index+1}`;
+    button.onclick = () => derived(ids, `part-${index+1}`);
+    $('split-outputs').append(button);
+  }
+}
+async function derived(ids, suffix) {
+  if (busy) return;
+  lock(true);
+  try {
+    const state = session.current, byId = new Map(state.pages.map(p => [p.id,p]));
+    const bytes = await createPDF(sources,state,ids.map(id => byId.get(id)),baseId,true);
+    $('pages-message').textContent = `Download requested: ${download(bytes,suffix)}. Original unchanged.`;
+  } catch (e) { $('pages-message').textContent = e.message; }
+  finally { lock(false); }
+}
+function openPageTools() {
   if (!ready()) return;
-  change({ type, id: activePage().id, delta }, message);
+  pageToolsState(); $('pages-message').textContent = ''; $('pages-dialog').showModal();
+}
+$('page-tools').onclick = openPageTools;
+for (const key of ['select-all-pages','clear-pages']) $(key).onclick = () => {
+  if (busy) return;
+  checked.clear(); if (key === 'select-all-pages') session.current.pages.forEach(p => checked.add(p.id));
+  viewer.list(session.current.pages,selected); controls(); pageToolsState();
 };
-$('rotate').onclick = () => pageAction('rotate', 'Page rotated clockwise.');
-$('delete').onclick = () => pageAction('delete', 'Page deleted. Undo restores it. Form fields will be flattened in the downloaded copy.');
-$('earlier').onclick = () => pageAction('move', 'Page moved earlier.', -1);
-$('later').onclick = () => pageAction('move', 'Page moved later.', 1);
+$('move-group').onclick = () => {
+  if (busy) return;
+  const position = $('move-position').valueAsNumber;
+  if (!Number.isInteger(position) || !$('move-position').checkValidity()) { $('pages-message').textContent = `Enter a position from 1 to ${$('move-position').max}.`; return; }
+  $('pages-dialog').close(); groupAction('move',position);
+};
+$('extract-group').onclick = () => derived(groupPages().map(p => p.id),'selection');
+for (const side of ['before','after']) $(`blank-${side}`).onclick = () => {
+  if (busy) return;
+  $('pages-dialog').close(); const id = crypto.randomUUID();
+  change({ type:'blank', newId:id, id:activePage().id, after:side==='after' }, 'Blank page inserted.');
+  go(session.current.pages.findIndex(p => p.id === id));
+};
+$('plan-split').onclick = () => {
+  if (busy) return;
+  try { change({ type:'splitPlan', expression:$('split-ranges').value }, 'Split plan prepared.',false); pageToolsState(); $('pages-message').textContent = 'Plan prepared. Download each output separately.'; }
+  catch (e) { $('pages-message').textContent = e.message; }
+};
+
+const stampsDialog = $('stamps-dialog'), stampsForm = $('stamps-form');
+const stampField = name => $(`stamp-${name}`);
+let stampRequest;
+$('open-stamps').onclick = () => {
+  if (busy || !$('pages-dialog').open) return;
+  stampRequest?.abort();
+  stampRequest = undefined;
+  stampsForm.reset();
+  $('stamp-fields').disabled = $('apply-stamps').disabled = false;
+  stampField('message').textContent = '';
+  const pages = session.current.pages;
+  const positions = pages.flatMap((p, i) => checked.has(p.id) ? [i + 1] : []);
+  stampField('range').value = positions.length ? positions.join(', ') : pages.length === 1 ? '1' : `1-${pages.length}`;
+  viewer.cancelGestures();
+  cancelStroke();
+  $('pages-dialog').close();
+  stampsDialog.showModal();
+};
+stampsDialog.addEventListener('close', () => {
+  if (stampsDialog.open) return;
+  stampRequest?.abort();
+  stampRequest = undefined;
+  if (!anyDialog()) $('page-tools').focus({ preventScroll: true });
+});
+stampsForm.onsubmit = async event => {
+  event.preventDefault();
+  if (!stampsDialog.open || busy || stampRequest) return;
+  const state = session.current;
+  const request = stampRequest = new AbortController();
+  const options = Object.fromEntries(['range','header','footer','format','watermark','position'].map(key => [key, stampField(key).value]));
+  for (const key of ['start','opacity','angle']) options[key] = stampField(key).valueAsNumber;
+  $('stamp-fields').disabled = $('apply-stamps').disabled = true;
+  stampField('message').textContent = '';
+  try {
+    const edits = await prepareStamps(state.pages, options,
+      entry => sources.get(entry.source).pdf.getPage(entry.index + 1), request.signal);
+    if (!request.signal.aborted && stampsDialog.open && session.current === state) {
+      stampsDialog.close();
+      change({ type: 'stampBatch', edits }, `Stamps applied to ${edits.length} page(s).`, false);
+    }
+  } catch (error) {
+    if (!request.signal.aborted && stampsDialog.open) {
+      stampField('message').textContent = error.message;
+      $('stamp-fields').disabled = $('apply-stamps').disabled = false;
+      stampField('range').focus();
+    }
+  } finally {
+    if (stampRequest === request) stampRequest = undefined;
+  }
+};
+
+const cropPreview = $('crop-preview'), cropFields = ['x','y','w','h'].map(k => $(`crop-${k}`));
+let cropView, cropStart;
+function cropValues() {
+  const [x,y,w,h] = cropFields.map(f => f.valueAsNumber / cropView.userUnit);
+  return [x,y,x+w,y+h];
+}
+function previewCrop() {
+  const box = cropValues(), valid = insideBox(box,cropView.viewBox);
+  const rect = cropPreview.querySelector('rect'); rect.style.display = valid ? '' : 'none';
+  $('apply-crop').disabled = !valid;
+  $('crop-message').textContent = valid ? '' : 'Enter a positive box inside the current visible page.';
+  if (!valid) return;
+  const [x,y] = cropView.convertToViewportPoint(box[0],box[1]);
+  const [r,t] = cropView.convertToViewportPoint(box[2],box[3]);
+  for (const [key,value] of Object.entries({ x:Math.min(x,r), y:Math.min(y,t), width:Math.abs(r-x), height:Math.abs(t-y) })) rect.setAttribute(key,value);
+}
+function fillCrop([x,y,r,t]) {
+  [x,y,r-x,t-y].forEach((v,i) => { cropFields[i].value = v*cropView.userUnit; }); previewCrop();
+}
+cropFields.forEach(f => { f.oninput = previewCrop; });
+$('crop-page').onclick = () => {
+  if (busy || !viewer.view) { $('pages-message').textContent = 'Wait for the page preview.'; return; }
+  cropView = viewer.view; cropStart = undefined;
+  const {width,height} = cropView;
+  cropPreview.setAttribute('viewBox',`0 0 ${width} ${height}`);
+  const image = cropPreview.querySelector('image'); image.setAttribute('href',$('canvas').toDataURL());
+  image.setAttribute('width',width); image.setAttribute('height',height);
+  cropPreview.querySelector('g').replaceChildren(...Array.from($('overlay').children,n => n.cloneNode(true)));
+  fillCrop(cropView.viewBox); $('pages-dialog').close(); $('crop-dialog').showModal();
+};
+function cropPoint(e) {
+  const p = new DOMPoint(e.clientX,e.clientY).matrixTransform(cropPreview.getScreenCTM().inverse());
+  const point = cropView.convertToPdfPoint(p.x,p.y), b = cropView.viewBox;
+  return point.map((n,i) => Math.min(b[i+2],Math.max(b[i],n)));
+}
+cropPreview.onpointerdown = e => { if (e.isPrimary && e.button === 0) { cropStart = cropPoint(e); cropPreview.setPointerCapture(e.pointerId); } };
+cropPreview.onpointermove = e => {
+  if (!cropStart || !e.isPrimary) return;
+  const [x,y] = cropPoint(e), [a,b] = cropStart;
+  fillCrop([Math.min(a,x),Math.min(b,y),Math.max(a,x),Math.max(b,y)]);
+};
+cropPreview.onpointerup = cropPreview.onpointercancel = () => { cropStart = undefined; };
+$('apply-crop').onclick = () => {
+  const box = cropValues(); if (!insideBox(box,cropView.viewBox)) return;
+  $('crop-dialog').close(); change({ type:'crop', id:activePage().id, bounds:cropView.viewBox, box }, 'Crop applied. Content outside the box is hidden, not removed.');
+};
 $('prev').onclick = () => go(selected - 1);
 $('next').onclick = () => go(selected + 1);
 $('page-number').onchange = event => go(event.target.valueAsNumber - 1);
@@ -401,12 +573,13 @@ function syncVisualViewport() {
     for (const key of ['--phone-visual-top', '--phone-visual-height', '--phone-scroll-room']) phoneShell.removeProperty(key);
   }
   const field = document.activeElement;
-  if (!phoneLayout.matches || !toolOptions.contains(field) || !field.matches('#option-controls input') ||
-      !field.getClientRects().length) return;
-  const box = field.getBoundingClientRect(), sheet = toolOptions.getBoundingClientRect();
-  const sheetTop = sheet.top + toolOptions.clientTop;
-  // Only scroll the clipped options content, not an already visible input or the PDF.
-  if (box.top < sheetTop || box.bottom > sheetTop + toolOptions.clientHeight) {
+  const scrollBox = field?.closest('#stamps-dialog[open]') ?? toolOptions;
+  if (!phoneLayout.matches || !scrollBox.contains(field) || !field.matches('input,select,button') ||
+      (scrollBox === toolOptions && !field.matches('#option-controls input')) || !field.getClientRects().length) return;
+  const box = field.getBoundingClientRect(), sheet = scrollBox.getBoundingClientRect();
+  const sheetTop = sheet.top + scrollBox.clientTop;
+  // Only scroll clipped options, not an already visible input or the PDF.
+  if (box.top < sheetTop || box.bottom > sheetTop + scrollBox.clientHeight) {
     field.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
   }
 }
@@ -417,6 +590,7 @@ visualViewport?.addEventListener('resize', queueVisualViewport);
 visualViewport?.addEventListener('scroll', queueVisualViewport);
 phoneLayout.addEventListener('change', queueVisualViewport);
 toolOptions.addEventListener('focusin', queueVisualViewport);
+stampsDialog.addEventListener('focusin', queueVisualViewport);
 if (visualViewport) new ResizeObserver(queueVisualViewport).observe(toolOptions);
 queueVisualViewport();
 
@@ -501,7 +675,7 @@ function syncSelection() {
   const mark = selectedMark();
   if (!mark) markId = undefined;
   const list = $('mark-list');
-  list.replaceChildren(new Option('Choose an item', ''), ...(activePage()?.marks ?? []).map((m, i) => new Option(`${i + 1}. ${m.kind}`, m.markId)));
+  list.replaceChildren(new Option('Choose an item', ''), ...(activePage()?.marks ?? []).filter(m => m.kind !== 'stamp').map((m, i) => new Option(`${i + 1}. ${m.kind}`, m.markId)));
   list.value = markId ?? '';
   $('edit-color-label').hidden = $('edit-color-text-label').hidden = !mark?.color;
   $('edit-size-label').hidden = !mark?.size;
@@ -742,7 +916,10 @@ function installWorkspace(loaded, doc, recovered = false) {
   if (preparedURL) URL.revokeObjectURL(preparedURL);
   preparedURL = undefined;
   selected = 0; zoom = 1; image = undefined;
-  const timeline = history(documentState(baseId, loaded.pdf.numPages, loaded.marks));
+  checked.clear(); $('split-ranges').value = '';
+  const initial = documentState(baseId, loaded.pdf.numPages, loaded.marks);
+  if (loaded.splitIndices) initial.splitPlan = loaded.splitIndices.map(g => g.map(i => initial.pages[i].id));
+  const timeline = history(initial);
   session = Object.create(timeline, {
     dirty: { get: () => recovered || timeline.dirty },
     checkpoint: { value: () => { recovered = false; timeline.checkpoint(); } },
