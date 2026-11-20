@@ -20,6 +20,8 @@ Wait for **Offline ready** on the first online visit. Afterwards the app can rel
 
 - Select a thumbnail, enter a page number, or focus the viewer and use Left/Right or Home/End. Zoom is relative to the fit-width view. Only the selected page is rendered at full size; thumbnail canvases are created only for visible tiles.
 - Choose **Text**, enter the note, and click/tap its baseline or use **Place at page center**. **Draw** and **Highlight** take a pointer, pen, or touch stroke. **Image / Signature** places a PNG or JPEG, including scanned signatures. Images are normalized by the browser and limited to 2,400 pixels on their longer side. Draw is also suitable for visual signatures.
+- Open **More tools** to choose **Underline**, **Strikethrough**, **Rectangle**, **Ellipse**, **Line**, or **Arrow**. Set the stroke width and hex color, then drag on the page or use **Place at page center**. Underline and strikethrough mark a region, not selected text; drag toward the desired arrow tip.
+- Click or tap an added item to select it, or choose **Select items** (under **More tools** on phones) and pick it from **Page item**. Drag the item or its move/resize handles. Alternatively, use the arrow keys while the viewer has focus, the **Nudge** buttons, or **Shrink item** / **Grow item**. Set the item's hex color and size or stroke width where applicable. **Delete item** removes it; Escape leaves selection mode. Images retain their proportions when resized.
 - Rotate clockwise, move pages earlier/later, or delete all but the final page. **Merge PDF** appends another file; **Extract pages** downloads a separate copy of your selection in displayed order, e.g. `1, 3-5`. Extraction does not change the open document.
 - **Fill forms** lists the plain fields from the PDF that supplied the selected page. Apply text, checkbox, radio, dropdown or list changes as one edit. Use **Undo**/**Redo** (up to 100 recent edits) or Ctrl/Cmd+Z and Ctrl/Cmd+Shift+Z. Ctrl/Cmd+S uses the current save mode.
 
@@ -94,7 +96,7 @@ All three controls passed hit-testing at these samples. The root stayed at (0, 0
 
 ## Supported scope and limits
 
-- Annotations are new page content, not edits to existing text, redaction, OCR, or cryptographic signatures. Added text and edited plain text fields use Helvetica’s Latin/WinAnsi character set. A highlight is a translucent freehand stroke, not text selection. The PDF canvas does not provide an accessible text layer or interactive PDF links; editing and navigation controls are keyboard accessible.
+- Annotations add visible marks; they do not edit existing text, redact content, perform OCR, or create cryptographic signatures. Text, drawings, highlights and images can be edited before saving, but reopening the saved copy does not make those marks editable again. The six shape tools export as PDF annotations and are editable on reopen in Paperplane if their Paperplane metadata is intact. Third-party PDF annotations are not editable in the item list. Added text and edited plain text fields use Helvetica’s Latin/WinAnsi character set. Highlight is a translucent freehand stroke. The PDF canvas does not provide an accessible text layer or interactive PDF links.
 - Standard plain AcroForm fields stay editable in a standalone export without page removal. Deletion, merge and extract can rebuild the document: form appearances are flattened in that copy, and document-level data such as outlines, tags and attachments may not be preserved. Verify important output in your viewer. XFA, form scripts/calculations, rich text fields and signature fields are unsupported. Saving signed PDFs may invalidate existing signatures.
 - Password-protected files require an unlocked copy. Corrupt files and unsupported PDF features can fail to open, render, or save. The page count is not a file-size limit; very image-heavy pages or large merges may still need significant memory. Browser cache eviction requires another online visit.
 - PWA installation and file association depend on the browser and OS. The automated checks use Chromium and WebKit iPhone emulation; they do not simulate a native installation or OS file association.
@@ -107,12 +109,15 @@ npx playwright install chromium webkit
 npm test
 npm run test:save
 npm run test:browser
+npm run test:annotate
 npm run test:mobile
 node --test --test-concurrency=1 tests/mobile.mjs
 node scripts/assets.mjs --check
 ```
 
 The Node suite checks immutable page operations, field updates, range extraction, annotation coordinates and undo/redo. The browser suite starts its own loopback server, generates PDFs, drives the editor, parses the downloaded PDFs, and checks rendered pixels. It covers denied downloads and exports of PDFs with inherited page attributes. If qpdf is installed, use `qpdf --check` on each `test-results/inherited-*.pdf` input and export for an additional structural check. For the offline scenario it stops the HTTP server and sets the Chromium context offline before reloading. Artifacts, including PDFs and screenshots, go to `test-results/` (ignored). `tests/fixtures/locked.pdf` is a synthetic one-page PDF encrypted with qpdf to exercise the password error; browser verification does not require qpdf.
+
+`npm run test:annotate` checks selection and exact undo/redo in Chromium and touch-emulated WebKit. It opens synthetic exports in PDF.js and pdf-lib, checks actual PDF annotation counts and types, samples rendered colors, and tests reopening without duplicate marks. The keyboard checks use our own Playwright accessibility-tree assertions for roles and names, visible focus, and annotation actions. Use the hex field for keyboard color entry; OS color pickers are not tested. Axe-core was not used because its MPL-2.0 license is outside the allowlist. These are our own targeted checks, not a full accessibility audit, a screen-reader test, or a physical-device test. AX snapshots and focus screenshots are written under `test-results/`.
 
 ## Phase 0 baseline
 

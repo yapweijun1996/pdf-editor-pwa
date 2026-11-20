@@ -23,7 +23,7 @@
       <button id="file-options">File options</button>
       <button id="save" class="primary" aria-label="Download PDF" disabled><span class="desktop-download">Download PDF</span><span class="mobile-only" aria-hidden="true">Save</span><small id="save-mode">Saves a copy</small></button>
       <button id="confirm-save" hidden>I saved this copy</button>
-      <button id="more-tools" class="mobile-only" aria-label="More tools" aria-haspopup="dialog" aria-controls="tools-sheet">More</button>
+      <button id="more-tools" aria-label="More tools" aria-haspopup="dialog" aria-controls="tools-sheet">More</button>
     </div>
   </header>
   <div class="info"><span id="filename">No document open</span><span id="dirty"></span><span id="offline">Preparing offline access…</span></div>
@@ -51,7 +51,7 @@
           <div class="tool-group history-tools" role="group" aria-label="History and documents">
             <button id="undo">Undo</button><button id="redo">Redo</button>
             <div id="document-actions">
-              <button id="forms">Fill forms</button><button id="merge">Merge PDF</button><button id="extract">Extract pages</button>
+              <button id="select-tool" aria-pressed="false">Select items</button><button id="forms">Fill forms</button><button id="merge">Merge PDF</button><button id="extract">Extract pages</button>
             </div>
           </div>
         </div>
@@ -61,10 +61,24 @@
             <span>Tool options</span>
           </label>
           <div id="option-controls">
+            <div id="selection-options" hidden>
+              <label>Page item <select id="mark-list"></select></label>
+              <label id="edit-color-label">Item color <input id="edit-color" type="color"></label>
+              <label id="edit-color-text-label">Item color hex <input id="edit-color-text" type="text" size="7" maxlength="7" placeholder="#RRGGBB" spellcheck="false" autocomplete="off"></label>
+              <label id="edit-size-label">Size / stroke width <input id="edit-size" type="number" min="1" max="288" step="any"> pt</label>
+              <button id="shrink-mark">Shrink item</button><button id="grow-mark">Grow item</button>
+              <div role="group" aria-label="Move item one unit" class="tool-group">
+                <button data-nudge="left" aria-label="Nudge left">←</button><button data-nudge="up" aria-label="Nudge up">↑</button>
+                <button data-nudge="down" aria-label="Nudge down">↓</button><button data-nudge="right" aria-label="Nudge right">→</button>
+              </div>
+              <button id="remove-mark">Delete item</button>
+            </div>
             <label id="text-option" hidden>Text <input id="mark-text" type="text" maxlength="250" placeholder="Type a note" autocomplete="off"></label>
             <label id="size-option" hidden>Size <input id="mark-size" type="number" min="8" max="72" value="18"> pt</label>
             <label id="color-option" hidden>Color <input id="mark-color" type="color" value="#15386a"></label>
             <label id="ink-width-option" class="mobile-only" hidden>Width <input id="ink-width" type="number" min="1" max="20" step="0.5" value="2.5"> pt</label>
+            <label id="shape-color-option" hidden>Shape color hex <input id="shape-color" type="text" size="7" maxlength="7" spellcheck="false" autocomplete="off"></label>
+            <label id="shape-width-option" hidden>Stroke width <input id="shape-width" type="number" min="1" max="288" value="3"> pt</label>
             <button id="choose-image" hidden>Choose PNG or JPEG</button>
             <label id="image-option" hidden>Width <input id="image-width" type="number" min="10" max="95" value="30"> % of page view</label>
             <button id="keyboard-place" aria-label="Place at page center" hidden><span class="place-full">Place at page center</span><span class="place-compact" aria-hidden="true">Place</span></button>
@@ -109,6 +123,11 @@
   <dialog id="tools-sheet" aria-labelledby="tools-title">
     <div class="sheet-heading"><h2 id="tools-title">More tools</h2><button type="button" data-close autofocus>Close</button></div>
     <div id="sheet-actions" class="tool-group" role="group" aria-label="File and app actions"></div>
+    <div id="shape-tools" role="group" aria-label="Annotation shapes" hidden>
+      <button data-shape="underline">Underline</button><button data-shape="strikeout">Strikethrough</button>
+      <button data-shape="rectangle">Rectangle</button><button data-shape="ellipse">Ellipse</button>
+      <button data-shape="line">Line</button><button data-shape="arrow">Arrow</button>
+    </div>
     <div id="sheet-document"></div>
     <p id="sheet-status"></p>
     <p id="sheet-details" class="mobile-only"></p>

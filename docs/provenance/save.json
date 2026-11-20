@@ -2,13 +2,15 @@
   "schemaVersion": 1,
   "module": "Paperplane original-file save integrity, recovery and regression evidence",
   "revision": {
-    "baseCommit": "ccbd98ebfe3a02f591a2217f64af249fa9185f1e",
+    "baseCommit": "856a184cfc3f0bafcbf1c51ae1cd6dec8d8399f7",
     "files": {
       "src/save.js": "f74ec0b13a62dc3319f5b04ae875fa6c58caefa3fc2115291ee72738e27ebda7",
-      "src/app.js": "90dfefefdd371293c81b6d695cbf9ecbfcfe862ac2686bc897fec5273ccc7b3b",
-      "index.html": "8c39e202294743ed3059051b9778b72826014c37887d1b14d08b4cdd589f1659",
-      "style.css": "1377d767b7211592a4d05fcf647d72b9b1d1e3e7ad28285044110f559611ddab",
-      "precache.js": "affdaebc7752f57045d95971ebff2f6df797d1a7423d7250195c1cff3a507605",
+      "src/app.js": "dbdb4e3ea3b1698e4fb709f4b6dc432bf243973ef85b2f1ce6f8d5e9ec8373c2",
+      "src/pdf.js": "acd9755d2aad1fa03e2b0a3e50e55cfb7d2c012db2b686274e7786e30de541eb",
+      "src/shapes.js": "8389a339fa1512ba2bba72973c54c1aa4955b6e1bcc2c9a85b01c1321f5f7fda",
+      "index.html": "30882165534cf897e0313f71f3543b828f0b42792a8af65454d83757991dc436",
+      "style.css": "cb20c8f801ddaf01225f1b434d8866ab0393571cb71ad47d76b48ac2279d71b6",
+      "precache.js": "874cd07b02d8babdd1a012d90b559cb36be82d6ea40f0791b0ccab9238a553f0",
       "tests/save.mjs": "c6a8edabeb4fbec0905866c52063328b1170f31458bd5a0ccbe961bf2eb3493a",
       "tests/fixtures/save-storage.mjs": "d59d7c30b67da8071a3792975c8d5021630dae4550a68500a9cf44b436a8aeb6"
     }
@@ -40,27 +42,29 @@
       "notes": "Historical runtime author consultation; no new consultation claimed."
     }
   ],
-  "notes": "The repair author changed src/save.js, tests/save.mjs and generated precache.js, and reported no external PDF specification consultation or third-party source copying. Original runtime author: work-976263da-3145-42fa-8116-eb43e05f2e81. Prior regression and fixture author: work-f6504733-70af-4b09-b69e-15f0304fa84a. See the source ledger and review for attribution and evidence boundaries. The previous approval does not apply to this revision.",
+  "notes": "The repair author changed src/save.js, tests/save.mjs and generated precache.js, and reported no external PDF specification consultation or third-party source copying. Original runtime author: work-976263da-3145-42fa-8116-eb43e05f2e81. Prior regression and fixture author: work-f6504733-70af-4b09-b69e-15f0304fa84a. See the source ledger and review for attribution and evidence boundaries. S3a refreshes the integration fingerprints only, extends them to the shape materializer and records a new runtime-only review. Prior review remains historical.",
   "review": {
     "status": "approved",
     "reviewer": {
-      "id": "work-8445e5f7-c0f6-4f93-8e6d-ae711cd9dc05",
-      "role": "Independent save repair regression and provenance review"
+      "id": "work-0e0752a8-2d9c-4ca1-9d61-d3a5a6698a0b",
+      "role": "Independent Save integration provenance review"
     },
     "reviewedOn": "2026-11-20",
     "reviewedRevision": {
-      "baseCommit": "ccbd98ebfe3a02f591a2217f64af249fa9185f1e",
+      "baseCommit": "856a184cfc3f0bafcbf1c51ae1cd6dec8d8399f7",
       "files": {
         "src/save.js": "f74ec0b13a62dc3319f5b04ae875fa6c58caefa3fc2115291ee72738e27ebda7",
-        "src/app.js": "90dfefefdd371293c81b6d695cbf9ecbfcfe862ac2686bc897fec5273ccc7b3b",
-        "index.html": "8c39e202294743ed3059051b9778b72826014c37887d1b14d08b4cdd589f1659",
-        "style.css": "1377d767b7211592a4d05fcf647d72b9b1d1e3e7ad28285044110f559611ddab",
-        "precache.js": "affdaebc7752f57045d95971ebff2f6df797d1a7423d7250195c1cff3a507605",
+        "src/app.js": "dbdb4e3ea3b1698e4fb709f4b6dc432bf243973ef85b2f1ce6f8d5e9ec8373c2",
+        "src/pdf.js": "acd9755d2aad1fa03e2b0a3e50e55cfb7d2c012db2b686274e7786e30de541eb",
+        "src/shapes.js": "8389a339fa1512ba2bba72973c54c1aa4955b6e1bcc2c9a85b01c1321f5f7fda",
+        "index.html": "30882165534cf897e0313f71f3543b828f0b42792a8af65454d83757991dc436",
+        "style.css": "cb20c8f801ddaf01225f1b434d8866ab0393571cb71ad47d76b48ac2279d71b6",
+        "precache.js": "874cd07b02d8babdd1a012d90b559cb36be82d6ea40f0791b0ccab9238a553f0",
         "tests/save.mjs": "c6a8edabeb4fbec0905866c52063328b1170f31458bd5a0ccbe961bf2eb3493a",
         "tests/fixtures/save-storage.mjs": "d59d7c30b67da8071a3792975c8d5021630dae4550a68500a9cf44b436a8aeb6"
       }
     },
     "evidence": ["docs/provenance/reviews/save.md"],
-    "notes": "Fresh independent provenance review for the exact runtime and regression digests, not standing QA, security clearance, release approval or owner review."
+    "notes": "S3a Save integration provenance for these exact runtime and unchanged Save regression digests; not approval of the new annotation tests, standing QA, security clearance, release approval or owner review."
   }
 }

@@ -10,6 +10,12 @@ body.dragging main{outline:3px dashed var(--accent);outline-offset:-5px}dialog{c
 .mobile-disclosure,.mobile-only,.options label.mobile-only,.place-compact{display:none}
 #document-actions,#option-controls{display:contents}
 .desktop-tool-label,#overlay > *{pointer-events:none}
+#overlay > [data-mark-id]{pointer-events:visiblePainted;cursor:move;touch-action:none}
+#overlay > [data-handle]{pointer-events:all;fill:#194c87;fill-opacity:.85}
+#overlay > [data-handle=resize]{cursor:nwse-resize}
+.selection-frame{stroke:#194c87;stroke-dasharray:4 3;fill:none}
+.handle-symbol{stroke:white;stroke-width:2;fill:none}
+#selection-options{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem}
 #stage{touch-action:pan-x pan-y}
 
 @media (max-width:768px){
@@ -162,3 +168,6 @@ body.dragging main{outline:3px dashed var(--accent);outline-offset:-5px}dialog{c
 #view-copy{color:var(--text);text-decoration:underline}
 @media(max-width:768px){#save{height:44px;line-height:1.1}#save-mode{font-size:.62rem}}
 @media(max-width:460px){.welcome{grid-template-columns:1fr}.hero-art{display:none}}
+
+#paper[data-shape] #overlay{touch-action:none}
+#shape-tools{display:flex;gap:.5rem;flex-wrap:wrap;margin-block:1rem}

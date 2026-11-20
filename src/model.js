@@ -1,11 +1,31 @@
-export function pagesFor(source, count) {
+export function pagesFor(source, count, imported) {
   return Array.from({ length: count }, (_, index) => ({
-    id: `${source}:${index}`, source, index, rotation: 0, marks: [],
+    id: `${source}:${index}`, source, index, rotation: 0, marks: imported?.[index] ?? [],
   }));
 }
 
-export function documentState(source, count) {
-  return { pages: pagesFor(source, count), fields: {} };
+export function documentState(source, count, imported) {
+  return { pages: pagesFor(source, count, imported), fields: {} };
+}
+
+// All geometry uses unrotated PDF coordinates. A change transforms the original
+// mark, never the previous preview. Images retain their immutable byte payload.
+export function transformMark(mark, { op, dx, dy, factor, color, size }) {
+  if (op === 'translate' && Number.isFinite(dx) && Number.isFinite(dy) && (dx || dy)) {
+    return mark.points ? { ...mark, points: mark.points.map(([x, y]) => [x + dx, y + dy]) }
+      : { ...mark, x: mark.x + dx, y: mark.y + dy };
+  }
+  if (op === 'scale' && Number.isFinite(factor) && factor > 0 && factor !== 1) {
+    if (mark.points) {
+      const [ax, ay] = mark.points[0];
+      return { ...mark, points: mark.points.map(([x, y]) => [ax + (x - ax) * factor, ay + (y - ay) * factor]) };
+    }
+    if (mark.kind === 'image') return { ...mark, width: mark.width * factor, height: mark.height * factor };
+    if (mark.kind === 'text') size = Math.max(1, Math.min(288, mark.size * factor));
+  }
+  if (mark.size !== undefined && Number.isFinite(size) && size >= 1 && size <= 288 && size !== mark.size) return { ...mark, size };
+  if (mark.color && /^#[0-9a-f]{6}$/i.test(color) && color !== mark.color) return { ...mark, color };
+  return mark;
 }
 
 export function edit(state, action) {
@@ -16,7 +36,20 @@ export function edit(state, action) {
     case 'rotate':
       return page ? replace({ ...page, rotation: (page.rotation + 90) % 360 }) : state;
     case 'mark':
-      return page ? replace({ ...page, marks: [...page.marks, action.mark] }) : state;
+      return page ? replace({ ...page, marks: [...page.marks, structuredClone(action.mark)] }) : state;
+    case 'editMark':
+    case 'removeMark': {
+      const index = page?.marks.findIndex(mark => mark.markId === action.markId);
+      if (!action.markId || index == null || index < 0) return state;
+      const marks = [...page.marks];
+      if (action.type === 'removeMark') marks.splice(index, 1);
+      else {
+        const next = transformMark(marks[index], action.change);
+        if (next === marks[index]) return state;
+        marks[index] = next;
+      }
+      return replace({ ...page, marks });
+    }
     case 'delete':
       return !page || state.pages.length < 2 ? state : { ...state, pages: state.pages.filter(p => p !== page) };
     case 'move': {
@@ -29,7 +62,7 @@ export function edit(state, action) {
     }
     case 'merge':
       return action.count > 0 && !state.pages.some(p => p.source === action.source)
-        ? { ...state, pages: [...state.pages, ...pagesFor(action.source, action.count)] } : state;
+        ? { ...state, pages: [...state.pages, ...pagesFor(action.source, action.count, action.marks)] } : state;
     case 'fields': {
       const previous = state.fields[action.source] ?? {};
       const values = { ...previous };

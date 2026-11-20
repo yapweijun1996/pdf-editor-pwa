@@ -1,9 +1,11 @@
 import * as renderer from '../vendor/pdfjs/build/pdf.min.mjs';
 import {
   PDFDocument, PDFTextField, PDFCheckBox, PDFRadioGroup, PDFDropdown, PDFOptionList,
-  StandardFonts, degrees, rgb, LineCapStyle, PDFName, PDFPageLeaf,
+  StandardFonts, degrees, rgb, LineCapStyle, PDFName, PDFPageLeaf, PDFString, PDFDict, PDFArray, PDFRef, PDFStream,
 } from '../vendor/pdf-lib/dist/pdf-lib.esm.min.js';
 import { rotatePoint } from './model.js';
+
+import { geometry, isShape, subtypes } from './shapes.js';
 
 const asset = path => new URL(`../vendor/pdfjs/${path}`, import.meta.url).href;
 renderer.GlobalWorkerOptions.workerSrc = asset('build/pdf.worker.min.mjs');
@@ -11,8 +13,9 @@ export const annotationMode = renderer.AnnotationMode.ENABLE_STORAGE;
 
 export async function openPDF(file) {
   const bytes = new Uint8Array(await file.arrayBuffer());
+  const { clean, marks } = await unpack(bytes);
   const task = renderer.getDocument({
-    data: bytes.slice(), cMapUrl: asset('cmaps/'), cMapPacked: true,
+    data: (clean ?? bytes).slice(), cMapUrl: asset('cmaps/'), cMapPacked: true,
     standardFontDataUrl: asset('standard_fonts/'), wasmUrl: asset('wasm/'),
     iccUrl: asset('iccs/'), useSystemFonts: false, isEvalSupported: false,
   });
@@ -20,7 +23,7 @@ export async function openPDF(file) {
     const pdf = await task.promise;
     if (!pdf.numPages) throw new Error('Empty document');
     await pdf.getPage(1);
-    return { bytes, pdf, name: file.name, destroy: () => task.destroy() };
+    return { bytes, clean, marks, pdf, name: file.name, destroy: () => task.destroy() };
   } catch (error) {
     await task.destroy().catch(() => {});
     throw new Error(error.name === 'PasswordException'
@@ -30,6 +33,73 @@ export async function openPDF(file) {
 }
 
 const load = bytes => PDFDocument.load(bytes, { updateMetadata: false });
+
+// Only detach our versioned annotations from a private working copy. Original
+// file bytes remain available for the Save identity, conflict and backup checks.
+async function unpack(bytes) {
+  let doc;
+  try { doc = await load(bytes); } catch { return {}; } // PDF.js may still display the input.
+  const marks = [], key = PDFName.of;
+  const detached = new Set();
+  let changed = false;
+  for (const [p, page] of doc.getPages().entries()) {
+    const list = page.node.lookup(key('Annots'));
+    if (!(list instanceof PDFArray)) continue;
+    const kept = [], items = [], seen = new Set();
+    for (const ref of list.asArray()) {
+      const dict = doc.context.lookup(ref);
+      const payload = dict instanceof PDFDict && dict.get(key('PaperplaneShapeV1'));
+      let mark;
+      if (payload instanceof PDFString && payload.asString().length < 1024) {
+        try {
+          const [kind, markId, points, angle, color, size] = JSON.parse(payload.asString());
+          if (typeof kind === 'string' && isShape(kind) && typeof markId === 'string' && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/.test(markId) && !seen.has(markId) &&
+              dict.get(key('Subtype')) === key(subtypes[kind]) && dict.get(key('NM'))?.asString?.() === `paperplane:${markId}` &&
+              Array.isArray(points) && points.length === 2 && points.every(pair => Array.isArray(pair) && pair.length === 2 && pair.every(n => Number.isFinite(n) && Math.abs(n) <= 1e9)) &&
+              [0,90,180,270].includes(angle) && typeof color === 'string' && /^#[0-9a-f]{6}$/i.test(color) && Number.isFinite(size) && size >= 1 && size <= 288) mark = { kind, markId, points, angle, color, size };
+        } catch { /* Unknown metadata is preserved as foreign content. */ }
+      }
+      if (mark) {
+        seen.add(mark.markId); items.push(mark);
+        if (ref instanceof PDFRef) detached.add(ref);
+        const appearance = dict.get(key('AP'));
+        const normal = appearance instanceof PDFDict && appearance.get(key('N'));
+        if (normal instanceof PDFRef && doc.context.lookup(normal) instanceof PDFStream) detached.add(normal);
+      } else kept.push(ref);
+    }
+    if (items.length) { page.node.set(key('Annots'), doc.context.obj(kept)); marks[p] = items; changed = true; }
+  }
+  if (!changed) return {};
+  // pdf-lib serializes even detached objects. Remove only superseded managed
+  // objects, and only when no retained object still references them.
+  const stack = Object.values(doc.context.trailerInfo);
+  for (const [ref, obj] of doc.context.enumerateIndirectObjects()) if (!detached.has(ref)) stack.push(obj);
+  const visited = new Set();
+  while (stack.length) {
+    const obj = stack.pop();
+    if (!obj || visited.has(obj)) continue;
+    visited.add(obj);
+    if (obj instanceof PDFRef && detached.delete(obj)) stack.push(doc.context.lookup(obj));
+    if (obj instanceof PDFStream) stack.push(obj.dict);
+    if (obj instanceof PDFDict) for (const [,value] of obj.entries()) stack.push(value);
+    if (obj instanceof PDFArray) for (const value of obj.asArray()) stack.push(value);
+  }
+  for (const ref of detached) doc.context.delete(ref);
+  return { clean: await doc.save({ updateFieldAppearances: false }), marks };
+}
+
+function writeShape(doc, page, mark) {
+  const { kind, points, markId, size, angle, color } = mark;
+  const { rect, path, quad } = geometry(mark), ctx = doc.context;
+  const channels = color.slice(1).match(/../g).map(s => parseInt(s,16)/255);
+  const ops = path.map(([op,...args]) => [...args.map(n => n.toFixed(6)), ({M:'m',L:'l',C:'c',Z:'h'})[op]].join(' '));
+  const stream = ctx.flateStream(`${channels.map(n => n.toFixed(6)).join(' ')} RG ${size.toFixed(6)} w 1 J 1 j\n${ops.join('\n')} S`, { Type:'XObject', Subtype:'Form', BBox:rect, Resources:{} });
+  const dict = ctx.obj({ Type:'Annot', Subtype:subtypes[kind], Rect:rect, C:channels, BS:{ W:size, S:'S' }, F:4,
+    AP:{ N:ctx.register(stream) }, NM:PDFString.of(`paperplane:${markId}`), PaperplaneShapeV1:PDFString.of(JSON.stringify([kind,markId,points,angle,color,size])),
+    ...(['underline','strikeout'].includes(kind) ? { QuadPoints:quad } : {}),
+    ...(subtypes[kind] === 'Line' ? { L:points.flat(), LE:['None',kind === 'arrow' ? 'OpenArrow':'None'] } : {}) });
+  page.node.addAnnot(ctx.register(dict));
+}
 
 export function checkText(value) {
   // Standard Helvetica uses WinAnsi, not arbitrary Unicode. Reject unsupported text before editing.
@@ -97,6 +167,7 @@ export async function previewFields(source, descriptors, values) {
 const color = hex => rgb(...hex.match(/\w\w/g).map(part => parseInt(part, 16) / 255));
 
 async function writeMark(doc, page, mark, resources) {
+  if (isShape(mark.kind)) return writeShape(doc, page, mark);
   if (mark.kind === 'text') {
     resources.font ??= await doc.embedFont(StandardFonts.Helvetica);
     page.drawText(mark.text, { x: mark.x, y: mark.y, size: mark.size,
@@ -121,7 +192,7 @@ export async function createPDF(sources, state, pages, baseId, extract = false) 
   const parsed = new Map();
   for (const id of new Set(pages.map(page => page.source))) {
     const source = sources.get(id);
-    const doc = await load(source.bytes);
+    const doc = await load(source.clean ?? source.bytes);
     fill(doc, state.fields[id] ?? {});
     parsed.set(id, doc);
   }

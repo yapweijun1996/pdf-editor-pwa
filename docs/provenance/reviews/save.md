@@ -1,4 +1,18 @@
-# Independent save repair provenance review
+# Save provenance reviews
+
+## S3a annotation integration — current
+
+Reviewer: `work-0e0752a8-2d9c-4ca1-9d61-d3a5a6698a0b`, Independent Save integration provenance review, 2026-11-20 UTC. Goal `606aea52-61e9-4831-8a66-cc24f0367fa8` revision 3, generation `239f591b-90ec-458b-9c50-e1e12d66c662`, base `856a184cfc3f0bafcbf1c51ae1cd6dec8d8399f7`.
+
+**Approved for integration provenance only** at the nine raw SHA-256 fingerprints in [save.json](../save.json). All fingerprints were recomputed. `src/save.js` remains byte-identical to the base (`f74ec0b13a62dc3319f5b04ae875fa6c58caefa3fc2115291ee72738e27ebda7`). The existing Save test and storage fixture are unchanged; the previous approval below is historical. The current reviewer authored no runtime or Save regression tests and does not sign off the new annotation tests.
+
+Reviewed whether the new shape runtime changes the Save trust boundary. `openPDF()` retains the input bytes for file binding; a separate in-memory PDF omits only managed shapes so that export can add the current shapes exactly once. Original file writes still use the unchanged standalone validator before opening the writer and after readback, with the original recovery, backup and permission paths. Download, extract and draft materialization use the new appearance writer rather than bypassing original-file save checks. The annotation suite exercised the public copy download and applied the unchanged validator to all six shape round-trip exports and an offline shape export. The two-reader evidence and exact coverage boundaries are in the [annotation runtime review](annotations.md).
+
+- Unchanged Save suite: **33/33**, including rejection before a writer opens, readback, conflict, backup, recovery and fallback checks.
+- Unchanged Node suite: **18 passed, five opt-in skips**. Desktop Chromium: **9 groups**, including server-stopped offline editing. WebKit mobile: **63/63 default and 63/63 serial**; 390×664 workspace 576 px (86.7%), targets at least 44 CSS px and no accidental placement in the stress profiles.
+- Asset check: **221**, version `bcc5fb7906b47bb0f7bd`; shape module is cached. Dependencies, lockfile, notices and prior tests match the base. Native pickers/share sheets, physical hardware, exhaustive external-writer races and full PDF conformance were not verified. This is not standing QA, security clearance, release approval or owner review.
+
+## Prior independent save repair provenance review — historical
 
 - Reviewer: `work-8445e5f7-c0f6-4f93-8e6d-ae711cd9dc05`, Independent save repair regression and provenance review, 2026-11-20 UTC. Dispatcher generation: `2328c8d3-1217-4979-b711-e8e1cee507c0`.
 - Repair author: `work-aee8ae75-3af8-4f85-bb71-a2a9e1e6ecb8`, PDF structural verification safety repair (`src/save.js`, `tests/save.mjs`, generated `precache.js`).

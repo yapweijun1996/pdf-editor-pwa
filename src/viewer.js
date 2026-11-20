@@ -1,3 +1,4 @@
+import { geometry, isShape } from './shapes.js';
 import { annotationMode } from './pdf.js';
 
 const svg = (tag, attributes) => {
@@ -10,10 +11,13 @@ const TAP_SLOP = 10; // CSS pixels, independent of PDF zoom and device pixel rat
 const TAP_TIMEOUT = 500;
 
 function pageGestures({ stage, overlay, canTap, canViewTap, canPinch, canPan, isPhone,
-  zoomAnchor, onTap, onViewTap, onPinch, onMultitouch }) {
+  zoomAnchor, onTap, onViewTap, onPinch, onMultitouch, beginEdit }) {
   const touches = new Map();
-  let tap, drag, pinch;
-  const cancel = () => { tap = drag = pinch = undefined; };
+  let tap, drag, pinch, editing;
+  const cancel = () => {
+    editing?.cancel();
+    tap = drag = pinch = editing = undefined;
+  };
   const separation = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
   const scrollOrigin = () => ({ left: stage.scrollLeft, top: stage.scrollTop });
   const pan = (origin, dx, dy) => stage.scrollTo(origin.left - dx, origin.top - dy);
@@ -50,6 +54,16 @@ function pageGestures({ stage, overlay, canTap, canViewTap, canPinch, canPan, is
     }
     tap = undefined;
     if (!event.isPrimary || event.button !== 0 || touches.size > Number(event.pointerType === 'touch')) return;
+    if (event.target.closest?.('[data-mark-id]')) {
+      editing = beginEdit(event);
+      if (editing) {
+        drag = undefined;
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.isTrusted) overlay.setPointerCapture(event.pointerId);
+        return;
+      }
+    }
     const viewTap = canViewTap();
     const target = viewTap ? stage : overlay;
     if ((!viewTap && !canTap()) || !target.contains(event.target)) return;
@@ -63,6 +77,7 @@ function pageGestures({ stage, overlay, canTap, canViewTap, canPinch, canPan, is
       touch.event = event;
       if (pinch && canPinch()) movePinch();
     }
+    if (editing?.pointer === event.pointerId) { editing.move(event); return; }
     if (drag?.start.pointerId === event.pointerId && canPan()) {
       const { start, scroll } = drag;
       if (drag.moving || separation(start, event) > TAP_SLOP) {
@@ -92,6 +107,12 @@ function pageGestures({ stage, overlay, canTap, canViewTap, canPinch, canPan, is
       return;
     }
     touches.delete(event.pointerId);
+    if (editing?.pointer === event.pointerId) {
+      const completed = editing;
+      editing = undefined;
+      completed.finish(event);
+      return;
+    }
     if (drag?.start.pointerId === event.pointerId) drag = undefined;
     if (tap?.start.pointerId !== event.pointerId) return;
     const { start, left, top, target } = tap;
@@ -108,11 +129,11 @@ function pageGestures({ stage, overlay, canTap, canViewTap, canPinch, canPan, is
   });
 
   on('pointercancel', event => {
-    if (touches.delete(event.pointerId)) cancel();
+    if (touches.delete(event.pointerId) || editing?.pointer === event.pointerId) cancel();
     if (tap?.start.pointerId === event.pointerId) tap = undefined;
   });
   on('lostpointercapture', event => {
-    if (touches.delete(event.pointerId)) cancel();
+    if (event.target === overlay && (touches.delete(event.pointerId) || editing?.pointer === event.pointerId)) cancel();
     if (tap?.start.pointerId === event.pointerId) tap = undefined;
   });
   on('scroll', event => { if (event.target === stage || event.target === document) tap = undefined; });
@@ -124,7 +145,7 @@ function pageGestures({ stage, overlay, canTap, canViewTap, canPinch, canPan, is
 }
 
 export function createViewer({ stage, paper, canvas, overlay, thumbs, getSource, onSelect, onError,
-  canTap, canViewTap, canPinch, canPan, isPhone, onTap, onViewTap, onPinch, onMultitouch }) {
+  canTap, canViewTap, canPinch, canPan, isPhone, onTap, onViewTap, onPinch, onMultitouch, beginEdit, selectedMarkId }) {
   let generation = 0, task, viewport, active, observer, thumbnailKey;
   const jobs = new Map();
   function zoomAnchor(clientX, clientY) {
@@ -134,7 +155,7 @@ export function createViewer({ stage, paper, canvas, overlay, thumbs, getSource,
   const { cancel: cancelGestures, canStartTouchStroke } = pageGestures({ stage, overlay,
     canTap: () => Boolean(viewport) && canTap(), canViewTap: () => Boolean(viewport) && canViewTap(),
     canPinch: () => Boolean(viewport) && canPinch(), canPan: () => Boolean(viewport) && canPan(),
-    isPhone, zoomAnchor, onTap, onViewTap, onPinch, onMultitouch });
+    isPhone, zoomAnchor, onTap, onViewTap, onPinch, onMultitouch, beginEdit });
   const stop = (keepPaper = false) => {
     cancelGestures();
     generation++;
@@ -146,9 +167,24 @@ export function createViewer({ stage, paper, canvas, overlay, thumbs, getSource,
   function paint(marks = active?.marks ?? []) {
     if (!viewport) return;
     overlay.replaceChildren();
+    let selectedNode;
     for (const mark of marks) {
+      const append = node => {
+        if (mark.markId) node.dataset.markId = mark.markId;
+        if (mark.markId && mark.markId === selectedMarkId()) selectedNode = node;
+        overlay.append(node);
+      };
+      if (isShape(mark.kind)) {
+        const d = geometry(mark).path.map(([op,...args]) => {
+          const coords = [];
+          for (let i=0;i<args.length;i+=2) coords.push(...viewport.convertToViewportPoint(args[i],args[i+1]));
+          return `${op}${coords.join(' ')}`;
+        }).join(' ');
+        append(svg('path', { d, fill:'none', stroke:mark.color, 'stroke-width':mark.size*viewport.scale*viewport.userUnit, 'stroke-linejoin':'round', 'stroke-linecap':'round' }));
+        continue;
+      }
       if (mark.points) {
-        overlay.append(svg('polyline', {
+        append(svg('polyline', {
           points: mark.points.map(point => viewport.convertToViewportPoint(...point).join(',')).join(' '),
           fill: 'none', stroke: mark.color, 'stroke-width': mark.size * viewport.scale * viewport.userUnit,
           'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: mark.kind === 'highlight' ? .38 : 1,
@@ -161,9 +197,21 @@ export function createViewer({ stage, paper, canvas, overlay, thumbs, getSource,
       if (mark.kind === 'text') {
         const node = svg('text', { transform, fill: mark.color, 'font-family': 'Helvetica, Arial, sans-serif', 'font-size': mark.size * scale, 'xml:space': 'preserve' });
         node.textContent = mark.text;
-        overlay.append(node);
+        append(node);
       } else {
-        overlay.append(svg('image', { transform, width: mark.width * scale, height: mark.height * scale, href: mark.image.url }));
+        append(svg('image', { transform, width: mark.width * scale, height: mark.height * scale, href: mark.image.url }));
+      }
+    }
+    if (selectedNode) {
+      const bounds = selectedNode.getBoundingClientRect(), page = overlay.getBoundingClientRect();
+      const left = bounds.left - page.left, top = bounds.top - page.top;
+      overlay.append(svg('rect', { x: left, y: top, width: bounds.width, height: bounds.height, class: 'selection-frame' }));
+      // The viewport is laid out at CSS resolution; raster backing scale is irrelevant.
+      const y = Math.max(0, Math.min(page.height - 46, top + bounds.height));
+      const x = Math.max(46, Math.min(page.width - 46, left + bounds.width));
+      for (const [operation, position] of [['move', Math.min(x - 46, Math.max(0, left - 46))], ['resize', x]]) {
+        overlay.append(svg('rect', { x: position, y, width: 46, height: 46, rx: 7, 'data-handle': operation, 'data-mark-id': selectedNode.dataset.markId }));
+        overlay.append(svg('path', { d: operation === 'move' ? 'M9 23h28m-14-14v28' : 'M13 33l20-20m-12 0h12v12', transform: `translate(${position} ${y})`, class: 'handle-symbol' }));
       }
     }
   }
@@ -198,8 +246,8 @@ export function createViewer({ stage, paper, canvas, overlay, thumbs, getSource,
       canvas.height = height;
       canvas.getContext('2d').drawImage(buffer, 0, 0);
       overlay.setAttribute('viewBox', `0 0 ${view.width} ${view.height}`);
-      paint();
       paper.hidden = false;
+      paint();
       if (resetScroll) stage.scrollTo(0, 0);
       if (anchor) {
         const pageRect = paper.getBoundingClientRect(), stageRect = stage.getBoundingClientRect();

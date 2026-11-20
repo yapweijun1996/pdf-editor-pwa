@@ -1,7 +1,9 @@
-import { documentState, edit, history, selectPages } from './model.js';
+import { documentState, edit, history, rotatePoint, selectPages, transformMark } from './model.js';
 import { checkText, createPDF, describeFields, openPDF, previewFields, validateFields } from './pdf.js';
 import * as vault from './save.js';
 import { createViewer } from './viewer.js';
+
+import { isShape, subtypes } from './shapes.js';
 
 const $ = id => document.getElementById(id);
 const sources = new Map();
@@ -55,8 +57,10 @@ sheet.addEventListener('click', event => {
 }, true);
 phoneLayout.addEventListener('change', syncPhoneLayout);
 let session, requestedState, baseId, selected = 0, serial = 0, zoom = 1, busy = false;
+let markId;
 let mode = 'view', image, stroke, formSource, warned = false;
 const colors = { text: '#15386a', ink: '#15386a', highlight: '#ffd12a' };
+for (const kind of Object.keys(subtypes)) colors[kind] = '#15386a';
 const viewer = createViewer({
   stage: $('stage'), paper: $('paper'), canvas: $('canvas'), overlay: $('overlay'), thumbs: $('thumbs'),
   getSource: id => sources.get(id), onSelect: (index, reveal) => go(index, reveal), onError: message => status(message, true),
@@ -67,8 +71,8 @@ const viewer = createViewer({
   onViewTap: () => setImmersive(!document.body.classList.contains('immersive')),
   onPinch: (ratio, anchor) => adjustZoom(zoom * ratio, anchor),
   isPhone: () => phoneLayout.matches,
-  canPan: () => ready() && !['ink', 'highlight'].includes(mode),
-  onMultitouch: cancelStroke,
+  canPan: () => ready() && !isShape(mode) && !['ink', 'highlight'].includes(mode),
+  onMultitouch: cancelStroke, beginEdit, selectedMarkId: () => markId,
 });
 
 function cancelStroke() {
@@ -121,6 +125,7 @@ const canConfirmSave = () => session?.dirty && session.current === requestedStat
 const warnBeforeUnload = event => { event.preventDefault(); event.returnValue = true; };
 
 function controls() {
+  syncSelection();
   const hasDocument = Boolean(session);
   const count = session?.current.pages.length ?? 0;
   $('welcome').hidden = hasDocument;
@@ -137,7 +142,7 @@ function controls() {
   $('file-notice').textContent = !picker() ? 'This browser cannot overwrite the original.' : connected ? 'Save writes to the connected original after backing it up.' : 'This workspace saves copies. Use Open PDF to connect an original.';
   $('filename').textContent = filename;
   $('filename').title = filename;
-  $('sheet-document').hidden = !hasDocument;
+  $('shape-tools').hidden = $('sheet-document').hidden = !hasDocument;
   $('page-number').max = count;
   $('page-number').value = selected + 1;
   $('page-count').textContent = `of ${count}`;
@@ -181,6 +186,7 @@ function refresh({ render = true, reset = false, reveal = false, anchor } = {}) 
 }
 function go(index, reveal = true) {
   if (!ready() || !Number.isInteger(index)) { controls(); return; }
+  markId = undefined;
   selected = Math.max(0, Math.min(index, session.current.pages.length - 1));
   refresh({ reset: true, reveal });
   if (phoneLayout.matches) {
@@ -257,7 +263,7 @@ async function importPDF(file, merge = false, handle) {
     const id = `source-${++serial}`;
     if (merge) {
       sources.set(id, loaded);
-      change({ type: 'merge', source: id, count: loaded.pdf.numPages }, `Appended ${loaded.pdf.numPages} page(s) from ${file.name}. Form fields will be flattened in the downloaded copy.`);
+      change({ type: 'merge', source: id, count: loaded.pdf.numPages, marks: loaded.marks }, `Appended ${loaded.pdf.numPages} page(s) from ${file.name}. Form fields will be flattened in the downloaded copy.`);
     } else {
       let doc = { id: crypto.randomUUID(), name: file.name }, notice = '';
       if (handle) {
@@ -427,6 +433,9 @@ screen.orientation?.addEventListener('change', () => {
   queueVisualViewport();
 });
 window.addEventListener('keydown', event => {
+  if (ready() && (mode === 'select' || isShape(mode)) && event.key === 'Escape') {
+    setMode('view'); $('stage').focus({ preventScroll: true }); return;
+  }
   if (phoneLayout.matches && ready() && event.key === 'Escape') {
     if (document.body.classList.contains('immersive')) { setImmersive(false); return; }
     if (mode !== 'view' && optionDisclosure.checked) {
@@ -437,6 +446,10 @@ window.addEventListener('keydown', event => {
   }
   if (!ready() || event.target.closest?.('input,select,textarea,[contenteditable]')) return;
   const key = event.key.toLowerCase(), mod = event.ctrlKey || event.metaKey;
+  if (!mod && mode === 'select' && markId && event.target === $('stage')) {
+    if (key === 'delete' || key === 'backspace') { event.preventDefault(); removeMark(); return; }
+    if (key.startsWith('arrow') && nudge(key.slice(5))) { event.preventDefault(); return; }
+  }
   if (mod && ['z', 'y'].includes(key)) {
     event.preventDefault();
     void historyStep(key === 'y' || event.shiftKey ? 'redo' : 'undo');
@@ -454,6 +467,7 @@ window.addEventListener('keydown', event => {
 
 function setMode(next) {
   mode = next;
+  if (mode !== 'select') markId = undefined;
   setImmersive(false);
   viewer.cancelGestures();
   cancelStroke();
@@ -462,7 +476,11 @@ function setMode(next) {
   $('ink-width-option').hidden = mode !== 'ink';
   $('text-option').hidden = $('size-option').hidden = mode !== 'text';
   $('image-option').hidden = $('choose-image').hidden = mode !== 'image';
-  $('keyboard-place').hidden = !['text', 'image'].includes(mode);
+  $('paper').toggleAttribute('data-shape', isShape(mode));
+  $('shape-color-option').hidden = $('shape-width-option').hidden = !isShape(mode);
+  if (isShape(mode)) $('shape-color').value = colors[mode];
+  $('keyboard-place').hidden = !isShape(mode) && !['text', 'image'].includes(mode);
+  for (const button of $('shape-tools').querySelectorAll('button')) button.setAttribute('aria-pressed', button.dataset.shape === mode);
   $('color-option').hidden = !Object.hasOwn(colors, mode);
   if (!$('color-option').hidden) $('mark-color').value = colors[mode];
   $('tool-hint').textContent = ({
@@ -470,9 +488,100 @@ function setMode(next) {
     ink: 'Drag on the page to draw freehand ink or a visual signature.',
     highlight: 'Drag over the area to mark it with translucent ink.',
     image: image ? `Ready to place: ${image.name}. Click or tap the top-left corner on the page.` : 'Choose an image or a scanned signature to place on this page.',
-  })[mode] ?? '';
+  })[mode] ?? (isShape(mode) ? `Drag a region for ${mode}, or place at page center.` : '');
+  syncSelection();
+  viewer.paint();
   for (const button of $('modes').querySelectorAll('button')) button.setAttribute('aria-pressed', button.dataset.mode === mode);
 }
+const selectedMark = () => activePage()?.marks.find(mark => mark.markId && mark.markId === markId);
+function syncSelection() {
+  $('selection-options').hidden = mode !== 'select';
+  $('select-tool').setAttribute('aria-pressed', mode === 'select');
+  if (mode !== 'select') return;
+  const mark = selectedMark();
+  if (!mark) markId = undefined;
+  const list = $('mark-list');
+  list.replaceChildren(new Option('Choose an item', ''), ...(activePage()?.marks ?? []).map((m, i) => new Option(`${i + 1}. ${m.kind}`, m.markId)));
+  list.value = markId ?? '';
+  $('edit-color-label').hidden = $('edit-color-text-label').hidden = !mark?.color;
+  $('edit-size-label').hidden = !mark?.size;
+  if (mark?.color) $('edit-color-text').value = $('edit-color').value = mark.color;
+  if (mark?.size) $('edit-size').value = mark.size;
+  for (const button of $('selection-options').querySelectorAll('button')) button.disabled = !mark;
+  $('tool-hint').textContent = 'Choose an item or tap it on the page. On the page, use arrows to move, Delete to remove, or Escape to deselect.';
+}
+function editSelected(delta) {
+  if (ready() && selectedMark()) change({ type: 'editMark', id: activePage().id, markId, change: delta }, 'Item updated.', false);
+}
+function nudge(direction) {
+  const vector = { left: [-1, 0], right: [1, 0], up: [0, 1], down: [0, -1] }[direction];
+  const view = viewer.point(0, 0);
+  if (!vector || !view) return false;
+  const [dx, dy] = rotatePoint(...vector, view.angle);
+  editSelected({ op: 'translate', dx, dy });
+  return true;
+}
+for (const button of $('selection-options').querySelectorAll('[data-nudge]')) button.onclick = () => nudge(button.dataset.nudge);
+function removeMark() {
+  if (ready() && selectedMark()) change({ type: 'removeMark', id: activePage().id, markId }, 'Item removed.', false);
+}
+$('select-tool').onclick = () => {
+  if (!ready()) return;
+  setMode('select'); optionDisclosure.checked = true; $('mark-list').focus();
+};
+$('mark-list').onchange = event => {
+  markId = event.target.value; syncSelection(); viewer.paint(); $('stage').focus({ preventScroll: true });
+};
+$('edit-size').onchange = event => editSelected({ op: 'style', size: event.target.valueAsNumber });
+$('edit-color').onchange = event => editSelected({ op: 'style', color: event.target.value });
+// Some browsers skip the native color picker in sequential keyboard navigation.
+$('edit-color-text').onchange = event => {
+  const field = event.target, color = field.value.trim().toLowerCase();
+  if (/^#[0-9a-f]{6}$/.test(color)) editSelected({ op: 'style', color });
+  else status('Use a six-digit item color, such as #336699.', true);
+  field.value = selectedMark()?.color ?? '';
+};
+$('shrink-mark').onclick = () => editSelected({ op: 'scale', factor: .8 });
+$('grow-mark').onclick = () => editSelected({ op: 'scale', factor: 1.25 });
+$('remove-mark').onclick = removeMark;
+function beginEdit(event) {
+  const page = activePage(), mark = page?.marks.find(m => m.markId === event.target.dataset.markId);
+  if (!ready() || !mark) return;
+  const start = viewer.point(event.clientX, event.clientY);
+  if (!start) return;
+  const resize = event.target.dataset.handle === 'resize';
+  const units = start.viewWidth / $('overlay').getBoundingClientRect().width;
+  markId = mark.markId;
+  if (mode !== 'select') setMode('select');
+  optionDisclosure.checked = false;
+  syncSelection(); viewer.paint(); $('stage').focus({ preventScroll: true });
+  const delta = e => {
+    const x = e.clientX - event.clientX, y = e.clientY - event.clientY;
+    if (Math.hypot(x, y) < 3) return null;
+    if (resize) return { op: 'scale', factor: Math.max(.05, 1 + (x + y) / 120) };
+    const [dx, dy] = rotatePoint(x * units, -y * units, start.angle);
+    return { op: 'translate', dx, dy };
+  };
+  return { pointer: event.pointerId, cancel: () => viewer.paint(),
+    move(e) {
+      if (activePage() !== page) return;
+      const d = delta(e);
+      viewer.paint(page.marks.map(m => m === mark && d ? transformMark(m, d) : m));
+    },
+    finish(e) {
+      const d = delta(e);
+      if (activePage() === page && selectedMark() === mark && d) editSelected(d);
+      viewer.paint();
+    },
+  };
+}
+$('shape-tools').onclick = event => {
+  const kind = event.target.dataset.shape;
+  if (!isShape(kind)) return;
+  sheet.close();
+  if (!ready()) return;
+  setMode(kind); optionDisclosure.checked = true; $('shape-width').focus();
+};
 $('modes').onclick = event => {
   if (!ready() || !event.target.dataset.mode) return;
   setMode(event.target.dataset.mode);
@@ -483,7 +592,17 @@ $('modes').onclick = event => {
 };
 $('show-pages').onchange = () => { if ($('show-pages').checked) optionDisclosure.checked = false; };
 optionDisclosure.onchange = () => { if (optionDisclosure.checked) $('show-pages').checked = false; };
-$('mark-color').oninput = event => { if (Object.hasOwn(colors, mode)) colors[mode] = event.target.value; };
+$('mark-color').oninput = event => {
+  if (Object.hasOwn(colors, mode)) colors[mode] = event.target.value;
+  if (isShape(mode)) $('shape-color').value = colors[mode];
+};
+$('shape-color').onchange = event => {
+  if (!isShape(mode)) return;
+  const color = event.target.value.trim().toLowerCase();
+  if (/^#[0-9a-f]{6}$/.test(color)) $('mark-color').value = colors[mode] = color;
+  else status('Use a six-digit shape color, such as #336699.', true);
+  event.target.value = colors[mode];
+};
 fileInput('choose-image', 'image-file', async file => {
   if (!ready()) return;
   const owner = session;
@@ -532,12 +651,20 @@ function place(point) {
     const width = point.viewWidth * percent / 100;
     mark = { ...point, kind: mode, image, width, height: width * image.ratio };
   }
+  if (isShape(mode)) {
+    if (!$('shape-width').validity.valid || !$('shape-width').value) return;
+    const [dx,dy] = rotatePoint(point.viewWidth*.14,-point.viewWidth*.05,point.angle);
+    mark = { kind: mode, color: colors[mode], size: $('shape-width').valueAsNumber, angle: point.angle,
+      points: [[point.x-dx/2,point.y-dy/2],[point.x+dx/2,point.y+dy/2]] };
+  }
   if (!mark) return;
-  const added = change({ type: 'mark', id: activePage().id, mark }, `${mark.kind === 'text' ? 'Text' : 'Image'} added.`, false);
+  mark.markId = crypto.randomUUID();
+  const added = change({ type: 'mark', id: activePage().id, mark }, `${mark.kind[0].toUpperCase() + mark.kind.slice(1)} added.`, false);
   if (added && mark.kind === 'text') $('mark-text').value = '';
   return added;
 }
 const overlay = $('overlay');
+window.addEventListener('blur', cancelStroke);
 $('keyboard-place').onclick = event => {
   const rect = overlay.getBoundingClientRect();
   if (place(viewer.point(rect.left + rect.width / 2, rect.top + rect.height / 2)) && phoneLayout.matches) {
@@ -545,7 +672,8 @@ $('keyboard-place').onclick = event => {
   }
 };
 overlay.addEventListener('pointerdown', event => {
-  if (!ready() || !event.isPrimary || event.button !== 0 || !['ink', 'highlight'].includes(mode) ||
+  if (!ready() || !event.isPrimary || event.button !== 0 || (!isShape(mode) && !['ink', 'highlight'].includes(mode)) ||
+    (isShape(mode) && (!$('shape-width').value || !$('shape-width').validity.valid)) ||
     (event.pointerType === 'touch' && !viewer.canStartTouchStroke())) return;
   const start = viewer.point(event.clientX, event.clientY);
   if (!start) return;
@@ -554,12 +682,19 @@ overlay.addEventListener('pointerdown', event => {
   if (event.pointerType !== 'touch') overlay.setPointerCapture(event.pointerId);
   const inkWidth = phoneLayout.matches && $('ink-width').validity.valid ? $('ink-width').valueAsNumber : NaN;
   stroke = { pointer: event.pointerId, id: activePage().id, kind: mode, color: colors[mode],
-    points: [[start.x, start.y]], size: mode === 'highlight' ? 14 : Number.isFinite(inkWidth) ? inkWidth : 2.5 };
+    ...(isShape(mode) ? { angle: start.angle } : {}),
+    points: [[start.x, start.y]], size: isShape(mode) ? $('shape-width').valueAsNumber : mode === 'highlight' ? 14 : Number.isFinite(inkWidth) ? inkWidth : 2.5 };
 });
 function sample(event) {
   if (!stroke || stroke.pointer !== event.pointerId || stroke.points.length >= 6000) return;
   const point = viewer.point(event.clientX, event.clientY);
   if (!point) return;
+  if (isShape(stroke.kind)) {
+    const [x,y] = stroke.points[0];
+    stroke.points.length = 1;
+    if (Math.hypot(x-point.x,y-point.y) >= 2) stroke.points.push([point.x,point.y]);
+    return;
+  }
   const [x, y] = stroke.points.at(-1);
   if (Math.hypot(x - point.x, y - point.y) >= .5) stroke.points.push([point.x, point.y]);
 }
@@ -575,7 +710,8 @@ overlay.addEventListener('pointerup', event => {
   const mark = stroke;
   stroke = undefined;
   if (ready() && mark.id === activePage().id && mark.points.length > 1) {
-    change({ type: 'mark', id: mark.id, mark }, `${mark.kind === 'ink' ? 'Drawing' : 'Highlight'} added.`, false);
+    const { pointer, id, ...geometry } = mark;
+    change({ type: 'mark', id, mark: { ...geometry, markId: crypto.randomUUID() } }, `${mark.kind === 'ink' ? 'Drawing' : mark.kind[0].toUpperCase() + mark.kind.slice(1)} added.`, false);
   } else viewer.paint();
 });
 for (const name of ['pointercancel', 'lostpointercapture']) overlay.addEventListener(name, event => {
@@ -606,7 +742,7 @@ function installWorkspace(loaded, doc, recovered = false) {
   if (preparedURL) URL.revokeObjectURL(preparedURL);
   preparedURL = undefined;
   selected = 0; zoom = 1; image = undefined;
-  const timeline = history(documentState(baseId, loaded.pdf.numPages));
+  const timeline = history(documentState(baseId, loaded.pdf.numPages, loaded.marks));
   session = Object.create(timeline, {
     dirty: { get: () => recovered || timeline.dirty },
     checkpoint: { value: () => { recovered = false; timeline.checkpoint(); } },

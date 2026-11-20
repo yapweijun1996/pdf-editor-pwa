@@ -8,6 +8,7 @@
     "assets": "node scripts/assets.mjs",
     "test": "node --test tests/*.test.mjs",
     "test:browser": "node tests/browser.mjs",
+    "test:annotate": "node tests/annotate.mjs",
     "test:save": "node --test tests/save.mjs",
     "test:mobile": "node --test tests/mobile.mjs",
     "baseline": "node scripts/baseline/run.mjs"
