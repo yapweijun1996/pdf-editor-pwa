@@ -20,12 +20,14 @@
       <button id="install" hidden>Install</button>
       <button id="theme" aria-label="Switch color theme">Theme</button>
       <button id="open">Open PDF</button>
-      <button id="save" class="primary" disabled>Download PDF</button>
+      <button id="save" class="primary" aria-label="Download PDF" disabled><span class="desktop-download">Download PDF</span><span class="mobile-only" aria-hidden="true">Save</span></button>
       <button id="confirm-save" hidden>I saved this copy</button>
+      <button id="more-tools" class="mobile-only" aria-label="More tools" aria-haspopup="dialog" aria-controls="tools-sheet">More</button>
     </div>
   </header>
   <div class="info"><span id="filename">No document open</span><span id="dirty"></span><span id="offline">Preparing offline access…</span></div>
   <p id="status" role="status" aria-live="polite">Select a PDF to get started.</p>
+  <div id="phone-status" class="mobile-only" aria-hidden="true" hidden></div>
   <main>
     <section id="welcome" class="welcome" aria-labelledby="welcome-title">
       <div class="hero">
@@ -47,10 +49,6 @@
           </div>
           <div class="tool-group history-tools" role="group" aria-label="History and documents">
             <button id="undo">Undo</button><button id="redo">Redo</button>
-            <label class="mobile-disclosure">
-              <input type="checkbox" aria-controls="document-actions">
-              <span>More tools</span>
-            </label>
             <div id="document-actions">
               <button id="forms">Fill forms</button><button id="merge">Merge PDF</button><button id="extract">Extract pages</button>
             </div>
@@ -65,9 +63,10 @@
             <label id="text-option" hidden>Text <input id="mark-text" type="text" maxlength="250" placeholder="Type a note" autocomplete="off"></label>
             <label id="size-option" hidden>Size <input id="mark-size" type="number" min="8" max="72" value="18"> pt</label>
             <label id="color-option" hidden>Color <input id="mark-color" type="color" value="#15386a"></label>
+            <label id="ink-width-option" class="mobile-only" hidden>Width <input id="ink-width" type="number" min="1" max="20" step="0.5" value="2.5"> pt</label>
             <button id="choose-image" hidden>Choose PNG or JPEG</button>
             <label id="image-option" hidden>Width <input id="image-width" type="number" min="10" max="95" value="30"> % of page view</label>
-            <button id="keyboard-place" hidden>Place at page center</button>
+            <button id="keyboard-place" aria-label="Place at page center" hidden><span class="place-full">Place at page center</span><span class="place-compact" aria-hidden="true">Place</span></button>
             <p id="tool-hint"></p>
           </div>
         </div>
@@ -87,14 +86,15 @@
             <div class="tool-group" role="group" aria-label="Zoom">
               <button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-fit" title="Reset to fit width">Fit</button><button id="zoom-in" aria-label="Zoom in">+</button>
             </div>
-            <label class="mobile-disclosure">
-              <input type="checkbox" aria-controls="page-operations page-thumbnails">
+            <label class="mobile-disclosure pages-disclosure">
+              <input id="show-pages" type="checkbox" aria-controls="page-operations page-thumbnails">
               <span>Pages</span>
             </label>
             <div id="page-operations" class="tool-group" role="group" aria-label="Page operations">
               <button id="rotate">Rotate ↻</button><button id="earlier">Move earlier</button><button id="later">Move later</button><button id="delete">Delete page</button>
             </div>
           </div>
+          <div id="phone-pages" class="mobile-only"></div>
           <div id="stage" tabindex="0" role="region" aria-label="Page viewer. Use Left and Right arrows to change pages.">
             <div id="paper" hidden>
               <canvas id="canvas" role="img" aria-label="Rendered PDF page"></canvas>
@@ -105,6 +105,13 @@
       </div>
     </section>
   </main>
+  <dialog id="tools-sheet" aria-labelledby="tools-title">
+    <div class="sheet-heading"><h2 id="tools-title">More tools</h2><button type="button" data-close autofocus>Close</button></div>
+    <div id="sheet-actions" class="tool-group" role="group" aria-label="File and app actions"></div>
+    <div id="sheet-document"></div>
+    <p id="sheet-status"></p>
+    <p id="sheet-details" class="mobile-only"></p>
+  </dialog>
   <dialog id="extract-dialog" aria-labelledby="extract-title">
     <form id="extract-form">
       <h2 id="extract-title">Extract pages</h2>

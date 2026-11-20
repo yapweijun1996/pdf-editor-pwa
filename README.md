@@ -26,11 +26,56 @@ Wait for **Offline ready** on the first online visit. Afterwards the app can rel
 
 ## Mobile behavior and limits
 
-- On a phone, the PDF opens above the bottom editing bar. **Undo** and **Redo** are in that bar, outside the menus. Open **Pages** for thumbnails, rotation, reordering and deletion, or **More tools** for forms, merge and extract.
-- Choose **Text**, type your note in **Tool options**, dismiss the keyboard, and tap the page once where you want the text baseline. You can collapse **Tool options** without losing your pending text. A successful placement (including **Place at page center**) clears the input; type again to place another note. Scrolling, dragging, canceled touches and multi-finger gestures do not place text.
-- In **View** or **Text**, swipe to scroll the page and pinch within the viewer to change PDF zoom. Zoom updates when you release, from 50% to 300% of fit width. Use **Fit** to return to fit width. In **Draw** and **Highlight**, a single-finger drag marks the page; switch to **View** to pan without marking.
+- At phone widths (768 CSS px and below), the filename truncates to one line. A single floating row combines page navigation and zoom. The status pill shows the page and save state over the viewer, then starts fading after about two seconds. **Pages** overlays thumbnails and page operations. **More tools** overlays theme, open, merge, extract and forms without resizing the viewer; closing returns focus to **More tools**.
+- The bottom row holds **View**, **Text**, **Draw**, **Highlight**, **Image**, **Undo** and **Redo**. The mode strip may scroll internally; history remains directly tappable. Controls have a 44×44 CSS px minimum and inputs use at least 16 CSS px text. The dynamic viewport shell uses CSS safe-area insets, including bottom padding for the editing dock and More tools sheet.
+- Choose **Text**, type a note in **Tool options**, dismiss the keyboard and tap where you want its baseline. Collapsing options preserves pending text. A successful placement (including **Place at page center**) clears the input; an empty repeat tap adds nothing. Scrolling, dragging, holding, canceling and multi-finger gestures do not place a note. **Undo** and **Redo** each take one tap.
+- In **View**, a stationary tap hides or restores the controls; scrolling and pinching do not toggle them. In **View** or **Text**, drag to scroll or use two fingers to pan the zoomed page inside the viewer. Pinch zoom updates on release (50–300% of fit width); **Fit** restores full-width paper without horizontal scrolling. A tap after zoom and pan still places the note at the tapped baseline. In **Draw** and **Highlight**, a one-finger drag marks the page; switch to **View** to pan without marking.
 
-The mobile suite uses Playwright WebKit at 375×812 and 390×844. It sends touchscreen taps for placement and history, and scripted pointer gestures for drag, cancellation and pinch; the scroll test moves the viewer and checks cancellation. It does not reproduce native iOS gesture physics, the software keyboard, or installation on a real iPhone.
+Measured in Playwright WebKit 27.2 at initial Fit and scroll zero, with a synthetic three-page portrait Letter PDF. **Workspace** is the allocated viewer rectangle, including the area underneath the floating controls. The annotate gate is ≥75% of viewport height (80% target); immersive View must reach ≥92%. Persistent chrome is limited to 120 CSS px portrait and 88 CSS px landscape.
+
+| Viewport (CSS px) | Annotate workspace: options closed / Text / Draw (px) | Annotate share (all three) | Immersive workspace | Header + toolbar | Floating nav | Status at 3 s |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 390×664 | 576 / 576 / 576 | 86.7% | 664 (100%) | 44 + 44 | 50 | 0 |
+| 375×812 | 724 / 724 / 724 | 89.2% | 812 (100%) | 44 + 44 | 50 | 0 |
+| 390×844 | 756 / 756 / 756 | 89.6% | 844 (100%) | 44 + 44 | 50 | 0 |
+| 430×932 | 844 / 844 / 844 | 90.6% | 932 (100%) | 44 + 44 | 50 | 0 |
+| 320×568 | 480 / 480 / 480 | 84.5% | 568 (100%) | 44 + 44 | 50 | 0 |
+| 664×390 | 302 / 302 / 302 | 77.4% | 390 (100%) | 44 + 44 | 50 | 0 |
+
+**Paper intersection** is the rendered page clipped to viewport and workspace, before overlay occlusion; its width equals viewport width at Fit. **Occlusion** is the percentage of that clipped paper area covered by the union of overlay bounding boxes after status settles (a geometric estimate, not a pixel-opacity measurement). Height share is not the same as unoccluded paper area.
+
+| Viewport | Paper height in annotate, all three states | Paper height in immersive | Paper occlusion: closed / Text / Draw / immersive |
+| --- | ---: | ---: | ---: |
+| 390×664 | 504.7 px | 504.7 px | 3.0% / 40.6% / 21.6% / 0% |
+| 375×812 | 485.3 px | 485.3 px | 0% / 8.4% / 0% / 0% |
+| 390×844 | 504.7 px | 504.7 px | 0% / 5.6% / 0% / 0% |
+| 430×932 | 556.5 px | 556.5 px | 0% / 0% / 0% / 0% |
+| 320×568 | 414.1 px | 414.1 px | 5.0% / 54.3% / 31.3% / 0% |
+| 664×390 | 302 px | 390 px | 11.9% / 52.8% / 33.3% / 0% |
+
+At Fit, root and stage scroll widths matched their client widths. The title occupied one line; measured controls were at least 44×44 px and displayed inputs were 16 px. Text, Draw and More tools leave the workspace rectangle unchanged. The suite captures these overlays, closed options, visible status and immersive View for each profile in `test-results/mobile/`; set `MOBILE_EVIDENCE_DIR` for a different output directory.
+
+Each profile runs 50 touchscreen taps, 20 one-finger drags that must actually scroll the stage, and 10 alternating pinches that must change rendered width. Every step must leave zero notes, preserve pending text, and leave the outer page fixed. Separate checks cover one-shot placement, Undo/Redo (1 → 0 → 1 notes), cancellation, compatibility clicks, and two-finger pan. The note baseline after zoom and pan, and the ink centerline at Fit and after zoom and pan, are compared with gesture coordinates via the rendered SVG. All six profiles measured 0.0000 CSS px to four decimal places, against an 8 px limit.
+
+WebKit delivers the touchscreen taps. The drag, scroll, pan, pinch and ink tests dispatch scripted touch pointers through the viewer and do not reproduce native iOS gesture physics.
+
+### Emulated keyboard
+
+At phone widths and browser scale 1, the editor follows `visualViewport.height` and `offsetTop` on resize and scroll. A clipped, focused option input scrolls into view inside the sheet. The sheet and dock stay above the reduced viewport even if focus leaves the input before keyboard dismissal. The PDF keeps its fit width and can still pan behind the sheet. On very short visual viewports, scroll the sheet to reach other controls.
+
+The WebKit test keeps the Playwright and layout viewports at 390×664 CSS px. A test-only `visualViewport` shim changes only the visual height and offset; a hit-blocking overlay covers the simulated keyboard area. Measured control bounds are top–bottom in layout CSS px (rounded to two decimals):
+
+| Sample | Visual height / top / bottom | Note | Size | Place |
+| --- | ---: | ---: | ---: | ---: |
+| Before | 664 / 0 / 664 | 395.02–439.02 | 443.81–487.81 | 492.61–536.61 |
+| 300 px occlusion | 364 / 0 / 364 | 143.81–187.81 | 192.61–236.61 | 192.61–236.61 |
+| Offset | 340 / 24 / 364 | 143.81–187.81 | 192.61–236.61 | 192.61–236.61 |
+| Scroll event only | 340 / 36 / 376 | 155.81–199.81 | 204.61–248.61 | 204.61–248.61 |
+| Restored | 664 / 0 / 664 | 395.02–439.02 | 443.81–487.81 | 492.61–536.61 |
+
+All three controls passed hit-testing at these samples. The root stayed at (0, 0), browser scale at 1, and Fit paper width at 390 px. A separate pan check reached the lower edge of the Fit page without adding a note or losing draft text. The suite captures `webkit-390x664-keyboard-{before,open,offset,closed,pan}.png`.
+
+**Emulation only:** these checks do not verify a real iOS keyboard, Safari toolbar movement, device safe-area inset values, or installation on an iPhone.
 
 ## Supported scope and limits
 
@@ -47,6 +92,7 @@ npx playwright install chromium webkit
 npm test
 npm run test:browser
 npm run test:mobile
+node --test --test-concurrency=1 tests/mobile.mjs
 node scripts/assets.mjs --check
 ```
 

@@ -4,6 +4,51 @@ import { createViewer } from './viewer.js';
 
 const $ = id => document.getElementById(id);
 const sources = new Map();
+const phoneLayout = matchMedia('(max-width: 768px)');
+const sheet = $('tools-sheet');
+const optionDisclosure = document.querySelector('#tool-options .mobile-disclosure input');
+const phoneStatus = $('phone-status');
+let fadeTimer, hideTimer;
+// Reuse the same controls and listeners in the phone sheet and desktop groups.
+const phoneControls = Object.entries({
+  filename: document.querySelector('.masthead'),
+  install: $('sheet-actions'), theme: $('sheet-actions'), open: $('sheet-actions'), 'confirm-save': $('sheet-actions'),
+  'document-actions': $('sheet-document'), 'page-thumbnails': $('phone-pages'), 'page-operations': $('page-thumbnails'),
+}).map(([id, destination]) => {
+  const control = $(id), home = document.createComment(`Home: ${id}`);
+  control.before(home);
+  return { control, home, destination };
+});
+function syncPhoneLayout() {
+  if (!phoneLayout.matches) {
+    if (sheet.open) sheet.close();
+    setImmersive(false);
+    clearTimeout(fadeTimer);
+    clearTimeout(hideTimer);
+    phoneStatus.classList.remove('is-visible');
+    phoneStatus.hidden = true;
+  }
+  for (const { control, home, destination } of phoneControls) {
+    if (!phoneLayout.matches) home.after(control);
+    else if (control.id === 'filename') destination.prepend(control);
+    else destination.append(control);
+  }
+  controls();
+}
+$('more-tools').onclick = () => {
+  if (anyDialog()) return;
+  viewer.cancelGestures();
+  cancelStroke();
+  $('show-pages').checked = false;
+  $('more-tools').focus({ preventScroll: true });
+  syncSheetDetails();
+  sheet.showModal();
+};
+sheet.addEventListener('click', event => {
+  // Close before actions run: some open another modal or require a live user gesture.
+  if (event.target.closest('#sheet-actions button, #sheet-document button')) sheet.close();
+}, true);
+phoneLayout.addEventListener('change', syncPhoneLayout);
 let session, requestedState, baseId, selected = 0, serial = 0, zoom = 1, busy = false;
 let mode = 'view', image, stroke, formSource, warned = false;
 const colors = { text: '#15386a', ink: '#15386a', highlight: '#ffd12a' };
@@ -11,9 +56,13 @@ const viewer = createViewer({
   stage: $('stage'), paper: $('paper'), canvas: $('canvas'), overlay: $('overlay'), thumbs: $('thumbs'),
   getSource: id => sources.get(id), onSelect: (index, reveal) => go(index, reveal), onError: message => status(message, true),
   canTap: () => ready() && (mode === 'image' || (mode === 'text' && Boolean($('mark-text').value.trim()))),
+  canViewTap: () => ready() && phoneLayout.matches && mode === 'view',
   canPinch: () => ready(),
   onTap: (x, y) => place(viewer.point(x, y)),
-  onPinch: (ratio, x, y) => adjustZoom(zoom * ratio, viewer.zoomAnchor(x, y)),
+  onViewTap: () => setImmersive(!document.body.classList.contains('immersive')),
+  onPinch: (ratio, anchor) => adjustZoom(zoom * ratio, anchor),
+  isPhone: () => phoneLayout.matches,
+  canPan: () => ready() && !['ink', 'highlight'].includes(mode),
   onMultitouch: cancelStroke,
 });
 
@@ -23,9 +72,42 @@ function cancelStroke() {
   viewer.paint();
 }
 
+function setImmersive(enabled) {
+  if (enabled) {
+    $('show-pages').checked = false;
+    $('stage').focus({ preventScroll: true });
+  }
+  document.body.classList.toggle('immersive', enabled);
+  const toggleHint = enabled ? 'Tap or press Enter to show controls.' : 'Tap or press Enter in View mode to hide controls.';
+  $('stage').setAttribute('aria-label', `Page viewer. Use Left and Right arrows to change pages.${phoneLayout.matches ? ` ${toggleHint}` : ''}`);
+}
+
+function syncSheetDetails() {
+  $('sheet-details').textContent = [$('dirty').textContent, $('offline').textContent].filter(Boolean).join(' · ');
+}
+
+const pageSummary = () => session ? `Page ${selected + 1} of ${session.current.pages.length}` : '';
+function showPhoneStatus(message, error) {
+  if (!phoneLayout.matches) return;
+  const saveState = session ? session.dirty ? 'Unsaved edits' : 'No unsaved edits' : '';
+  phoneStatus.textContent = [pageSummary(), saveState, message].filter(Boolean).join(' · ');
+  phoneStatus.dataset.error = error;
+  phoneStatus.hidden = false;
+  phoneStatus.classList.add('is-visible');
+  clearTimeout(fadeTimer);
+  clearTimeout(hideTimer);
+  fadeTimer = setTimeout(() => {
+    phoneStatus.classList.remove('is-visible');
+    hideTimer = setTimeout(() => { phoneStatus.hidden = true; }, 240);
+  }, 2000);
+}
+
 function status(message, error = false) {
-  $('status').textContent = message;
-  $('status').dataset.error = error;
+  for (const id of ['status', 'sheet-status']) {
+    $(id).textContent = message;
+    $(id).dataset.error = error;
+  }
+  showPhoneStatus(message, error);
 }
 const activePage = () => session?.current.pages[selected];
 const anyDialog = () => Boolean(document.querySelector('dialog[open]'));
@@ -38,11 +120,17 @@ function controls() {
   const count = session?.current.pages.length ?? 0;
   $('welcome').hidden = hasDocument;
   $('workspace').hidden = !hasDocument;
-  $('filename').textContent = sources.get(baseId)?.name ?? 'No document open';
+  const filename = sources.get(baseId)?.name ?? 'No document open';
+  $('filename').textContent = filename;
+  $('filename').title = filename;
+  $('sheet-document').hidden = !hasDocument;
   $('page-number').max = count;
   $('page-number').value = selected + 1;
   $('page-count').textContent = `of ${count}`;
+  if (phoneLayout.matches && count) $('page-number').setAttribute('aria-valuetext', pageSummary());
+  else $('page-number').removeAttribute('aria-valuetext');
   $('dirty').textContent = session?.dirty ? 'Unsaved edits' : '';
+  if (phoneLayout.matches) syncSheetDetails();
   $('confirm-save').hidden = !canConfirmSave();
   $('confirm-save').disabled = busy;
   if (warned !== Boolean(session?.dirty)) {
@@ -52,7 +140,8 @@ function controls() {
   }
   for (const id of ['open', 'start']) $(id).disabled = busy;
   for (const id of ['save', 'forms', 'merge', 'extract', 'rotate', 'page-number', 'zoom-fit']) $(id).disabled = busy || !hasDocument;
-  $('zoom-fit').textContent = zoom === 1 ? 'Fit' : `${Math.round(zoom * 100)}% of fit`;
+  const percent = `${Math.round(zoom * 100)}%`;
+  $('zoom-fit').textContent = zoom === 1 ? 'Fit' : phoneLayout.matches ? percent : `${percent} of fit`;
   $('zoom-in').disabled = busy || zoom >= 3;
   $('zoom-out').disabled = busy || zoom <= .5;
   $('undo').disabled = busy || !session?.canUndo;
@@ -80,6 +169,11 @@ function go(index, reveal = true) {
   if (!ready() || !Number.isInteger(index)) { controls(); return; }
   selected = Math.max(0, Math.min(index, session.current.pages.length - 1));
   refresh({ reset: true, reveal });
+  if (phoneLayout.matches) {
+    $('status').textContent = pageSummary();
+    $('status').dataset.error = false;
+    showPhoneStatus('', false);
+  }
 }
 function retainSelection(id) {
   const pages = session.current.pages;
@@ -244,7 +338,11 @@ function adjustZoom(next, anchor) {
 }
 $('zoom-in').onclick = () => adjustZoom(zoom * 1.25);
 $('zoom-out').onclick = () => adjustZoom(zoom / 1.25);
-$('zoom-fit').onclick = () => adjustZoom(1);
+$('zoom-fit').onclick = () => {
+  if (!ready()) return;
+  if (phoneLayout.matches) $('stage').scrollTo(0, 0);
+  adjustZoom(1);
+};
 let stageWidth, resizeFrame;
 new ResizeObserver(() => {
   const width = $('stage').clientWidth;
@@ -253,7 +351,71 @@ new ResizeObserver(() => {
   cancelAnimationFrame(resizeFrame);
   if (session && width) resizeFrame = requestAnimationFrame(() => refresh());
 }).observe($('stage'));
+// At scale 1 the visual viewport is a slice of the layout viewport in CSS pixels.
+// Keep using that slice even if an input blurs before the keyboard finishes closing.
+const visualViewport = window.visualViewport;
+const toolOptions = $('tool-options');
+const pageBar = document.querySelector('.page-bar');
+const phoneShell = document.body.style;
+let visualFrame;
+function syncVisualViewport() {
+  visualFrame = undefined;
+  const top = Math.max(0, visualViewport?.offsetTop ?? 0);
+  const height = Math.min(visualViewport?.height ?? 0, window.innerHeight - top);
+  const reduced = phoneLayout.matches && visualViewport?.scale === 1 && height > 0 && window.innerHeight - height > 1;
+  document.body.classList.toggle('visual-viewport-reduced', reduced);
+  if (reduced) {
+    phoneShell.setProperty('--phone-visual-top', `${top}px`);
+    phoneShell.setProperty('--phone-visual-height', `${height}px`);
+    // Leave scroll room to pan the end of the PDF above the floating controls.
+    const cover = toolOptions.getClientRects().length ? toolOptions : pageBar;
+    const stage = $('stage').getBoundingClientRect();
+    const room = cover.getClientRects().length ? stage.bottom - Math.max(stage.top, cover.getBoundingClientRect().top) : 0;
+    phoneShell.setProperty('--phone-scroll-room', `${Math.max(0, room)}px`);
+  } else {
+    for (const key of ['--phone-visual-top', '--phone-visual-height', '--phone-scroll-room']) phoneShell.removeProperty(key);
+  }
+  const field = document.activeElement;
+  if (!phoneLayout.matches || !toolOptions.contains(field) || !field.matches('#option-controls input') ||
+      !field.getClientRects().length) return;
+  const box = field.getBoundingClientRect(), sheet = toolOptions.getBoundingClientRect();
+  const sheetTop = sheet.top + toolOptions.clientTop;
+  // Only scroll the clipped options content, not an already visible input or the PDF.
+  if (box.top < sheetTop || box.bottom > sheetTop + toolOptions.clientHeight) {
+    field.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
+  }
+}
+function queueVisualViewport() {
+  if (visualFrame === undefined) visualFrame = requestAnimationFrame(syncVisualViewport);
+}
+visualViewport?.addEventListener('resize', queueVisualViewport);
+visualViewport?.addEventListener('scroll', queueVisualViewport);
+phoneLayout.addEventListener('change', queueVisualViewport);
+toolOptions.addEventListener('focusin', queueVisualViewport);
+if (visualViewport) new ResizeObserver(queueVisualViewport).observe(toolOptions);
+queueVisualViewport();
+
+let layoutWidth = window.innerWidth;
+window.addEventListener('resize', () => {
+  queueVisualViewport();
+  // A toolbar or soft-keyboard height change alone should not exit immersive View.
+  if (window.innerWidth === layoutWidth) return;
+  layoutWidth = window.innerWidth;
+  setImmersive(false);
+});
+screen.orientation?.addEventListener('change', () => {
+  setImmersive(false);
+  queueVisualViewport();
+});
 window.addEventListener('keydown', event => {
+  if (phoneLayout.matches && ready() && event.key === 'Escape') {
+    if (document.body.classList.contains('immersive')) { setImmersive(false); return; }
+    if (mode !== 'view' && optionDisclosure.checked) {
+      if ($('tool-options').contains(document.activeElement)) optionDisclosure.focus({ preventScroll: true });
+      optionDisclosure.checked = false;
+      return;
+    }
+  }
   if (!ready() || event.target.closest?.('input,select,textarea,[contenteditable]')) return;
   const key = event.key.toLowerCase(), mod = event.ctrlKey || event.metaKey;
   if (mod && ['z', 'y'].includes(key)) {
@@ -262,6 +424,9 @@ window.addEventListener('keydown', event => {
   } else if (mod && key === 's') {
     event.preventDefault();
     void save();
+  } else if (!mod && event.target === $('stage') && mode === 'view' && phoneLayout.matches && ['enter', ' '].includes(key)) {
+    event.preventDefault();
+    if (!event.repeat) setImmersive(!document.body.classList.contains('immersive'));
   } else if (!mod && event.target === $('stage') && ['arrowleft', 'arrowright', 'home', 'end'].includes(key)) {
     event.preventDefault();
     go({ arrowleft: selected - 1, arrowright: selected + 1, home: 0, end: session.current.pages.length - 1 }[key]);
@@ -270,10 +435,12 @@ window.addEventListener('keydown', event => {
 
 function setMode(next) {
   mode = next;
+  setImmersive(false);
   viewer.cancelGestures();
   cancelStroke();
   $('paper').dataset.mode = mode;
   $('tool-options').hidden = mode === 'view';
+  $('ink-width-option').hidden = mode !== 'ink';
   $('text-option').hidden = $('size-option').hidden = mode !== 'text';
   $('image-option').hidden = $('choose-image').hidden = mode !== 'image';
   $('keyboard-place').hidden = !['text', 'image'].includes(mode);
@@ -287,7 +454,16 @@ function setMode(next) {
   })[mode] ?? '';
   for (const button of $('modes').querySelectorAll('button')) button.setAttribute('aria-pressed', button.dataset.mode === mode);
 }
-$('modes').onclick = event => { if (ready() && event.target.dataset.mode) setMode(event.target.dataset.mode); };
+$('modes').onclick = event => {
+  if (!ready() || !event.target.dataset.mode) return;
+  setMode(event.target.dataset.mode);
+  if (phoneLayout.matches) {
+    optionDisclosure.checked = mode !== 'view';
+    $('show-pages').checked = false;
+  }
+};
+$('show-pages').onchange = () => { if ($('show-pages').checked) optionDisclosure.checked = false; };
+optionDisclosure.onchange = () => { if (optionDisclosure.checked) $('show-pages').checked = false; };
 $('mark-color').oninput = event => { if (Object.hasOwn(colors, mode)) colors[mode] = event.target.value; };
 fileInput('choose-image', 'image-file', async file => {
   if (!ready()) return;
@@ -340,20 +516,26 @@ function place(point) {
   if (!mark) return;
   const added = change({ type: 'mark', id: activePage().id, mark }, `${mark.kind === 'text' ? 'Text' : 'Image'} added.`, false);
   if (added && mark.kind === 'text') $('mark-text').value = '';
+  return added;
 }
 const overlay = $('overlay');
-$('keyboard-place').onclick = () => {
+$('keyboard-place').onclick = event => {
   const rect = overlay.getBoundingClientRect();
-  place(viewer.point(rect.left + rect.width / 2, rect.top + rect.height / 2));
+  if (place(viewer.point(rect.left + rect.width / 2, rect.top + rect.height / 2)) && phoneLayout.matches) {
+    event.currentTarget.focus({ preventScroll: true });
+  }
 };
 overlay.addEventListener('pointerdown', event => {
-  if (!ready() || !event.isPrimary || event.button !== 0 || !['ink', 'highlight'].includes(mode)) return;
+  if (!ready() || !event.isPrimary || event.button !== 0 || !['ink', 'highlight'].includes(mode) ||
+    (event.pointerType === 'touch' && !viewer.canStartTouchStroke())) return;
   const start = viewer.point(event.clientX, event.clientY);
   if (!start) return;
   event.preventDefault();
-  overlay.setPointerCapture(event.pointerId);
+  // Touch pointers already have implicit capture on their original target.
+  if (event.pointerType !== 'touch') overlay.setPointerCapture(event.pointerId);
+  const inkWidth = phoneLayout.matches && $('ink-width').validity.valid ? $('ink-width').valueAsNumber : NaN;
   stroke = { pointer: event.pointerId, id: activePage().id, kind: mode, color: colors[mode],
-    points: [[start.x, start.y]], size: mode === 'highlight' ? 14 : 2.5 };
+    points: [[start.x, start.y]], size: mode === 'highlight' ? 14 : Number.isFinite(inkWidth) ? inkWidth : 2.5 };
 });
 function sample(event) {
   if (!stroke || stroke.pointer !== event.pointerId || stroke.points.length >= 6000) return;
@@ -531,13 +713,19 @@ $('install').onclick = async () => {
   catch { status('Use your browser’s menu to install this app if supported.', true); }
   finally { installPrompt = undefined; $('install').hidden = true; }
 };
+function updateOffline(message) {
+  $('offline').textContent = message;
+  if (!phoneLayout.matches) return;
+  syncSheetDetails();
+  if (phoneStatus.hidden) showPhoneStatus(message, false);
+}
 if ('serviceWorker' in navigator && window.isSecureContext) {
-  const offlineLabel = () => { $('offline').textContent = navigator.onLine ? 'Offline ready' : 'Offline'; };
+  const offlineLabel = () => updateOffline(navigator.onLine ? 'Offline ready' : 'Offline');
   navigator.serviceWorker.register('./sw.js').then(registration => {
     const check = worker => {
       if (!worker) return;
       const state = () => {
-        if (worker.state === 'redundant' && !navigator.serviceWorker.controller) $('offline').textContent = 'Offline setup failed';
+        if (worker.state === 'redundant' && !navigator.serviceWorker.controller) updateOffline('Offline setup failed');
       };
       worker.addEventListener('statechange', state);
       state();
@@ -549,6 +737,7 @@ if ('serviceWorker' in navigator && window.isSecureContext) {
     offlineLabel();
     window.addEventListener('online', offlineLabel);
     window.addEventListener('offline', offlineLabel);
-  }).catch(() => { $('offline').textContent = 'Offline setup failed'; });
-} else $('offline').textContent = 'Offline requires HTTPS or localhost';
-controls();
+  }).catch(() => updateOffline('Offline setup failed'));
+} else updateOffline('Offline requires HTTPS or localhost');
+$('sheet-status').textContent = $('status').textContent;
+syncPhoneLayout();

@@ -9,14 +9,28 @@ const svg = (tag, attributes) => {
 const TAP_SLOP = 10; // CSS pixels, independent of PDF zoom and device pixel ratio.
 const TAP_TIMEOUT = 500;
 
-function pageGestures({ stage, overlay, canTap, canPinch, onTap, onPinch, onMultitouch }) {
+function pageGestures({ stage, overlay, canTap, canViewTap, canPinch, canPan, isPhone,
+  zoomAnchor, onTap, onViewTap, onPinch, onMultitouch }) {
   const touches = new Map();
-  let tap, pinch;
-  // Let the browser handle one-finger scrolling, not viewport pinch zoom over the stage.
-  stage.style.touchAction = 'pan-x pan-y';
-  const cancel = () => { tap = pinch = undefined; };
+  let tap, drag, pinch;
+  const cancel = () => { tap = drag = pinch = undefined; };
   const separation = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  const scrollOrigin = () => ({ left: stage.scrollLeft, top: stage.scrollTop });
+  const pan = (origin, dx, dy) => stage.scrollTo(origin.left - dx, origin.top - dy);
   const on = (type, handler) => window.addEventListener(type, handler, true);
+  function pair() {
+    const [{ event: a }, { event: b }] = touches.values();
+    return { distance: separation(a, b), x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 };
+  }
+  function movePinch() {
+    const current = pair();
+    const dx = current.x - pinch.x, dy = current.y - pinch.y;
+    if (pinch.moving || Math.hypot(dx, dy) > TAP_SLOP) {
+      pinch.moving = true;
+      pan(pinch.scroll, dx, dy);
+    }
+    return current;
+  }
 
   on('pointerdown', event => {
     if (event.pointerType === 'touch') {
@@ -25,24 +39,38 @@ function pageGestures({ stage, overlay, canTap, canPinch, onTap, onPinch, onMult
       if (touches.size > 1) {
         cancel();
         onMultitouch();
-        const [a, b] = touches.values();
-        if (touches.size === 2 && a.inStage && b.inStage && canPinch()) {
-          const distance = separation(a.event, b.event);
-          if (distance > 0) pinch = { distance };
+        if (touches.size === 2 && [...touches.values()].every(touch => touch.inStage) && canPinch()) {
+          const start = pair();
+          if (start.distance > 0) pinch = { ...start, scroll: scrollOrigin(), anchor: zoomAnchor(start.x, start.y) };
         }
         return;
       }
+      // On phones, keep pointer delivery in the stage even if a second finger joins a drag.
+      if (isPhone() && inStage && canPan()) drag = { start: event, scroll: scrollOrigin() };
     }
     tap = undefined;
-    if (!event.isPrimary || event.button !== 0 || touches.size > Number(event.pointerType === 'touch') ||
-      !overlay.contains(event.target) || !canTap()) return;
-    const { left, top } = overlay.getBoundingClientRect();
-    tap = { start: event, left, top };
+    if (!event.isPrimary || event.button !== 0 || touches.size > Number(event.pointerType === 'touch')) return;
+    const viewTap = canViewTap();
+    const target = viewTap ? stage : overlay;
+    if ((!viewTap && !canTap()) || !target.contains(event.target)) return;
+    const { left, top } = target.getBoundingClientRect();
+    tap = { start: event, left, top, target };
   });
 
   on('pointermove', event => {
     const touch = touches.get(event.pointerId);
-    if (touch) touch.event = event;
+    if (touch) {
+      touch.event = event;
+      if (pinch && canPinch()) movePinch();
+    }
+    if (drag?.start.pointerId === event.pointerId && canPan()) {
+      const { start, scroll } = drag;
+      if (drag.moving || separation(start, event) > TAP_SLOP) {
+        tap = undefined;
+        drag.moving = true;
+        pan(scroll, event.clientX - start.clientX, event.clientY - start.clientY);
+      }
+    }
     if (tap?.start.pointerId !== event.pointerId) return;
     const samples = event.getCoalescedEvents?.() ?? [];
     if (separation(tap.start, event) > TAP_SLOP || samples.some(item => separation(tap.start, item) > TAP_SLOP)) {
@@ -51,53 +79,62 @@ function pageGestures({ stage, overlay, canTap, canPinch, onTap, onPinch, onMult
   });
 
   on('pointerup', event => {
-    const touch = touches.get(event.pointerId);
-    if (touch && pinch) {
-      const [a, b] = [...touches.values()].map(item => item.event);
-      // Commit once on release, using the last two-finger sample while both were down.
-      const distance = separation(a, b);
-      const start = pinch.distance;
+    if (touches.has(event.pointerId) && pinch) {
+      const start = pinch;
+      const current = canPinch() ? movePinch() : null;
       cancel();
       touches.delete(event.pointerId);
-      if (Math.abs(distance - start) > TAP_SLOP && canPinch()) {
-        onPinch(distance / start, (a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2);
+      // Render once on release; anchor the original midpoint under the final midpoint.
+      if (current && Math.abs(current.distance - start.distance) > TAP_SLOP) {
+        const rect = stage.getBoundingClientRect();
+        onPinch(current.distance / start.distance, { ...start.anchor, left: current.x - rect.left, top: current.y - rect.top });
       }
       return;
     }
     touches.delete(event.pointerId);
+    if (drag?.start.pointerId === event.pointerId) drag = undefined;
     if (tap?.start.pointerId !== event.pointerId) return;
-    const { start, left, top } = tap;
+    const { start, left, top, target } = tap;
     tap = undefined;
-    const rect = overlay.getBoundingClientRect();
-    if (canTap() && !touches.size && event.button === 0 && event.timeStamp - start.timeStamp <= TAP_TIMEOUT &&
-      separation(start, event) <= TAP_SLOP && rect.left === left && rect.top === top &&
-      overlay.contains(document.elementFromPoint(event.clientX, event.clientY))) {
-      onTap(event.clientX, event.clientY);
+    const viewTap = target === stage;
+    const rect = target.getBoundingClientRect();
+    if ((viewTap ? canViewTap() : canTap()) && !touches.size && event.button === 0 &&
+      event.timeStamp - start.timeStamp <= TAP_TIMEOUT && separation(start, event) <= TAP_SLOP &&
+      rect.left === left && rect.top === top && target.contains(document.elementFromPoint(event.clientX, event.clientY))) {
+      // The compatibility click is not a second gesture.
+      if (viewTap) onViewTap();
+      else onTap(event.clientX, event.clientY);
     }
   });
 
   on('pointercancel', event => {
-    if (touches.delete(event.pointerId)) pinch = undefined;
+    if (touches.delete(event.pointerId)) cancel();
     if (tap?.start.pointerId === event.pointerId) tap = undefined;
   });
   on('lostpointercapture', event => {
+    if (touches.delete(event.pointerId)) cancel();
     if (tap?.start.pointerId === event.pointerId) tap = undefined;
   });
-  on('scroll', event => { if (event.target === stage || event.target === document) cancel(); });
+  on('scroll', event => { if (event.target === stage || event.target === document) tap = undefined; });
   on('blur', event => { if (event.target === window) { cancel(); touches.clear(); } });
-  // Once two fingers are down, stop WebKit from taking over as a native pan.
   for (const type of ['touchstart', 'touchmove']) stage.addEventListener(type, event => {
     if (pinch && event.touches.length >= 2 && event.cancelable) event.preventDefault();
   }, { passive: false });
-  return cancel;
+  return { cancel, canStartTouchStroke: () => touches.size === 1 };
 }
 
 export function createViewer({ stage, paper, canvas, overlay, thumbs, getSource, onSelect, onError,
-  canTap, canPinch, onTap, onPinch, onMultitouch }) {
+  canTap, canViewTap, canPinch, canPan, isPhone, onTap, onViewTap, onPinch, onMultitouch }) {
   let generation = 0, task, viewport, active, observer, thumbnailKey;
   const jobs = new Map();
-  const cancelGestures = pageGestures({ stage, overlay, canTap: () => Boolean(viewport) && canTap(),
-    canPinch: () => Boolean(viewport) && canPinch(), onTap, onPinch, onMultitouch });
+  function zoomAnchor(clientX, clientY) {
+    const pageRect = paper.getBoundingClientRect();
+    return { x: (clientX - pageRect.left) / pageRect.width, y: (clientY - pageRect.top) / pageRect.height };
+  }
+  const { cancel: cancelGestures, canStartTouchStroke } = pageGestures({ stage, overlay,
+    canTap: () => Boolean(viewport) && canTap(), canViewTap: () => Boolean(viewport) && canViewTap(),
+    canPinch: () => Boolean(viewport) && canPinch(), canPan: () => Boolean(viewport) && canPan(),
+    isPhone, zoomAnchor, onTap, onViewTap, onPinch, onMultitouch });
   const stop = (keepPaper = false) => {
     cancelGestures();
     generation++;
@@ -141,7 +178,7 @@ export function createViewer({ stage, paper, canvas, overlay, thumbs, getSource,
       const rotation = (page.rotate + entry.rotation) % 360;
       const original = page.getViewport({ scale: 1, rotation });
       const style = getComputedStyle(stage);
-      const available = stage.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) - 2;
+      const available = stage.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) - (isPhone() ? 0 : 2);
       const scale = Math.max(1, Math.min(available, 1100)) / original.width * zoom;
       const view = page.getViewport({ scale, rotation });
       const ratio = Math.min(devicePixelRatio || 1, 2, 4096 / Math.max(view.width, view.height),
@@ -248,18 +285,15 @@ export function createViewer({ stage, paper, canvas, overlay, thumbs, getSource,
   }
 
   return {
-    stop, show, paint, list, cancelGestures,
+    stop, show, paint, list, cancelGestures, canStartTouchStroke,
     update(entry) { active = entry; paint(); },
-    zoomAnchor(clientX, clientY) {
-      const pageRect = paper.getBoundingClientRect(), stageRect = stage.getBoundingClientRect();
-      return { x: (clientX - pageRect.left) / pageRect.width, y: (clientY - pageRect.top) / pageRect.height,
-        left: clientX - stageRect.left, top: clientY - stageRect.top };
-    },
     point(clientX, clientY) {
       if (!viewport) return null;
-      const rect = overlay.getBoundingClientRect();
-      const x = Math.min(overlay.clientWidth, Math.max(0, clientX - rect.left)) / rect.width * viewport.width;
-      const y = Math.min(overlay.clientHeight, Math.max(0, clientY - rect.top)) / rect.height * viewport.height;
+      const matrix = overlay.getScreenCTM();
+      if (!matrix) return null;
+      const point = new DOMPoint(clientX, clientY).matrixTransform(matrix.inverse());
+      const x = Math.min(viewport.width, Math.max(0, point.x));
+      const y = Math.min(viewport.height, Math.max(0, point.y));
       const [pdfX, pdfY] = viewport.convertToPdfPoint(x, y);
       return { x: pdfX, y: pdfY, angle: viewport.rotation, viewWidth: viewport.width / (viewport.scale * viewport.userUnit) };
     },

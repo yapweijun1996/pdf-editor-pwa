@@ -1,12 +1,14 @@
 import { PDFDocument, rgb } from '../../vendor/pdf-lib/dist/pdf-lib.esm.min.js';
 
-// Original synthetic artwork. A tall single page makes the viewer scroll even at fit width.
+// Synthetic portrait Letter pages with artwork and no real document data.
 export async function mobilePage() {
   const pdf = await PDFDocument.create({ updateMetadata: false });
-  const sheet = pdf.addPage([420, 1100]);
-  sheet.drawRectangle({ x: 30, y: 1000, width: 360, height: 60, color: rgb(.08, .24, .47) });
-  for (let i = 0; i < 12; i++) {
-    sheet.drawRectangle({ x: 30, y: 900 - 73 * i, width: 160 + i * 12, height: 8, color: rgb(.16, .52, .48) });
+  for (let page = 0; page < 3; page++) {
+    const sheet = pdf.addPage([612, 792]);
+    sheet.drawRectangle({ x: 40, y: 720, width: 532, height: 50, color: rgb(.08, .24, .47) });
+    for (let i = 0; i < 9; i++) {
+      sheet.drawRectangle({ x: 40, y: 670 - 70 * i, width: 200 + i * 20, height: 8, color: rgb(.16, .52, .48) });
+    }
   }
-  return { name: 'synthetic-mobile.pdf', mimeType: 'application/pdf', buffer: Buffer.from(await pdf.save()) };
+  return { name: 'synthetic-mobile-long-document-filename-for-truncation.pdf', mimeType: 'application/pdf', buffer: Buffer.from(await pdf.save()) };
 }
