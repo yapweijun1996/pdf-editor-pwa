@@ -1,0 +1,39 @@
+{
+  "ledgerVersion": 1,
+  "scope": "Save provenance extension to sources.json; author consultations transcribed from goal 6638c3e8-7b45-41da-ac7e-331670aece32, thread message 2. No additional reviewer consultations are implied.",
+  "sources": [
+    {
+      "id": "paperplane-save-contract-r3",
+      "kind": "project-context",
+      "title": "Paperplane original-file save contract",
+      "version": "Goal 6638c3e8-7b45-41da-ac7e-331670aece32, specification revision 3",
+      "path": ".aic/save-contract.md",
+      "accessedOn": "2026-11-20",
+      "status": "consulted",
+      "sections": { "S1–S3": "Save transaction, fallback, draft recovery and permissions." },
+      "notes": "Internal brief; see save-spec.md for how it applies to this revision."
+    },
+    {
+      "id": "whatwg-fs-create-writable",
+      "kind": "public-specification",
+      "title": "WHATWG File System Standard",
+      "version": "Living Standard, 2026-10-19, as reported by the author",
+      "url": "https://fs.spec.whatwg.org/#dom-filesystemfilehandle-createwritable",
+      "accessedOn": "2026-11-20",
+      "status": "consulted",
+      "sections": { "FileSystemFileHandle.createWritable()": "Replacement deferred until close." },
+      "notes": "Consultation reported by the runtime author; no archived source digest supplied. Reference only; no source code copied per author handoff."
+    },
+    {
+      "id": "w3c-web-share-share-method",
+      "kind": "public-specification",
+      "title": "W3C Web Share API",
+      "version": "Recommendation, 2023-05-30, as reported by the author",
+      "url": "https://www.w3.org/TR/web-share/#share-method",
+      "accessedOn": "2026-11-20",
+      "status": "consulted",
+      "sections": { "share() method": "Transient user activation for sharing." },
+      "notes": "Consultation reported by the runtime author; no archived source digest supplied. Reference only; no source code copied per author handoff."
+    }
+  ]
+}

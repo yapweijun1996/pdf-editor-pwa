@@ -157,4 +157,8 @@ body.dragging main{outline:3px dashed var(--accent);outline-offset:-5px}dialog{c
   #sheet-status,#sheet-details{display:block;margin:.35rem 0 0;color:var(--muted);font-size:.85rem;overflow-wrap:anywhere}
   #sheet-status[data-error=true]{color:var(--error)}
 }
+#save-mode{display:block;font-size:.65rem;line-height:1.05;font-weight:600;white-space:nowrap}
+#choices button{max-width:100%;overflow-wrap:anywhere}
+#view-copy{color:var(--text);text-decoration:underline}
+@media(max-width:768px){#save{height:44px;line-height:1.1}#save-mode{font-size:.62rem}}
 @media(max-width:460px){.welcome{grid-template-columns:1fr}.hero-art{display:none}}

@@ -2,7 +2,7 @@
 
 > **Beta.** Desktop and mobile editing are covered by automated browser tests. Real-device behavior may vary.
 
-Paperplane is a static, browser-first PDF editor. It reads files, renders pages, and generates new PDFs locally. There is no upload, no account, and no frontend build. Opened PDFs and edits are held in memory, not in the offline cache.
+Paperplane is a static, browser-first PDF editor. It reads files, renders pages, and generates new PDFs locally. There is no upload, no account, and no frontend build. Working PDFs are held in memory. Recovery drafts and original-file backups may also be stored privately by this browser; they are not part of the offline asset cache.
 
 ## Run locally
 
@@ -21,8 +21,23 @@ Wait for **Offline ready** on the first online visit. Afterwards the app can rel
 - Select a thumbnail, enter a page number, or focus the viewer and use Left/Right or Home/End. Zoom is relative to the fit-width view. Only the selected page is rendered at full size; thumbnail canvases are created only for visible tiles.
 - Choose **Text**, enter the note, and click/tap its baseline or use **Place at page center**. **Draw** and **Highlight** take a pointer, pen, or touch stroke. **Image / Signature** places a PNG or JPEG, including scanned signatures. Images are normalized by the browser and limited to 2,400 pixels on their longer side. Draw is also suitable for visual signatures.
 - Rotate clockwise, move pages earlier/later, or delete all but the final page. **Merge PDF** appends another file; **Extract pages** downloads a separate copy of your selection in displayed order, e.g. `1, 3-5`. Extraction does not change the open document.
-- **Fill forms** lists the plain fields from the PDF that supplied the selected page. Apply text, checkbox, radio, dropdown or list changes as one edit. Use **Undo**/**Redo** (up to 100 recent edits) or Ctrl/Cmd+Z and Ctrl/Cmd+Shift+Z. Ctrl/Cmd+S requests a download.
-- **Download PDF** requests an `-edited.pdf` copy; the original is never written. The app cannot tell whether the browser saved, blocked, or canceled the download. Check that you have the file, then choose **I saved this copy** to mark that version as saved. Until you confirm, edited versions still trigger the replacement warning and request the browser’s standard unsaved-navigation warning. Later edits need a new download and confirmation. There is no crash/session restore, and some browsers do not show `beforeunload` prompts without prior interaction or when the OS terminates the app.
+- **Fill forms** lists the plain fields from the PDF that supplied the selected page. Apply text, checkbox, radio, dropdown or list changes as one edit. Use **Undo**/**Redo** (up to 100 recent edits) or Ctrl/Cmd+Z and Ctrl/Cmd+Shift+Z. Ctrl/Cmd+S uses the current save mode.
+
+## Save and recover
+
+- **Overwrites the original** appears when **Open PDF** connects a writable file handle. **Save original** checks for an external change and offers **Reload from disk**, **Overwrite anyway**, or **Save a copy**. The app must write and verify a private backup before overwriting; it then rereads and validates the written PDF. If verification fails, it attempts to restore the backup and reports the outcome. If backup storage fails or permission is denied, use **Save a copy** instead. The browser file API cannot prevent another app from writing in the final check-to-close window.
+- **Saves a copy** applies to HTML file input, drag-and-drop, and browsers without the picker. **File options** (under **More** on phones) offers **Save a copy** even when an original is connected. Check the `-edited.pdf` copy before selecting **I saved this copy**; a requested download or share is not proof that a copy was saved. **Share copy** appears when the browser can share PDF files. Where a download is unavailable, **Open prepared PDF** provides a separate route to the viewer and its Save to Files options. Sharing can send the copy outside the device to the destination you choose.
+- Dirty edits request the browser's navigation warning. The app attempts a local autosave about every 10 seconds while active. On relaunch, **Recover workspace** opens the last completed draft, without its undo history. Autosave does not save the original, and abrupt exit, private browsing, storage limits or eviction can prevent recovery. **Restore previous version** lists local backups for the current document and offers workspace-only restoration or, for a connected file with permission, restoration to the original.
+
+See the [save capability matrix](docs/SAVE-CAPABILITIES.md) for test boundaries and platform limits.
+
+### Real-device checklist (not run)
+
+Use disposable synthetic PDFs and check saved bytes by reopening, not just by reading the badge.
+
+- [ ] **Chrome Android 132+**: check whether the picker is exposed on the actual build. If so, verify same-file saving, external-change choices and restoration; otherwise check copy and share.
+- [ ] **iOS 26 Safari and Home Screen PWA**: verify copy-only messaging, the prepared PDF/Save to Files route, and that canceling the system share sheet leaves the edit unsaved.
+- [ ] **Installed Chrome PWA**: verify a connected original with offline save and reopen, permission after relaunch, recovery, and restore of an older backup.
 
 ## Mobile behavior and limits
 
@@ -90,6 +105,7 @@ All three controls passed hit-testing at these samples. The root stayed at (0, 0
 npm ci
 npx playwright install chromium webkit
 npm test
+npm run test:save
 npm run test:browser
 npm run test:mobile
 node --test --test-concurrency=1 tests/mobile.mjs

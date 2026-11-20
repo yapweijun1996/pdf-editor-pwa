@@ -20,7 +20,8 @@
       <button id="install" hidden>Install</button>
       <button id="theme" aria-label="Switch color theme">Theme</button>
       <button id="open">Open PDF</button>
-      <button id="save" class="primary" aria-label="Download PDF" disabled><span class="desktop-download">Download PDF</span><span class="mobile-only" aria-hidden="true">Save</span></button>
+      <button id="file-options">File options</button>
+      <button id="save" class="primary" aria-label="Download PDF" disabled><span class="desktop-download">Download PDF</span><span class="mobile-only" aria-hidden="true">Save</span><small id="save-mode">Saves a copy</small></button>
       <button id="confirm-save" hidden>I saved this copy</button>
       <button id="more-tools" class="mobile-only" aria-label="More tools" aria-haspopup="dialog" aria-controls="tools-sheet">More</button>
     </div>
@@ -112,6 +113,13 @@
     <p id="sheet-status"></p>
     <p id="sheet-details" class="mobile-only"></p>
   </dialog>
+  <dialog id="file-dialog" aria-labelledby="file-title">
+    <h2 id="file-title">File options</h2><p id="file-notice"></p>
+    <div class="dialog-actions"><button id="copy-open">Open copy-only</button><button id="save-copy">Save a copy</button><button id="restore-version">Restore previous version</button></div>
+    <section id="prepared" hidden><p>Check your downloads, or open the PDF and use Save to Files. Sharing sends this copy to the destination you choose.</p><a id="view-copy" target="_blank" rel="noopener">Open prepared PDF</a> <button id="share-copy">Share copy</button></section>
+    <button data-close>Close</button>
+  </dialog>
+  <dialog id="save-choice" aria-labelledby="choice-title"><h2 id="choice-title"></h2><p id="choice-description"></p><div id="choices" class="dialog-actions"></div></dialog>
   <dialog id="extract-dialog" aria-labelledby="extract-title">
     <form id="extract-form">
       <h2 id="extract-title">Extract pages</h2>

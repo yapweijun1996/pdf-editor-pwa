@@ -1,5 +1,6 @@
 import { documentState, edit, history, selectPages } from './model.js';
 import { checkText, createPDF, describeFields, openPDF, previewFields, validateFields } from './pdf.js';
+import * as vault from './save.js';
 import { createViewer } from './viewer.js';
 
 const $ = id => document.getElementById(id);
@@ -9,10 +10,14 @@ const sheet = $('tools-sheet');
 const optionDisclosure = document.querySelector('#tool-options .mobile-disclosure input');
 const phoneStatus = $('phone-status');
 let fadeTimer, hideTimer;
+const tabId = crypto.randomUUID();
+const tabLock = id => `paperplane-workspace:${id}`;
+let binding, draftId, draftState, pendingDraft, prepared, preparedURL;
+const picker = () => typeof window.showOpenFilePicker === 'function';
 // Reuse the same controls and listeners in the phone sheet and desktop groups.
 const phoneControls = Object.entries({
   filename: document.querySelector('.masthead'),
-  install: $('sheet-actions'), theme: $('sheet-actions'), open: $('sheet-actions'), 'confirm-save': $('sheet-actions'),
+  'file-options': $('sheet-actions'), install: $('sheet-actions'), theme: $('sheet-actions'), open: $('sheet-actions'), 'confirm-save': $('sheet-actions'),
   'document-actions': $('sheet-document'), 'page-thumbnails': $('phone-pages'), 'page-operations': $('page-thumbnails'),
 }).map(([id, destination]) => {
   const control = $(id), home = document.createComment(`Home: ${id}`);
@@ -121,6 +126,15 @@ function controls() {
   $('welcome').hidden = hasDocument;
   $('workspace').hidden = !hasDocument;
   const filename = sources.get(baseId)?.name ?? 'No document open';
+  const connected = Boolean(binding?.handle && picker());
+  $('save-mode').textContent = connected ? 'Overwrites the original' : 'Saves a copy';
+  $('save').querySelector('.desktop-download').textContent = connected ? 'Save original' : 'Download PDF';
+  $('save').setAttribute('aria-label', connected ? 'Save original' : 'Download PDF');
+  $('file-options').disabled = busy;
+  $('save-copy').disabled = !hasDocument;
+  $('restore-version').disabled = !hasDocument;
+  $('prepared').hidden = !prepared || requestedState !== session?.current;
+  $('file-notice').textContent = !picker() ? 'This browser cannot overwrite the original.' : connected ? 'Save writes to the connected original after backing it up.' : 'This workspace saves copies. Use Open PDF to connect an original.';
   $('filename').textContent = filename;
   $('filename').title = filename;
   $('sheet-document').hidden = !hasDocument;
@@ -228,7 +242,8 @@ async function confirmReplacement() {
   await new Promise(resolve => dialog.addEventListener('close', resolve, { once: true }));
   return dialog.returnValue === 'discard';
 }
-async function importPDF(file, merge = false) {
+async function importPDF(file, merge = false, handle) {
+  await initialization;
   if (!file || busy || anyDialog()) return;
   lock(true);
   status(merge ? 'Reading PDF to merge…' : 'Opening PDF…');
@@ -244,19 +259,14 @@ async function importPDF(file, merge = false) {
       sources.set(id, loaded);
       change({ type: 'merge', source: id, count: loaded.pdf.numPages }, `Appended ${loaded.pdf.numPages} page(s) from ${file.name}. Form fields will be flattened in the downloaded copy.`);
     } else {
-      viewer.stop();
-      for (const previous of sources.values()) void previous.destroy().catch(() => {});
-      sources.clear();
-      sources.set(id, loaded);
-      baseId = id;
-      selected = 0;
-      zoom = 1;
-      image = undefined;
-      session = history(documentState(id, loaded.pdf.numPages));
-      requestedState = undefined;
-      setMode('view');
-      refresh({ reset: true, reveal: true });
-      status(`Opened ${file.name}.`);
+      let doc = { id: crypto.randomUUID(), name: file.name }, notice = '';
+      if (handle) {
+        try { doc = await vault.connect(handle, file, loaded.bytes); }
+        catch (error) { notice = ` Original saving unavailable: ${error.message} Use Save a copy.`; }
+      }
+      await forgetDraft();
+      installWorkspace(loaded, doc);
+      status(`Opened ${file.name}.${notice}`);
     }
     loaded = undefined;
   } catch (error) {
@@ -276,7 +286,16 @@ function fileInput(button, input, handler) {
   };
 }
 fileInput('open', 'file', importPDF);
-$('start').onclick = () => $('file').click();
+$('open').onclick = $('start').onclick = async () => {
+  if (busy || anyDialog()) return;
+  if (!picker()) return $('file').click();
+  try {
+    const [handle] = await window.showOpenFilePicker({ multiple: false, types: [{ description: 'PDF', accept: { 'application/pdf': ['.pdf'] } }] });
+    await importPDF(await handle.getFile(), false, handle);
+  } catch (error) { if (error.name !== 'AbortError') status(`Picker unavailable. Use File options → Open copy-only. ${error.message}`, true); }
+};
+$('file-options').onclick = () => $('file-dialog').showModal();
+$('copy-open').onclick = () => { $('file-dialog').close(); $('file').click(); };
 fileInput('merge', 'merge-file', file => importPDF(file, true));
 
 let dragDepth = 0;
@@ -575,26 +594,137 @@ function download(bytes, suffix) {
   setTimeout(() => URL.revokeObjectURL(url), 60_000);
   return link.download;
 }
-async function save() {
+function installWorkspace(loaded, doc, recovered = false) {
+  viewer.stop();
+  for (const previous of sources.values()) void previous.destroy().catch(() => {});
+  sources.clear();
+  baseId = `source-${++serial}`;
+  sources.set(baseId, loaded);
+  binding = doc;
+  draftId = `${tabId}:${crypto.randomUUID()}`;
+  draftState = requestedState = prepared = undefined;
+  if (preparedURL) URL.revokeObjectURL(preparedURL);
+  preparedURL = undefined;
+  selected = 0; zoom = 1; image = undefined;
+  const timeline = history(documentState(baseId, loaded.pdf.numPages));
+  session = Object.create(timeline, {
+    dirty: { get: () => recovered || timeline.dirty },
+    checkpoint: { value: () => { recovered = false; timeline.checkpoint(); } },
+  });
+  setMode('view');
+  refresh({ reset: true, reveal: true });
+}
+const materialize = () => createPDF(new Map(sources), session.current, session.current.pages, baseId);
+async function forgetDraft() {
+  await pendingDraft;
+  if (draftState) await vault.clearDraft(draftId);
+  draftState = undefined;
+}
+async function autosave() {
+  if (busy || !session || pendingDraft) return;
+  const state = session.current;
+  if (session.dirty && draftState === state || !session.dirty && !draftState) return;
+  const persist = async () => {
+    if (session.dirty) {
+      const bytes = await materialize();
+      await vault.saveDraft(draftId, binding, bytes);
+      draftState = state;
+    } else { await vault.clearDraft(draftId); draftState = undefined; }
+  };
+  pendingDraft = persist().catch(error => status(`Local autosave unavailable: ${error.message}`, true));
+  try { await pendingDraft; } finally { pendingDraft = undefined; }
+}
+setInterval(autosave, 10000);
+function choice(title, description, items) {
+  const dialog = $('save-choice');
+  $('choice-title').textContent = title;
+  $('choice-description').textContent = description;
+  $('choices').replaceChildren(...items.map(([value, label]) => {
+    const button = document.createElement('button'); button.textContent = label;
+    button.onclick = () => dialog.close(value); return button;
+  }));
+  dialog.returnValue = ''; dialog.showModal();
+  return new Promise(resolve => dialog.addEventListener('close', () => resolve(dialog.returnValue), { once: true }));
+}
+function prepareCopy(bytes, state) {
+  const name = download(bytes, 'edited');
+  requestedState = state;
+  if (preparedURL) URL.revokeObjectURL(preparedURL);
+  prepared = new File([bytes], name, { type: 'application/pdf' });
+  $('view-copy').href = preparedURL = URL.createObjectURL(prepared);
+  $('share-copy').hidden = !navigator.canShare?.({ files: [prepared] });
+  status(`Download requested: ${name}. File options offers Open prepared PDF or sharing. Check your copy before choosing “I saved this copy”.`);
+  if (matchMedia('(display-mode: standalone)').matches || navigator.standalone || !$('share-copy').hidden) $('file-dialog').showModal();
+}
+$('share-copy').onclick = async () => {
+  try { await navigator.share({ files: [prepared] }); }
+  catch (error) { $('file-notice').textContent = `Copy not shared: ${error.message}`; }
+};
+const conflict = () => choice('Original changed on disk', 'Reload replaces local edits and keeps a recovery snapshot. Overwrite backs up the current disk bytes first.', [['cancel','Cancel'], ['reload','Reload from disk'], ['overwrite','Overwrite anyway'], ['copy','Save a copy']]);
+async function archiveWorking() {
+  await pendingDraft;
+  if (session.dirty) await vault.saveDraft(crypto.randomUUID(), binding, await materialize());
+}
+async function transact(bytes, count, restoring) {
+  const result = await vault.replaceOriginal(binding, bytes, count, conflict);
+  if (result.action === 'copy') { prepareCopy(restoring ? await materialize() : bytes, session.current); return; }
+  if (result.action === 'reload') {
+    await archiveWorking();
+    const loaded = await openPDF(result.current.file);
+    await forgetDraft();
+    installWorkspace(loaded, { ...binding, baseline: result.current.stamp });
+    status('Reloaded from disk. Previous edits are recoverable on next launch.'); return;
+  }
+  if (result.action !== 'saved') return;
+  binding = { ...binding, baseline: result.baseline };
+  await forgetDraft();
+  if (restoring) installWorkspace(await openPDF(new File([bytes], binding.name)), binding);
+  else session.checkpoint();
+  status(restoring ? 'Previous version verified on disk.' : 'Saved and verified the original.');
+}
+async function save(copyOnly = false) {
   if (!ready()) return;
   lock(true);
-  status('Preparing a new PDF…');
   try {
     const state = session.current;
-    const bytes = await createPDF(sources, state, state.pages, baseId);
-    const name = download(bytes, 'edited');
-    requestedState = state;
-    const next = session.dirty ? ' If you have the file, choose “I saved this copy”.' : '';
-    status(`Download requested: ${name}. Check your browser’s downloads.${next}`);
-  } catch (error) {
-    status(`Could not save this PDF. Your edits are still open. ${error.message}`, true);
-  } finally { lock(false); }
+    if (binding.handle && picker() && !copyOnly) {
+      await vault.permission(binding.handle);
+      await transact(await materialize(), state.pages.length, false);
+    } else prepareCopy(await materialize(), state);
+  } catch (error) { status(`Save did not finish: ${error.message} File options → Save a copy is available.`, true); }
+  finally { lock(false); }
 }
-$('save').onclick = save;
-$('confirm-save').onclick = () => {
+$('save').onclick = () => save();
+$('save-copy').onclick = () => { $('file-dialog').close(); void save(true); };
+$('restore-version').onclick = async () => {
+  $('file-dialog').close();
+  if (!ready()) return;
+  lock(true);
+  try {
+    const versions = await vault.backups(binding);
+    const id = await choice('Restore previous version', versions.length ? 'Choose original bytes to restore. Unsaved edits will be kept as a recovery snapshot.' : 'No original-file backups for this document.', [['cancel','Cancel'], ...versions.map(v => [v.id, `${v.name} · ${new Date(v.time).toLocaleString()} · ${v.hash}`])]);
+    const version = versions.find(v => v.id === id);
+    if (!version) return;
+    const action = await choice('Restore destination', 'Workspace only does not modify the original.', [['cancel','Cancel'], ['workspace','Workspace only'], ...(binding.handle && picker() ? [['disk','Restore original']] : [])]);
+    if (!['disk','workspace'].includes(action)) return;
+    if (action === 'disk') await vault.permission(binding.handle);
+    const bytes = await vault.readVersion(version);
+    await archiveWorking();
+    if (action === 'disk') await transact(bytes, undefined, true);
+    else {
+      const loaded = await openPDF(new File([bytes], binding.name));
+      await forgetDraft(); installWorkspace(loaded, { id: binding.id, name: binding.name }, true);
+      status('Restored workspace only. Save a copy to keep it.');
+    }
+  } catch (error) { status(`Restore did not finish: ${error.message}`, true); }
+  finally { lock(false); }
+};
+$('confirm-save').onclick = async () => {
   if (!ready() || !canConfirmSave()) return;
-  session.checkpoint();
-  controls();
+  lock(true);
+  try { await forgetDraft(); session.checkpoint(); }
+  catch (error) { status(`Could not clear the recovery record: ${error.message}`, true); return; }
+  finally { lock(false); }
   $('save').focus();
   status('You confirmed that you saved this version.');
 };
@@ -741,3 +871,37 @@ if ('serviceWorker' in navigator && window.isSecureContext) {
 } else updateOffline('Offline requires HTTPS or localhost');
 $('sheet-status').textContent = $('status').textContent;
 syncPhoneLayout();
+async function recover() {
+    const active = new Set((await navigator.locks.query()).held.map(lock => lock.name));
+    for (const draft of (await vault.drafts()).sort((a,b) => b.time - a.time)) {
+      if (active.has(tabLock(draft.id.split(':')[0]))) continue;
+      const answer = await choice('Recover unsaved work?', `${draft.doc.name} · ${new Date(draft.time).toLocaleString()}. Restores the last autosaved PDF, without undo history.`, [['later','Not now'], ['recover','Recover workspace'], ['discard','Discard recovery']]);
+      if (answer === 'discard') await vault.clearDraft(draft.id);
+      if (answer !== 'recover') continue;
+      const bytes = await vault.readVersion(draft);
+      let doc = draft.doc;
+      if (doc.handle && picker()) {
+        try { await doc.handle.queryPermission({ mode: 'readwrite' }); }
+        catch { doc = { id: doc.id, name: doc.name }; }
+      }
+      else doc = { id: doc.id, name: doc.name };
+      installWorkspace(await openPDF(new File([bytes], doc.name)), doc, true);
+      await vault.saveDraft(draftId, doc, bytes);
+      draftState = session.current;
+      await vault.clearDraft(draft.id);
+      status('Recovered unsaved edits. The original has not been changed.'); break;
+    }
+}
+const initialization = (async () => {
+  lock(true);
+  try {
+    await new Promise((resolve, reject) => {
+      navigator.locks.request(tabLock(tabId), () => {
+        resolve();
+        return new Promise(() => {}); // Released automatically when this realm exits.
+      }).catch(reject);
+    });
+    await navigator.locks.request('paperplane-recovery', recover);
+  } catch (error) { status(`Recovery unavailable: ${error.message}`, true); }
+  finally { lock(false); }
+})();

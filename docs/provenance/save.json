@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "module": "Paperplane save transaction and recovery, UI integration and offline manifest",
+  "revision": {
+    "baseCommit": "4b035fe8c0b13823aa1f3658146c65f3d2811c0b",
+    "files": {
+      "src/save.js": "a2cb65312ab8bf5c31889e9f0890f0f1da10ed2007b79ae994685700edfad6f6",
+      "src/app.js": "90dfefefdd371293c81b6d695cbf9ecbfcfe862ac2686bc897fec5273ccc7b3b",
+      "index.html": "8c39e202294743ed3059051b9778b72826014c37887d1b14d08b4cdd589f1659",
+      "style.css": "1377d767b7211592a4d05fcf647d72b9b1d1e3e7ad28285044110f559611ddab",
+      "precache.js": "a0aa975065e43494006ec2d0597cfedf4f4452e33514477947cf242bb14a61bc"
+    }
+  },
+  "author": {
+    "id": "work-976263da-3145-42fa-8116-eb43e05f2e81",
+    "role": "Data-safe original-file transaction and recovery architect"
+  },
+  "authoredOn": "2026-11-20",
+  "sources": [
+    {
+      "sourceId": "paperplane-save-contract-r3",
+      "sections": [
+        "S1–S3"
+      ],
+      "notes": "Transaction, fallback, recovery and permissions contract; implemented using existing app/model/PDF interfaces."
+    },
+    {
+      "sourceId": "whatwg-fs-create-writable",
+      "sections": [
+        "FileSystemFileHandle.createWritable()"
+      ],
+      "notes": "Writable replacement is deferred until close; reference only."
+    },
+    {
+      "sourceId": "w3c-web-share-share-method",
+      "sections": [
+        "share() method"
+      ],
+      "notes": "Transient activation informed the separate share gesture; reference only."
+    }
+  ],
+  "notes": "The runtime author reports independent implementation, no third-party source copied, no new runtime dependencies, and no additional external sources relied on. Consultations are transcribed in docs/notes/save-sources.json, an extension to docs/notes/sources.json. The completion engineer adopted retained proposal 62dadc163e25e6e5141356504a7b37d4c942d51a9377fb77ff18e0b601c7cf87 verbatim and did not contribute runtime edits.",
+  "review": {
+    "status": "approved",
+    "reviewer": {
+      "id": "work-f6504733-70af-4b09-b69e-15f0304fa84a",
+      "role": "Save safety testing and scoped completion engineer"
+    },
+    "reviewedOn": "2026-11-20",
+    "reviewedRevision": {
+      "baseCommit": "4b035fe8c0b13823aa1f3658146c65f3d2811c0b",
+      "files": {
+        "src/save.js": "a2cb65312ab8bf5c31889e9f0890f0f1da10ed2007b79ae994685700edfad6f6",
+        "src/app.js": "90dfefefdd371293c81b6d695cbf9ecbfcfe862ac2686bc897fec5273ccc7b3b",
+        "index.html": "8c39e202294743ed3059051b9778b72826014c37887d1b14d08b4cdd589f1659",
+        "style.css": "1377d767b7211592a4d05fcf647d72b9b1d1e3e7ad28285044110f559611ddab",
+        "precache.js": "a0aa975065e43494006ec2d0597cfedf4f4452e33514477947cf242bb14a61bc"
+      }
+    },
+    "evidence": [
+      "docs/provenance/reviews/save.md"
+    ],
+    "notes": "Approval is limited to provenance of the reviewed runtime hashes; it is not standing QA, release clearance or owner approval."
+  }
+}
